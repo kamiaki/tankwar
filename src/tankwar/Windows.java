@@ -12,10 +12,9 @@ import java.awt.event.WindowEvent;
 import javax.swing.*;
 
 public class Windows extends JFrame implements InitValue{	
-	private int x = 50,y = 50;	
-	
 	private mainPanel mPanel;
 	
+	Tank myTank = new Tank(50, 50);
 	/**
 	 * ¹¹Ôìº¯Êý
 	 */
@@ -35,19 +34,16 @@ public class Windows extends JFrame implements InitValue{
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}		
-		});
-		
+		});		
 		//¼üÅÌ¼àÌý
 		this.addKeyListener(new Keylistener());
-		
 		//Ãæ°å
 		mPanel = new mainPanel(); 
 		mPanel.setSize(WindowsXlength, WindowsYlength);
 		this.setContentPane(mPanel);
 		mPanel.setLayout(null);	
 		new Thread(new PaintThread()).start();
-		
-		
+				
 		this.setVisible(true);
 	}
 	/**
@@ -82,10 +78,13 @@ public class Windows extends JFrame implements InitValue{
 		private Image Doublebuffer(){
 			Image image = mainPanel.this.createImage(WindowsXlength, WindowsYlength);
 			Graphics goffScreenImage = image.getGraphics();
-			goffScreenImage.setColor(Color.GREEN);
+			Color c = goffScreenImage.getColor();
+			
+			goffScreenImage.setColor(Color.GREEN);									//»­±³¾°
 			goffScreenImage.fillRect(0, 0, WindowsXlength, WindowsYlength);
-			goffScreenImage.setColor(Color.RED);
-			goffScreenImage.fillOval(x, y,30, 30);			
+			myTank.draw(goffScreenImage);											//»­tank
+			
+			goffScreenImage.setColor(c);
 			return image;
 		}
 	}
@@ -97,25 +96,8 @@ public class Windows extends JFrame implements InitValue{
 	private class Keylistener extends KeyAdapter {
 		public void keyPressed(KeyEvent e) {
 			super.keyPressed(e);
-			int Key = e.getKeyCode();
-			switch (Key) {
-			case KeyEvent.VK_W:
-				y = y - 5;
-				break;
-			case KeyEvent.VK_S:
-				y = y + 5;
-				break;
-			case KeyEvent.VK_A:
-				x = x - 5;
-				break;
-			case KeyEvent.VK_D:
-				x = x + 5;
-				break;
-			default:
-				break;
-			}
+			myTank.KEY(e);
 		}
-				
-		
+	
 	}
 }
