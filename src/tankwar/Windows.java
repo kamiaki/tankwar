@@ -3,19 +3,20 @@ package tankwar;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 
 public class Windows extends JFrame implements InitValue{	
 	private mainPanel mPanel;
 	
 	Tank myTank = new Tank(50, 50 ,this);
-	Missile missile = null;
+	List<Missile> missiles = new ArrayList<Missile>();
+	
 	/**
 	 * 构造函数
 	 */
@@ -76,8 +77,9 @@ public class Windows extends JFrame implements InitValue{
 		public void paint(Graphics g) {
 			super.paint(g);			
 			Image offScreenImage = Doublebuffer();
-			g.drawImage(offScreenImage, 0, 0 , null);
-		}		
+			g.drawImage(offScreenImage, 0, 0 , null);		
+		}
+		
 		/**
 		 * 双缓存 方法
 		 * @return
@@ -90,8 +92,13 @@ public class Windows extends JFrame implements InitValue{
 			goffScreenImage.fillRect(0, 0, WindowsXlength, WindowsYlength);
 			goffScreenImage.setColor(c);
 			
-			myTank.draw(goffScreenImage);											//画tank
-			if(missile != null) missile.draw(goffScreenImage);						//画missile
+			myTank.draw(goffScreenImage);											//画tank	
+			for(int i = 0; i < missiles.size(); i++){								//画炮弹
+				Missile m = missiles.get(i);
+				m.draw(goffScreenImage);		
+			}
+			goffScreenImage.drawString("子弹数量:" + missiles.size(), 10, 50);
+			
 			return image;
 		}
 	}

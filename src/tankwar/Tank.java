@@ -130,9 +130,6 @@ public class Tank{
 	public void KEY(KeyEvent e){
 		int Key = e.getKeyCode();
 		switch (Key) {
-		case KeyEvent.VK_NUMPAD0:
-			windows.missile = fire();
-			break;
 		case KeyEvent.VK_W:
 			Up = true;
 			break;
@@ -162,6 +159,9 @@ public class Tank{
 	public void noKEY(KeyEvent e){
 		int Key = e.getKeyCode();
 		switch (Key) {
+		case KeyEvent.VK_NUMPAD0:
+			fire();
+			break;
 		case KeyEvent.VK_W:
 			Up = false;
 			break;
@@ -199,11 +199,10 @@ public class Tank{
 	 * 生成一个子弹
 	 * @return
 	 */
-	public Missile fire(){
+	public void fire(){
 		int x = this.X + Tank.tankX/2 - Missile.missileX/2;
 		int y = this.Y + Tank.tankY/2 - Missile.missileY/2;
 		Missile missile = new Missile(x, y, ptDir);
-		return missile;
-		
+		windows.missiles.add(missile);		
 	}
 }
