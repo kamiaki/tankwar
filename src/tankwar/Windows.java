@@ -26,7 +26,7 @@ public class Windows extends JFrame implements InitValue{
 	 */
 	public void launchFrame(){
 		this.setTitle("Tank");
-		this.setSize(800, 450);
+		this.setSize(WindowsXlength, WindowsYlength);
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);
 		this.addWindowListener(new WindowAdapter() {
@@ -36,7 +36,7 @@ public class Windows extends JFrame implements InitValue{
 		});
 		
 		mPanel = new mainPanel(); 
-		mPanel.setSize(800, 450);
+		mPanel.setSize(WindowsXlength, WindowsYlength);
 		this.setContentPane(mPanel);
 		mPanel.setLayout(null);
 		
@@ -84,10 +84,10 @@ public class Windows extends JFrame implements InitValue{
 		}	
 		
 		private Image Doublebuffer(){
-			Image image = mainPanel.this.createImage(800, 450);
+			Image image = mainPanel.this.createImage(WindowsXlength, WindowsYlength);
 			Graphics goffScreenImage = image.getGraphics();
 			goffScreenImage.setColor(Color.GREEN);
-			goffScreenImage.fillRect(0, 0, 800, 450);
+			goffScreenImage.fillRect(0, 0, WindowsXlength, WindowsYlength);
 			goffScreenImage.setColor(Color.RED);
 			goffScreenImage.fillOval(x, y,30, 30);
 			
