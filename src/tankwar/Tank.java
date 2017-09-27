@@ -7,10 +7,14 @@ import java.awt.event.KeyEvent;
 
 public class Tank{
 	private int X, Y, xspeed = 1, yspeed = 1;
+	
+	private Windows windows = null;
+	
 	public static final int tankX = 30, tankY = 30;
 	private boolean Up = false, Down = false, Left = false, Right = false;
+	
 	private Direction FangXiang = Direction.d5;
-	private Windows windows = null;
+	private Direction ptDir = Direction.d4;
 	
 	public Tank(int x, int y) {
 		this.X = x;
@@ -27,6 +31,43 @@ public class Tank{
 		Color c = g.getColor();
 		g.setColor(Color.RED);
 		g.fillOval(X, Y,tankX, tankY);
+		g.setColor(c);
+		paotong(g);
+		
+	}
+	
+	private void paotong(Graphics g){
+		Color c = g.getColor();
+		int shenchu = 3;
+		g.setColor(Color.BLACK);
+		switch (ptDir) {
+		case d4:
+			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X - shenchu, Y + Tank.tankY/2);
+			break;
+		case d7:
+			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X, Y);
+			break;
+		case d8:
+			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X + Tank.tankX/2, Y - shenchu);
+			break;
+		case d9:
+			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X + Tank.tankX, Y);
+			break;
+		case d6:
+			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X + Tank.tankX + shenchu, Y + Tank.tankY/2);
+			break;
+		case d3:
+			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X + Tank.tankX, Y + Tank.tankY);
+			break;
+		case d2:
+			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X + Tank.tankX/2, Y + Tank.tankY + shenchu);
+			break;
+		case d1:
+			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X, Y + Tank.tankY);
+			break;
+		default:
+			break;
+		}
 		g.setColor(c);
 	}
 	
@@ -80,6 +121,10 @@ public class Tank{
 		default:
 			break;
 		}	
+		
+		if(FangXiang != Direction.d5){
+			this.ptDir = this.FangXiang;
+		}
 	}
 
 	public void KEY(KeyEvent e){
@@ -157,7 +202,7 @@ public class Tank{
 	public Missile fire(){
 		int x = this.X + Tank.tankX/2 - Missile.missileX/2;
 		int y = this.Y + Tank.tankY/2 - Missile.missileY/2;
-		Missile missile = new Missile(x, y, FangXiang);
+		Missile missile = new Missile(x, y, ptDir);
 		return missile;
 		
 	}
