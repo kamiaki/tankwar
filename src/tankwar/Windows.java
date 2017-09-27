@@ -2,16 +2,18 @@ package tankwar;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
-public class Windows extends JFrame{	
+public class Windows extends JFrame implements InitValue{	
+	private int x = 50,xFangXiang = 1,xSpeed = 1,y = 50;	
+	
 	private mainPanel mPanel;
 	
-	private int x = 50, y = 50;
-
 	/**
 	 * 构造函数
 	 */
@@ -34,9 +36,9 @@ public class Windows extends JFrame{
 		});
 		
 		mPanel = new mainPanel(); 
+		mPanel.setSize(800, 450);
 		this.setContentPane(mPanel);
 		mPanel.setLayout(null);
-		mPanel.setBackground(Color.GREEN);
 		
 		new Thread(new PaintThread()).start();
 		
@@ -50,7 +52,7 @@ public class Windows extends JFrame{
 			while(true){
 				mPanel.repaint();
 				try {
-					Thread.sleep(10);
+					Thread.sleep(20);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}	
@@ -62,13 +64,36 @@ public class Windows extends JFrame{
 	 * 主窗口面板
 	 */
 	private class mainPanel extends JPanel{
+		
+		@Override
 		public void paint(Graphics g) {
-			super.paint(g);
-			Color c = g.getColor();
-			g.setColor(Color.RED);
-			g.fillOval(x, y,30, 30);
-			g.setColor(c);	
-			x += 1;
-		}		
+			super.paint(g);			
+			Image offScreenImage = Doublebuffer();
+			g.drawImage(offScreenImage, 0, 0 , null);
+			
+			xSpeed = x / 10;
+			if(xSpeed <= 0){
+				xSpeed = 1;
+			}
+			if(x > 600){
+				xFangXiang = -1;
+			}else if(x < 50){
+				xFangXiang = 1;
+			}
+			x = x + ( xFangXiang * xSpeed);	
+		}	
+		
+		private Image Doublebuffer(){
+			Image image = mainPanel.this.createImage(800, 450);
+			Graphics goffScreenImage = image.getGraphics();
+			goffScreenImage.setColor(Color.GREEN);
+			goffScreenImage.fillRect(0, 0, 800, 450);
+			goffScreenImage.setColor(Color.RED);
+			goffScreenImage.fillOval(x, y,30, 30);
+			
+			return image;
+		}
 	}
+	
+	
 }
