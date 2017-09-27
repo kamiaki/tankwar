@@ -6,6 +6,6 @@ public class TankClient {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+		Windows windows = new Windows();
 	}
 }
