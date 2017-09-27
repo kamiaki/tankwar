@@ -15,6 +15,7 @@ public class Windows extends JFrame implements InitValue{
 	private mainPanel mPanel;
 	
 	Tank myTank = new Tank(50, 50);
+	Missile missile = new Missile(50, 50, Direction.d6);
 	/**
 	 * 构造函数
 	 */
@@ -70,22 +71,27 @@ public class Windows extends JFrame implements InitValue{
 	 * 主窗口面板
 	 */
 	private class mainPanel extends JPanel{
+		
 		@Override
 		public void paint(Graphics g) {
 			super.paint(g);			
 			Image offScreenImage = Doublebuffer();
 			g.drawImage(offScreenImage, 0, 0 , null);
 		}		
+		/**
+		 * 双缓存 方法
+		 * @return
+		 */
 		private Image Doublebuffer(){
 			Image image = mainPanel.this.createImage(WindowsXlength, WindowsYlength);
 			Graphics goffScreenImage = image.getGraphics();
-			Color c = goffScreenImage.getColor();
-			
+			Color c = goffScreenImage.getColor();		
 			goffScreenImage.setColor(Color.GREEN);									//画背景
 			goffScreenImage.fillRect(0, 0, WindowsXlength, WindowsYlength);
-			myTank.draw(goffScreenImage);											//画tank
-			
 			goffScreenImage.setColor(c);
+			
+			myTank.draw(goffScreenImage);											//画tank
+			missile.draw(goffScreenImage);
 			return image;
 		}
 	}
