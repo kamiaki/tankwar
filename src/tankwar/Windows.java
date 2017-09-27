@@ -35,6 +35,7 @@ public class Windows extends JFrame implements InitValue{
 				System.exit(0);
 			}		
 		});		
+
 		//键盘监听
 		this.addKeyListener(new Keylistener());
 		//面板
@@ -58,7 +59,7 @@ public class Windows extends JFrame implements InitValue{
 			while(true){
 				mPanel.repaint();
 				try {
-					Thread.sleep(10);
+					Thread.sleep(1);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}	
@@ -94,10 +95,15 @@ public class Windows extends JFrame implements InitValue{
 	 *
 	 */
 	private class Keylistener extends KeyAdapter {
+		//按下
 		public void keyPressed(KeyEvent e) {
 			super.keyPressed(e);
 			myTank.KEY(e);
 		}
-	
+		//抬起
+		public void keyReleased(KeyEvent e) {
+			super.keyReleased(e);
+			myTank.noKEY(e);
+		}
 	}
 }
