@@ -14,8 +14,8 @@ import javax.swing.*;
 public class Windows extends JFrame implements InitValue{	
 	private mainPanel mPanel;
 	
-	Tank myTank = new Tank(50, 50);
-	Missile missile = new Missile(50, 50, Direction.d6);
+	Tank myTank = new Tank(50, 50 ,this);
+	Missile missile = null;
 	/**
 	 * ¹¹Ôìº¯Êý
 	 */
@@ -91,7 +91,7 @@ public class Windows extends JFrame implements InitValue{
 			goffScreenImage.setColor(c);
 			
 			myTank.draw(goffScreenImage);											//»­tank
-			missile.draw(goffScreenImage);
+			if(missile != null) missile.draw(goffScreenImage);						//»­missile
 			return image;
 		}
 	}

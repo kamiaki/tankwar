@@ -7,8 +7,10 @@ import java.awt.event.KeyEvent;
 
 public class Tank{
 	private int X, Y, xspeed = 1, yspeed = 1;
+	public static final int tankX = 30, tankY = 30;
 	private boolean Up = false, Down = false, Left = false, Right = false;
 	private Direction FangXiang = Direction.d5;
+	private Windows windows = null;
 	
 	public Tank(int x, int y) {
 		this.X = x;
@@ -16,10 +18,15 @@ public class Tank{
 		TankQD();
 	}
 	
+	public Tank(int x, int y, Windows w){
+		this(x,y);
+		this.windows = w;
+	}
+	
 	public void draw(Graphics g){
 		Color c = g.getColor();
 		g.setColor(Color.RED);
-		g.fillOval(X, Y,30, 30);
+		g.fillOval(X, Y,tankX, tankY);
 		g.setColor(c);
 	}
 	
@@ -78,6 +85,9 @@ public class Tank{
 	public void KEY(KeyEvent e){
 		int Key = e.getKeyCode();
 		switch (Key) {
+		case KeyEvent.VK_NUMPAD0:
+			windows.missile = fire();
+			break;
 		case KeyEvent.VK_W:
 			Up = true;
 			break;
@@ -138,5 +148,17 @@ public class Tank{
 		else if(Up && Down && !Left && !Right)FangXiang = Direction.d5;
 		else if(!Up && !Down && !Left && !Right)FangXiang = Direction.d5;
 		else if(Up && Down && Left && Right)FangXiang = Direction.d5;
+	}
+	
+	/**
+	 * 生成一个子弹
+	 * @return
+	 */
+	public Missile fire(){
+		int x = this.X + Tank.tankX/2 - Missile.missileX/2;
+		int y = this.Y + Tank.tankY/2 - Missile.missileY/2;
+		Missile missile = new Missile(x, y, FangXiang);
+		return missile;
+		
 	}
 }

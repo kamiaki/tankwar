@@ -5,7 +5,8 @@ import java.awt.Graphics;
 
 public class Missile {
 	
-	int X, Y, xspeed = 10, yspeed = 10;
+	int X, Y, xspeed = 3, yspeed = 3;
+	public static final int missileX = 10, missileY = 10;
 	Direction MissileFangXiang;
 	
 	public Missile(int x, int y, Direction missileFangXiang) {
@@ -29,7 +30,7 @@ public class Missile {
 				while(true){
 					move();
 					try {
-						Thread.sleep(100);
+						Thread.sleep(10);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
