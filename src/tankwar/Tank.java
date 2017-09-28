@@ -5,10 +5,10 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 
-public class Tank{
+public class Tank implements InitValue{
 	private int X, Y, xspeed = 1, yspeed = 1;
 	
-	private Windows windows = null;
+	private TankClient tankClient = null;
 	
 	public static final int tankX = 30, tankY = 30;
 	private boolean Up = false, Down = false, Left = false, Right = false;
@@ -22,9 +22,9 @@ public class Tank{
 		TankQD();
 	}
 	
-	public Tank(int x, int y, Windows w){
+	public Tank(int x, int y, TankClient w){
 		this(x,y);
-		this.windows = w;
+		this.tankClient = w;
 	}
 	
 	public void draw(Graphics g){
@@ -202,7 +202,7 @@ public class Tank{
 	public void fire(){
 		int x = this.X + Tank.tankX/2 - Missile.missileX/2;
 		int y = this.Y + Tank.tankY/2 - Missile.missileY/2;
-		Missile missile = new Missile(x, y, ptDir);
-		windows.missiles.add(missile);		
+		Missile missile = new Missile(x, y, ptDir,tankClient);
+		tankClient.missiles.add(missile);		
 	}
 }

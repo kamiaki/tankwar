@@ -3,18 +3,28 @@ package tankwar;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class Missile {
-	
+public class Missile implements InitValue{
+	TankClient TC = null;
 	int X, Y, xspeed = 3, yspeed = 3;
 	public static final int missileX = 10, missileY = 10;
+	private boolean live = true;
+	
 	Direction MissileFangXiang;
+		
+	public boolean isLive() {
+		return live;
+	}
 	
 	public Missile(int x, int y, Direction missileFangXiang) {
-		super();
 		this.X = x;
 		this.Y = y;
 		MissileFangXiang = missileFangXiang;
 		MissileQD();
+	}
+	
+	public Missile(int x, int y, Direction missileFangXiang,TankClient tc) {
+		this(x,y,missileFangXiang);
+		this.TC = tc;
 	}
 	
 	public void draw(Graphics g) {
@@ -74,5 +84,10 @@ public class Missile {
 		default:
 			break;
 		}	
+		
+		if(X < 0 || Y < 0 || X > WindowsXlength || Y > WindowsYlength){
+			live = false;
+			TC.missiles.remove(this);
+		}
 	}
 }
