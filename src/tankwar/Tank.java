@@ -8,6 +8,14 @@ import java.awt.event.KeyEvent;
 public class Tank implements InitValue{
 	private int X, Y, xspeed = 1, yspeed = 1;
 	
+	public int getY() {
+		return Y;
+	}
+
+	public int getX() {
+		return X;
+	}
+
 	private TankClient tankClient = null;
 	
 	public static final int tankX = 30, tankY = 30;
@@ -125,6 +133,11 @@ public class Tank implements InitValue{
 		if(FangXiang != Direction.d5){
 			this.ptDir = this.FangXiang;
 		}
+		
+		if(X < 0) X = 0;
+		if(Y < 0) Y = 0;
+		if(X + Tank.tankX > WindowsXlength) X = WindowsXlength - Tank.tankX;
+		if(Y + Tank.tankY + 30 > WindowsYlength) Y = WindowsYlength - Tank.tankY - 30;
 	}
 
 	public void KEY(KeyEvent e){

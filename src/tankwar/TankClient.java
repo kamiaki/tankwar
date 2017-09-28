@@ -98,6 +98,7 @@ public class TankClient extends JFrame implements InitValue{
 				m.draw(goffScreenImage);		
 			}
 			goffScreenImage.drawString("子弹数量:" + missiles.size(), 10, 50);
+			goffScreenImage.drawString("坦克位置: X." + myTank.getX() + " Y." + myTank.getY(), 10, 70);
 			
 			return image;
 		}
