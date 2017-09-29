@@ -6,29 +6,33 @@ import java.awt.Rectangle;
 
 public class Missile implements InitValue{
 	TankClient TC = null;
+	Direction MissileFangXiang;
 	int X, Y, xspeed = 3, yspeed = 3;
 	public static final int missileX = 10, missileY = 10;
 	private boolean live = true;
-	
-	Direction MissileFangXiang;
-		
+
 	public boolean isLive() {
 		return live;
+	}
+	public void setLive(boolean live) {
+		this.live = live;
 	}
 	
 	public Missile(int x, int y, Direction missileFangXiang) {
 		this.X = x;
 		this.Y = y;
-		MissileFangXiang = missileFangXiang;
+		this.MissileFangXiang = missileFangXiang;
 		MissileQD();
 	}
 	
-	public Missile(int x, int y, Direction missileFangXiang,TankClient tc) {
+	public Missile(int x, int y, Direction missileFangXiang, TankClient tc) {
 		this(x,y,missileFangXiang);
 		this.TC = tc;
 	}
 	
 	public void draw(Graphics g) {
+		if(!live)return;
+		
 		Color c = g.getColor();
 		g.setColor(Color.BLACK);
 		g.fillOval(X, Y, 10, 10);
@@ -51,10 +55,6 @@ public class Missile implements InitValue{
 	}
 	
 	private void move() {
-		if(live == false){
-			TC.missiles.remove(this);
-			return;
-		}
 		switch (MissileFangXiang) {
 		case d4:
 			X = X - xspeed;

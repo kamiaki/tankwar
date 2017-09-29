@@ -18,9 +18,8 @@ public class TankClient extends JFrame implements InitValue{
 	private mainPanel mPanel;
 	
 	Tank myTank;
-	Tank enemyTank;
 	List<Missile> missiles;
-	
+	List<Tank> enemyTanks; 
 	/**
 	 * 构造函数
 	 */
@@ -45,10 +44,50 @@ public class TankClient extends JFrame implements InitValue{
 	 * 初始化坦克子弹等参数
 	 */
 	public void initTank(){	    
-		myTank = new Tank(random(50, 750), random(50, 400), true, Color.RED, this);
-		enemyTank = new Tank(100, 100, false, Color.GRAY, this);
+		myTank = new Tank(random(50, 750), random(50, 400), Tank.Tanktype_man, this);
 		missiles = new ArrayList<Missile>();
+		enemyTanks = new ArrayList<Tank>();
+		CreateEnemyTank();
+		new Thread(new Runnable() {		
+			public void run() {	
+				PDHitTank();
+			}
+		}).start();
 	}
+	
+	/**
+	 * 随机生成敌人坦克
+	 */
+	public void CreateEnemyTank(){
+		for(int i = 0; i < 5; i++){
+		enemyTanks.add( new Tank(random(50, 750), random(50, 400), Tank.Tanktype_robot , this) );		
+		}
+	}
+	
+	/**
+	 * 判断是否击中坦克
+	 */
+	public void PDHitTank(){
+		int tanknumber = 0;
+		int missileN = 0;
+		int tankN = 0;
+		while(true){
+			for(int i = 0; i < missiles.size(); i++){
+				for(int j = 0; j < enemyTanks.size(); j++){
+					if( missiles.get(i).hitTank(enemyTanks.get(j)) ){
+							missiles.remove(i);
+							enemyTanks.remove(j);
+							enemyTanks.add( new Tank(random(50, 750), random(50, 400), Tank.Tanktype_robot , this) );	
+							i = i - 1;
+							j = j - 1;
+							break;
+					}
+				}			
+			}
+			try {Thread.sleep(10);} catch (Exception e) {}
+		}
+	}
+	
 	/**
 	 * 初始化窗口
 	 */
@@ -119,11 +158,11 @@ public class TankClient extends JFrame implements InitValue{
 			goffScreenImage.setColor(c);
 			
 			myTank.draw(goffScreenImage);											//画自己的 tank	
-			enemyTank.draw(goffScreenImage);										//敌人的坦克
+			for(int j = 0; j < enemyTanks.size(); j++){								//敌人的坦克
+				enemyTanks.get(j).draw(goffScreenImage);
+			}								
 			for(int i = 0; i < missiles.size(); i++){								//画炮弹
-				Missile m = missiles.get(i);
-				m.hitTank(enemyTank);
-				m.draw(goffScreenImage);		
+				missiles.get(i).draw(goffScreenImage);		
 			}
 			goffScreenImage.drawString("子弹数量:" + missiles.size(), 10, 20);
 			goffScreenImage.drawString("坦克位置: X." + myTank.getX() + " Y." + myTank.getY(), 10, 40);

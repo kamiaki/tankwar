@@ -5,19 +5,24 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
 public class Tank implements InitValue{
+	public static final int Tanktype_man = 0;
+	public static final int Tanktype_robot = 1;
+	public static final int Tanktype_robotAI = 2;
+	
+	private TankClient tankClient = null;
 	
 	private int X, Y, xspeed = 1, yspeed = 1;	
-	private TankClient tankClient = null;
 	public static final int tankX = 30, tankY = 30;
 	private boolean Up = false, Down = false, Left = false, Right = false;
 	private Direction FangXiang = Direction.d5;
-	private Direction ptDir = Direction.d4;
-	private boolean Good;
+	private Direction ptDir = RandomEnum();
+	private int Tanktype = 0;
 	private Color tankColor;
 	private boolean tankLive = true;
-	
+
 	public boolean isTankLive() {
 		return tankLive;
 	}
@@ -32,17 +37,114 @@ public class Tank implements InitValue{
 		return X;
 	}
 	
-	public Tank(int x, int y, boolean good, Color Co) {
+	public Tank(int x, int y, int tanktype) {
 		this.X = x;
 		this.Y = y;
-		this.Good = good;
-		this.tankColor = Co;
+		this.Tanktype = tanktype;
+		TankInit();
 		TankQD();
 	}
 	
-	public Tank(int x, int y, boolean good, Color Co, TankClient w){
-		this(x, y, good, Co);
+	public Tank(int x, int y, int tanktype, TankClient w){
+		this(x, y, tanktype);
 		this.tankClient = w;
+	}
+	
+	/**
+	 * 自动开火
+	 */
+	private void autoFire(){
+		new Thread(new Runnable() {
+			public void run() {
+				Random random = new Random();
+				int time = 0;
+				while (true) {
+					time = random.nextInt(3000);
+					try { Thread.sleep(time); } catch (Exception e) {}	
+					fire();
+				}
+			}
+		}).start();
+	}
+	
+	/**
+	 * 自动行走
+	 */
+	private void autoMove(){
+		new Thread(new Runnable() {
+			public void run() {
+				Random random = new Random();
+				int time = 0;
+				int randomI = 0;
+				
+				while (true) {
+					time = random.nextInt(3000);
+					try { Thread.sleep(time); } catch (Exception e) {}
+					randomI = random.nextInt(9);
+					switch (randomI ) {
+					case 0:
+						Tank.this.FangXiang = Direction.d4;
+						break;
+					case 1:
+						Tank.this.FangXiang = Direction.d7;
+						break;
+					case 2:
+						Tank.this.FangXiang = Direction.d8;
+						break;
+					case 3:
+						Tank.this.FangXiang = Direction.d9;
+						break;
+					case 4:
+						Tank.this.FangXiang = Direction.d6;
+						break;
+					case 5:
+						Tank.this.FangXiang = Direction.d3;
+						break;
+					case 6:
+						Tank.this.FangXiang = Direction.d2;
+						break;
+					case 7:
+						Tank.this.FangXiang = Direction.d1;
+						break;
+					default:
+						Tank.this.FangXiang = Direction.d5;
+						break;
+					}
+				}		
+			}
+		}).start();
+	}
+	/**
+	 * 坦克初始化
+	 */
+	private void TankInit(){
+		switch (Tanktype) {
+		case Tanktype_man:
+			tankColor = Color.RED;
+			break;
+		case Tanktype_robot:
+			tankColor = Color.GRAY;
+			break;
+		case Tanktype_robotAI:
+			tankColor = Color.BLUE;
+			break;
+		default:
+			break;
+		}
+		if(Tanktype != Tanktype_man){
+//			autoFire();
+			autoMove();
+		}
+	}
+	/**
+	 * 随机枚举
+	 * @return
+	 */
+	private Direction RandomEnum(){
+		 Direction enums[] = Direction.values();  
+	     Random random = new Random();  
+	     Direction ed = enums[random.nextInt(enums.length)];  
+	     return ed;
 	}
 	
 	public void draw(Graphics g){
@@ -86,6 +188,7 @@ public class Tank implements InitValue{
 			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X, Y + Tank.tankY);
 			break;
 		default:
+			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X - shenchu, Y + Tank.tankY/2);
 			break;
 		}
 		g.setColor(c);
@@ -228,7 +331,8 @@ public class Tank implements InitValue{
 		if(tankClient != null){
 			int x = this.X + Tank.tankX/2 - Missile.missileX/2;
 			int y = this.Y + Tank.tankY/2 - Missile.missileY/2;
-			Missile missile = new Missile(x, y, ptDir,tankClient);
+			if(ptDir == Direction.d5) ptDir = Direction.d4;
+			Missile missile = new Missile(x, y, ptDir, tankClient);
 			tankClient.missiles.add(missile);	
 		}
 	}
