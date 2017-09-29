@@ -1,5 +1,7 @@
 package tankwar;
-
+/*
+ * 自制 
+ */
 public class Window {
 	/**
 	 * 主函数
