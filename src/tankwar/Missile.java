@@ -2,6 +2,7 @@ package tankwar;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 public class Missile implements InitValue{
 	TankClient TC = null;
@@ -50,6 +51,10 @@ public class Missile implements InitValue{
 	}
 	
 	private void move() {
+		if(live == false){
+			TC.missiles.remove(this);
+			return;
+		}
 		switch (MissileFangXiang) {
 		case d4:
 			X = X - xspeed;
@@ -85,9 +90,33 @@ public class Missile implements InitValue{
 			break;
 		}	
 		
-		if(X < 0 || Y < 0 || X > WindowsXlength || Y > WindowsYlength){
-			live = false;
-			TC.missiles.remove(this);
+		if(TC != null){
+			if(X < 0 || Y < 0 || X > WindowsXlength || Y > WindowsYlength){
+				live = false;
+				TC.missiles.remove(this);
+			}
 		}
+	}
+	
+	/**
+	 * 获取子弹的矩形
+	 * @return
+	 */
+	public Rectangle getRect(){
+		return new Rectangle(X, Y, missileX, missileY);
+	}
+	
+	/**
+	 * 击中坦克
+	 * @param t
+	 * @return
+	 */
+	public boolean hitTank(Tank t){
+		if(  this.getRect().intersects( t.getRect() )  && t.isTankLive()){
+			t.setTankLive(false);
+			this.live = false;
+			return true;
+		}
+		return false;
 	}
 }

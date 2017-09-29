@@ -9,26 +9,52 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
 import javax.swing.*;
 
 public class TankClient extends JFrame implements InitValue{	
+	
 	private mainPanel mPanel;
 	
-	Tank myTank = new Tank(50, 50 ,this);
-	List<Missile> missiles = new ArrayList<Missile>();
+	Tank myTank;
+	Tank enemyTank;
+	List<Missile> missiles;
 	
 	/**
 	 * 构造函数
 	 */
 	public TankClient(){
+		initTank();
 		launchFrame();
+	}
+	
+	/**
+	 * 随机范围数
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	public int random(int min, int max){
+		Random random = new Random();	
+		int jieguo = random.nextInt(max)%(max-min+1) + min;	
+		return jieguo;
+	}
+	
+	/**
+	 * 初始化坦克子弹等参数
+	 */
+	public void initTank(){	    
+		myTank = new Tank(random(50, 750), random(50, 400), true, Color.RED, this);
+		enemyTank = new Tank(100, 100, false, Color.GRAY, this);
+		missiles = new ArrayList<Missile>();
 	}
 	/**
 	 * 初始化窗口
 	 */
 	public void launchFrame(){
 		//窗口生成
-		this.setTitle("Tank");
+		this.setTitle("KamiAki's First JavaGame");
 		this.setSize(WindowsXlength, WindowsYlength);
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);
@@ -92,13 +118,15 @@ public class TankClient extends JFrame implements InitValue{
 			goffScreenImage.fillRect(0, 0, WindowsXlength, WindowsYlength);
 			goffScreenImage.setColor(c);
 			
-			myTank.draw(goffScreenImage);											//画tank	
+			myTank.draw(goffScreenImage);											//画自己的 tank	
+			enemyTank.draw(goffScreenImage);										//敌人的坦克
 			for(int i = 0; i < missiles.size(); i++){								//画炮弹
 				Missile m = missiles.get(i);
+				m.hitTank(enemyTank);
 				m.draw(goffScreenImage);		
 			}
-			goffScreenImage.drawString("子弹数量:" + missiles.size(), 10, 50);
-			goffScreenImage.drawString("坦克位置: X." + myTank.getX() + " Y." + myTank.getY(), 10, 70);
+			goffScreenImage.drawString("子弹数量:" + missiles.size(), 10, 20);
+			goffScreenImage.drawString("坦克位置: X." + myTank.getX() + " Y." + myTank.getY(), 10, 40);
 			
 			return image;
 		}

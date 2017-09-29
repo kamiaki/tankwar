@@ -3,41 +3,53 @@ package tankwar;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
 public class Tank implements InitValue{
-	private int X, Y, xspeed = 1, yspeed = 1;
+	
+	private int X, Y, xspeed = 1, yspeed = 1;	
+	private TankClient tankClient = null;
+	public static final int tankX = 30, tankY = 30;
+	private boolean Up = false, Down = false, Left = false, Right = false;
+	private Direction FangXiang = Direction.d5;
+	private Direction ptDir = Direction.d4;
+	private boolean Good;
+	private Color tankColor;
+	private boolean tankLive = true;
+	
+	public boolean isTankLive() {
+		return tankLive;
+	}
+	public void setTankLive(boolean tankLive) {
+		this.tankLive = tankLive;
+	}
 	
 	public int getY() {
 		return Y;
 	}
-
 	public int getX() {
 		return X;
 	}
-
-	private TankClient tankClient = null;
 	
-	public static final int tankX = 30, tankY = 30;
-	private boolean Up = false, Down = false, Left = false, Right = false;
-	
-	private Direction FangXiang = Direction.d5;
-	private Direction ptDir = Direction.d4;
-	
-	public Tank(int x, int y) {
+	public Tank(int x, int y, boolean good, Color Co) {
 		this.X = x;
 		this.Y = y;
+		this.Good = good;
+		this.tankColor = Co;
 		TankQD();
 	}
 	
-	public Tank(int x, int y, TankClient w){
-		this(x,y);
+	public Tank(int x, int y, boolean good, Color Co, TankClient w){
+		this(x, y, good, Co);
 		this.tankClient = w;
 	}
 	
 	public void draw(Graphics g){
+		if(!tankLive)return;
+		
 		Color c = g.getColor();
-		g.setColor(Color.RED);
+		g.setColor(tankColor);
 		g.fillOval(X, Y,tankX, tankY);
 		g.setColor(c);
 		paotong(g);
@@ -161,7 +173,7 @@ public class Tank implements InitValue{
 			break;
 		case KeyEvent.VK_P:
 			xspeed--;
-			yspeed++;
+			yspeed--;
 			break;
 		default:
 			break;
@@ -213,9 +225,19 @@ public class Tank implements InitValue{
 	 * @return
 	 */
 	public void fire(){
-		int x = this.X + Tank.tankX/2 - Missile.missileX/2;
-		int y = this.Y + Tank.tankY/2 - Missile.missileY/2;
-		Missile missile = new Missile(x, y, ptDir,tankClient);
-		tankClient.missiles.add(missile);		
+		if(tankClient != null){
+			int x = this.X + Tank.tankX/2 - Missile.missileX/2;
+			int y = this.Y + Tank.tankY/2 - Missile.missileY/2;
+			Missile missile = new Missile(x, y, ptDir,tankClient);
+			tankClient.missiles.add(missile);	
+		}
+	}
+	
+	/**
+	 * 获取坦克的矩形
+	 * @return
+	 */
+	public Rectangle getRect(){
+		return new Rectangle(X, Y, tankX, tankY);
 	}
 }
