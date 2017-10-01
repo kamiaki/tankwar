@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
 public class Tank implements InitValue{
 	
@@ -23,31 +24,25 @@ public class Tank implements InitValue{
 	}
 	public void setTankLive(boolean tankLive) {
 		this.tankLive = tankLive;
-	}
-	
+	}	
 	public int getY() {
 		return Y;
 	}
 	public int getX() {
 		return X;
 	}
-	
-	public Tank(int x, int y, boolean good, Color Co) {
+		
+	public Tank(int x, int y, boolean good, Color Co, TankClient w){
 		this.X = x;
 		this.Y = y;
 		this.Good = good;
 		this.tankColor = Co;
+		this.tankClient = w;
+		this.tankLive = true;
 		TankQD();
 	}
 	
-	public Tank(int x, int y, boolean good, Color Co, TankClient w){
-		this(x, y, good, Co);
-		this.tankClient = w;
-	}
-	
-	public void draw(Graphics g){
-		if(!tankLive)return;
-		
+	public void draw(Graphics g){	
 		Color c = g.getColor();
 		g.setColor(tankColor);
 		g.fillOval(X, Y,tankX, tankY);
@@ -55,7 +50,7 @@ public class Tank implements InitValue{
 		paotong(g);
 		
 	}
-	
+		
 	private void paotong(Graphics g){
 		Color c = g.getColor();
 		int shenchu = 3;
@@ -94,13 +89,9 @@ public class Tank implements InitValue{
 	private void TankQD(){
 		new Thread(new Runnable() {
 			public void run() {	
-				while(true){
-					move();
-					try {
-						Thread.sleep(10);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+				while(tankLive){
+					move();					
+					try {Thread.sleep(10);} catch (Exception e) {}
 				}	
 			}
 		}).start();
@@ -142,9 +133,7 @@ public class Tank implements InitValue{
 			break;
 		}	
 		
-		if(FangXiang != Direction.d5){
-			this.ptDir = this.FangXiang;
-		}
+		if( FangXiang != Direction.d5 ) this.ptDir = this.FangXiang;
 		
 		if(X < 0) X = 0;
 		if(Y < 0) Y = 0;

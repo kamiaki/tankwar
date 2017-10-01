@@ -9,52 +9,63 @@ public class Missile implements InitValue{
 	int X, Y, xspeed = 3, yspeed = 3;
 	public static final int missileX = 10, missileY = 10;
 	private boolean live = true;
-	
 	Direction MissileFangXiang;
-		
+	/**
+	 * 设置子弹存活状态
+	 * @param live
+	 */
+	public void setLive(boolean live) {
+		this.live = live;
+	}
+	/**
+	 * 判断子弹是否存活
+	 * @return
+	 */
 	public boolean isLive() {
 		return live;
 	}
-	
-	public Missile(int x, int y, Direction missileFangXiang) {
+	/**
+	 * 构造函数
+	 * @param x
+	 * @param y
+	 * @param missileFangXiang
+	 * @param tc
+	 */
+	public Missile(int x, int y, Direction missileFangXiang,TankClient tc) {
 		this.X = x;
 		this.Y = y;
 		MissileFangXiang = missileFangXiang;
+		this.TC = tc;
+		this.live = true;
 		MissileQD();
 	}
-	
-	public Missile(int x, int y, Direction missileFangXiang,TankClient tc) {
-		this(x,y,missileFangXiang);
-		this.TC = tc;
-	}
-	
+	/**
+	 * 画子弹
+	 * @param g
+	 */
 	public void draw(Graphics g) {
 		Color c = g.getColor();
 		g.setColor(Color.BLACK);
 		g.fillOval(X, Y, 10, 10);
 		g.setColor(c);
 	}
-
+	/**
+	 * 启动子弹移动线程
+	 */
 	private void MissileQD(){
 		new Thread(new Runnable() {
 			public void run() {	
-				while(true){
+				while(live){
 					move();
-					try {
-						Thread.sleep(10);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					try {Thread.sleep(10);} catch (Exception e) {}
 				}	
 			}
 		}).start();
 	}
-	
-	private void move() {
-		if(live == false){
-			TC.missiles.remove(this);
-			return;
-		}
+	/**
+	 * 移动子弹
+	 */
+	private void move() {	
 		switch (MissileFangXiang) {
 		case d4:
 			X = X - xspeed;
@@ -88,16 +99,15 @@ public class Missile implements InitValue{
 			break;
 		default:
 			break;
-		}	
+		}
 		
 		if(TC != null){
 			if(X < 0 || Y < 0 || X > WindowsXlength || Y > WindowsYlength){
-				live = false;
-				TC.missiles.remove(this);
+				this.live = false;			//子弹生命判断为死		
+				TC.missiles.remove(this);	//在队列中移除子弹
 			}
 		}
-	}
-	
+	}	
 	/**
 	 * 获取子弹的矩形
 	 * @return
@@ -105,16 +115,19 @@ public class Missile implements InitValue{
 	public Rectangle getRect(){
 		return new Rectangle(X, Y, missileX, missileY);
 	}
-	
 	/**
 	 * 击中坦克
 	 * @param t
 	 * @return
 	 */
 	public boolean hitTank(Tank t){
-		if(  this.getRect().intersects( t.getRect() )  && t.isTankLive()){
-			t.setTankLive(false);
-			this.live = false;
+		if(  this.getRect().intersects( t.getRect() )  && t.isTankLive()){			
+			this.live = false;				//子弹生命判断为死
+			TC.missiles.remove(this);		//在队列中移除子弹
+			
+			TC.ZhenDong();					//大管家震动			
+			t.setTankLive(false);			//坦克生命判断为死
+			
 			return true;
 		}
 		return false;

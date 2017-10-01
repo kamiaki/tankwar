@@ -15,8 +15,10 @@ import javax.swing.*;
 
 public class TankClient extends JFrame implements InitValue{	
 	
-	private mainPanel mPanel;
+	public static final int PanelX = -5,PanelY = -5;
 	
+	private mainPanel mPanel;
+	private JPanel Mmpanel;
 	Tank myTank;
 	Tank enemyTank;
 	List<Missile> missiles;
@@ -66,15 +68,58 @@ public class TankClient extends JFrame implements InitValue{
 
 		//键盘监听
 		this.addKeyListener(new Keylistener());
-		//面板
+		
+		
+		//游戏面板
 		mPanel = new mainPanel(); 
-		mPanel.setSize(WindowsXlength, WindowsYlength);
-		this.setContentPane(mPanel);
+		mPanel.setLocation(PanelX, PanelY);
+		mPanel.setSize(WindowsXlength + PanelX * (-2), WindowsYlength + PanelY * (-2));
 		mPanel.setLayout(null);	
+		
+		//窗口面板（游戏面板 在其中）
+		Mmpanel = new JPanel();
+		Mmpanel.setLayout(null);
+		Mmpanel.add(mPanel);
+		
+		//窗口面板添加进主窗口
+		this.setContentPane(Mmpanel);	
+
 		new Thread(new PaintThread()).start();
 				
 		this.setVisible(true);
 	}
+	
+	/**
+	 * 震动
+	 */
+	public void ZhenDong(){
+		new Thread(new Runnable() {
+			public void run() {
+				int windowsXz = 0;
+				int windowsYz = 0;
+				int ZFX = 1;
+				int ZFPDX =0;
+				int ZFY = 1;
+				int ZFPDY =0;
+				
+				for(int i = 0; i < 10; i++){
+					
+					ZFPDX = random(1, 10);
+					ZFPDY = random(1, 10);
+					windowsXz = random(1, PanelX * (-1));		//震动量
+					windowsYz = random(1, PanelY * (-1));		//震动量
+					if(ZFPDX <= 5){ZFX = -1;}else{ZFX = 1;}		//震动 + -
+					if(ZFPDY <= 5){ZFY = -1;}else{ZFY = 1;}		//震动 + -
+					
+					mPanel.setLocation(PanelX + ZFX * windowsXz, PanelY + ZFY * windowsYz);
+					try {Thread.sleep(20);} catch (Exception e) {}	
+				}
+				mPanel.setLocation(PanelX,PanelY);	
+			}
+		}).start();
+		
+	}
+	
 	/**
 	 * 重绘线程
 	 * @author Administrator
@@ -87,7 +132,7 @@ public class TankClient extends JFrame implements InitValue{
 			while(true){
 				mPanel.repaint();
 				try {
-					Thread.sleep(1);
+					Thread.sleep(10);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}	
@@ -119,7 +164,7 @@ public class TankClient extends JFrame implements InitValue{
 			goffScreenImage.setColor(c);
 			
 			myTank.draw(goffScreenImage);											//画自己的 tank	
-			enemyTank.draw(goffScreenImage);										//敌人的坦克
+			if( enemyTank.isTankLive() ) enemyTank.draw(goffScreenImage);			//敌人的坦克												
 			for(int i = 0; i < missiles.size(); i++){								//画炮弹
 				Missile m = missiles.get(i);
 				m.hitTank(enemyTank);
