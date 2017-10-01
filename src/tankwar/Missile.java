@@ -3,6 +3,7 @@ package tankwar;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.List;
 
 public class Missile implements InitValue{
 	TankClient TC = null;
@@ -139,6 +140,19 @@ public class Missile implements InitValue{
 			TC.explodes.add(e);
 			
 			return true;
+		}
+		return false;
+	}
+	/**
+	 * »÷ÖÐÌ¹¿ËÁ´±í
+	 * @param enemyTanks
+	 */
+	public boolean hitTanks(List<Tank> enemyTanks) {
+		for(int i = 0; i < enemyTanks.size(); i++){
+			if(hitTank(enemyTanks.get(i))){
+				enemyTanks.remove(i);
+				return true;
+			}			
 		}
 		return false;
 	}

@@ -21,7 +21,8 @@ public class TankClient extends JFrame implements InitValue{
 	private JPanel Mmpanel;
 	Background background;
 	Tank myTank;
-	Tank enemyTank;
+	List<Tank> enemyTanks;
+	boolean enemytanksPD = true;
 	List<Missile> missiles;
 	List<Explode> explodes;
 	
@@ -29,10 +30,12 @@ public class TankClient extends JFrame implements InitValue{
 	 * 构造函数
 	 */
 	public TankClient(){
-		initTank();
 		launchFrame();
-	}
-	
+		//启动绘图线程
+		new Thread(new PaintThread()).start();	
+		initObject();
+		this.setVisible(true);
+	}	
 	/**
 	 * 随机范围数
 	 * @param min
@@ -43,17 +46,35 @@ public class TankClient extends JFrame implements InitValue{
 		Random random = new Random();	
 		int jieguo = random.nextInt(max)%(max-min+1) + min;	
 		return jieguo;
+	}	
+	/**
+	 * 创建坦克线程
+	 * @author Administrator
+	 *
+	 */
+	private class CreatTank implements Runnable{
+		@Override
+		public void run() {
+			// TODO 自动生成的方法存根
+			while(enemytanksPD){
+				if(enemyTanks.size() < 5){
+					Tank enemyTank = new Tank(random(50, 750), random(50, 400), false, Color.GRAY, TankClient.this);
+					enemyTanks.add(enemyTank);
+				}
+				try {Thread.sleep(2000);} catch (Exception e) {}	//刷新间隔
+			}
+		}
 	}
-	
 	/**
 	 * 初始化坦克子弹等参数
 	 */
-	public void initTank(){	    
-		background = new Background(0, 0, WindowsXlength + PanelX * (-2),  WindowsYlength + PanelY * (-2), this);
-		myTank = new Tank(random(50, 750), random(50, 400), true, Color.RED, this);
-		enemyTank = new Tank(random(50, 750), random(50, 400), false, Color.GRAY, this);
+	public void initObject(){	   
+		enemyTanks = new ArrayList<Tank>();
 		missiles = new ArrayList<Missile>();
 		explodes = new ArrayList<Explode>();
+		background = new Background(0, 0, WindowsXlength + PanelX * (-2),  WindowsYlength + PanelY * (-2), this);
+		myTank = new Tank(random(50, 750), random(50, 400), true, Color.RED, this);
+		new Thread(new CreatTank()).start();	
 	}
 	/**
 	 * 初始化窗口
@@ -69,30 +90,20 @@ public class TankClient extends JFrame implements InitValue{
 				System.exit(0);
 			}		
 		});		
-
 		//键盘监听
-		this.addKeyListener(new Keylistener());
-		
-		
+		this.addKeyListener(new Keylistener());	
 		//游戏面板
 		mPanel = new mainPanel(); 
 		mPanel.setLocation(PanelX, PanelY);
 		mPanel.setSize(WindowsXlength + PanelX * (-2), WindowsYlength + PanelY * (-2));
-		mPanel.setLayout(null);	
-		
+		mPanel.setLayout(null);			
 		//窗口面板（游戏面板 在其中）
 		Mmpanel = new JPanel();
 		Mmpanel.setLayout(null);
-		Mmpanel.add(mPanel);
-		
+		Mmpanel.add(mPanel);		
 		//窗口面板添加进主窗口
-		this.setContentPane(Mmpanel);	
-
-		new Thread(new PaintThread()).start();
-				
-		this.setVisible(true);
-	}
-	
+		this.setContentPane(Mmpanel);			
+	}	
 	/**
 	 * 震动
 	 */
@@ -122,8 +133,7 @@ public class TankClient extends JFrame implements InitValue{
 			}
 		}).start();
 		
-	}
-	
+	}	
 	/**
 	 * 重绘线程
 	 * @author Administrator
@@ -168,11 +178,14 @@ public class TankClient extends JFrame implements InitValue{
 			
 			//对象信息
 			myTank.draw(goffScreenImage);											//画自己的 tank	
-			if( enemyTank.isTankLive() ) enemyTank.draw(goffScreenImage);			//敌人的坦克												
+			for(int i = 0; i < enemyTanks.size(); i++){								//画敌人的坦克
+				Tank tank = enemyTanks.get(i);
+				tank.draw(goffScreenImage);		
+			}											
 			for(int i = 0; i < missiles.size(); i++){								//画炮弹
-				Missile m = missiles.get(i);
-				m.hitTank(enemyTank);
-				m.draw(goffScreenImage);		
+				Missile m = missiles.get(i);		
+				m.draw(goffScreenImage);
+				m.hitTanks(enemyTanks);
 			}
 			for(int i = 0; i < explodes.size(); i++){
 				Explode e = explodes.get(i);
@@ -183,6 +196,7 @@ public class TankClient extends JFrame implements InitValue{
 			goffScreenImage.drawString("玩家坦克位置: X." + myTank.getX() + " Y." + myTank.getY(), 10, 20);
 			goffScreenImage.drawString("子弹数量:" + missiles.size(), 10, 40);	
 			goffScreenImage.drawString("爆炸数量:" + explodes.size(), 10, 60);
+			goffScreenImage.drawString("坦克数量:" + enemyTanks.size(), 10, 80);
 			return image;
 		}
 	}
