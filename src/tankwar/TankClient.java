@@ -48,7 +48,7 @@ public class TankClient extends JFrame implements InitValue{
 	 */
 	public void initTank(){	    
 		myTank = new Tank(random(50, 750), random(50, 400), true, Color.RED, this);
-		enemyTank = new Tank(100, 100, false, Color.GRAY, this);
+		enemyTank = new Tank(random(50, 750), random(50, 400), false, Color.GRAY, this);
 		missiles = new ArrayList<Missile>();
 	}
 	/**
@@ -156,11 +156,12 @@ public class TankClient extends JFrame implements InitValue{
 		 * @return
 		 */
 		private Image Doublebuffer(){
-			Image image = mainPanel.this.createImage(WindowsXlength, WindowsYlength);
+			Image image = mainPanel.this.createImage(WindowsXlength + PanelX * (-2),  WindowsYlength + PanelY * (-2));
 			Graphics goffScreenImage = image.getGraphics();
+			
 			Color c = goffScreenImage.getColor();		
-			goffScreenImage.setColor(Color.GREEN);									//»­±³¾°
-			goffScreenImage.fillRect(0, 0, WindowsXlength, WindowsYlength);
+			goffScreenImage.setColor(Color.GREEN);																//»­±³¾°
+			goffScreenImage.fillRect(0, 0, WindowsXlength + PanelX * (-2),  WindowsYlength + PanelY * (-2));
 			goffScreenImage.setColor(c);
 			
 			myTank.draw(goffScreenImage);											//»­×Ô¼ºµÄ tank	

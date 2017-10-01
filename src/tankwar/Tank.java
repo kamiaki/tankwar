@@ -19,19 +19,56 @@ public class Tank implements InitValue{
 	private Color tankColor;
 	private boolean tankLive = true;
 	
+	/**
+	 * 判断是好是坏
+	 * @return
+	 */
+	public boolean isGood() {
+		return Good;
+	}
+	/**
+	 * 设置是好是坏
+	 * @param good
+	 */
+	public void setGood(boolean good) {
+		Good = good;
+	}
+	/**
+	 * 判断死活
+	 * @return
+	 */
 	public boolean isTankLive() {
 		return tankLive;
 	}
+	/**
+	 * 设置死活
+	 * @param tankLive
+	 */
 	public void setTankLive(boolean tankLive) {
 		this.tankLive = tankLive;
 	}	
+	/**
+	 * 坦克x位置
+	 * @return
+	 */
 	public int getY() {
 		return Y;
 	}
+	/**
+	 * 坦克Y位置
+	 * @return
+	 */
 	public int getX() {
 		return X;
 	}
-		
+	/**
+	 * 坦克构造函数
+	 * @param x
+	 * @param y
+	 * @param good
+	 * @param Co
+	 * @param w
+	 */
 	public Tank(int x, int y, boolean good, Color Co, TankClient w){
 		this.X = x;
 		this.Y = y;
@@ -41,7 +78,10 @@ public class Tank implements InitValue{
 		this.tankLive = true;
 		TankQD();
 	}
-	
+	/**
+	 * 画坦克
+	 * @param g
+	 */
 	public void draw(Graphics g){	
 		Color c = g.getColor();
 		g.setColor(tankColor);
@@ -50,7 +90,10 @@ public class Tank implements InitValue{
 		paotong(g);
 		
 	}
-		
+	/**
+	 * 画炮筒
+	 * @param g
+	 */
 	private void paotong(Graphics g){
 		Color c = g.getColor();
 		int shenchu = 3;
@@ -85,7 +128,9 @@ public class Tank implements InitValue{
 		}
 		g.setColor(c);
 	}
-	
+	/**
+	 * 启动坦克线程
+	 */
 	private void TankQD(){
 		new Thread(new Runnable() {
 			public void run() {	
@@ -96,7 +141,9 @@ public class Tank implements InitValue{
 			}
 		}).start();
 	}
-	
+	/**
+	 * 坦克移动
+	 */
 	private void move() {
 		switch (FangXiang) {
 		case d4:
@@ -132,15 +179,18 @@ public class Tank implements InitValue{
 		default:
 			break;
 		}	
-		
+		//子弹初始方向
 		if( FangXiang != Direction.d5 ) this.ptDir = this.FangXiang;
-		
+		//坦克不能出界
 		if(X < 0) X = 0;
 		if(Y < 0) Y = 0;
 		if(X + Tank.tankX > WindowsXlength) X = WindowsXlength - Tank.tankX;
 		if(Y + Tank.tankY + 30 > WindowsYlength) Y = WindowsYlength - Tank.tankY - 30;
 	}
-
+	/**
+	 * 按下按键
+	 * @param e
+	 */
 	public void KEY(KeyEvent e){
 		int Key = e.getKeyCode();
 		switch (Key) {
@@ -169,7 +219,10 @@ public class Tank implements InitValue{
 		}
 		PDFangXiang();
 	}
-	
+	/**
+	 * 抬起按键
+	 * @param e
+	 */
 	public void noKEY(KeyEvent e){
 		int Key = e.getKeyCode();
 		switch (Key) {
@@ -192,8 +245,10 @@ public class Tank implements InitValue{
 			break;
 		}
 		PDFangXiang();
-	}
-	
+	}	
+	/**
+	 * 判断方向
+	 */
 	private void PDFangXiang(){
 		if(!Up && !Down && Left && !Right)FangXiang = Direction.d4;
 		else if(Up && !Down && Left && !Right)FangXiang = Direction.d7;
@@ -208,7 +263,6 @@ public class Tank implements InitValue{
 		else if(!Up && !Down && !Left && !Right)FangXiang = Direction.d5;
 		else if(Up && Down && Left && Right)FangXiang = Direction.d5;
 	}
-	
 	/**
 	 * 生成一个子弹
 	 * @return
