@@ -44,6 +44,13 @@ public class Missile implements InitValue{
 	 * @param g
 	 */
 	public void draw(Graphics g) {
+		MissilePicture(g);
+	}
+	/**
+	 * 子弹贴图
+	 * @param g
+	 */
+	private void MissilePicture(Graphics g){
 		Color c = g.getColor();
 		g.setColor(Color.BLACK);
 		g.fillOval(X, Y, 10, 10);
@@ -122,11 +129,14 @@ public class Missile implements InitValue{
 	 */
 	public boolean hitTank(Tank t){
 		if(  this.getRect().intersects( t.getRect() )  && t.isTankLive()){			
-			this.live = false;				//子弹生命判断为死
-			TC.missiles.remove(this);		//在队列中移除子弹
+			this.live = false;									//子弹生命判断为死
+			TC.missiles.remove(this);							//在队列中移除子弹
 			
-			TC.ZhenDong();					//大管家震动			
-			t.setTankLive(false);			//坦克生命判断为死
+			TC.ZhenDong();										//大管家震动			
+			t.setTankLive(false);								//坦克生命判断为死
+			
+			Explode e = new Explode(this.X, this.Y, this.TC);	//添加一个爆炸
+			TC.explodes.add(e);
 			
 			return true;
 		}

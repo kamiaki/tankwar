@@ -19,9 +19,11 @@ public class TankClient extends JFrame implements InitValue{
 	
 	private mainPanel mPanel;
 	private JPanel Mmpanel;
+	Background background;
 	Tank myTank;
 	Tank enemyTank;
 	List<Missile> missiles;
+	List<Explode> explodes;
 	
 	/**
 	 * 构造函数
@@ -47,9 +49,11 @@ public class TankClient extends JFrame implements InitValue{
 	 * 初始化坦克子弹等参数
 	 */
 	public void initTank(){	    
+		background = new Background(0, 0, WindowsXlength + PanelX * (-2),  WindowsYlength + PanelY * (-2), this);
 		myTank = new Tank(random(50, 750), random(50, 400), true, Color.RED, this);
 		enemyTank = new Tank(random(50, 750), random(50, 400), false, Color.GRAY, this);
 		missiles = new ArrayList<Missile>();
+		explodes = new ArrayList<Explode>();
 	}
 	/**
 	 * 初始化窗口
@@ -159,11 +163,10 @@ public class TankClient extends JFrame implements InitValue{
 			Image image = mainPanel.this.createImage(WindowsXlength + PanelX * (-2),  WindowsYlength + PanelY * (-2));
 			Graphics goffScreenImage = image.getGraphics();
 			
-			Color c = goffScreenImage.getColor();		
-			goffScreenImage.setColor(Color.GREEN);																//画背景
-			goffScreenImage.fillRect(0, 0, WindowsXlength + PanelX * (-2),  WindowsYlength + PanelY * (-2));
-			goffScreenImage.setColor(c);
+			//背景图案
+			background.draw(goffScreenImage);
 			
+			//对象信息
 			myTank.draw(goffScreenImage);											//画自己的 tank	
 			if( enemyTank.isTankLive() ) enemyTank.draw(goffScreenImage);			//敌人的坦克												
 			for(int i = 0; i < missiles.size(); i++){								//画炮弹
@@ -171,9 +174,15 @@ public class TankClient extends JFrame implements InitValue{
 				m.hitTank(enemyTank);
 				m.draw(goffScreenImage);		
 			}
-			goffScreenImage.drawString("子弹数量:" + missiles.size(), 10, 20);
-			goffScreenImage.drawString("坦克位置: X." + myTank.getX() + " Y." + myTank.getY(), 10, 40);
+			for(int i = 0; i < explodes.size(); i++){
+				Explode e = explodes.get(i);
+				e.draw(goffScreenImage);
+			}
 			
+			//数据信息
+			goffScreenImage.drawString("玩家坦克位置: X." + myTank.getX() + " Y." + myTank.getY(), 10, 20);
+			goffScreenImage.drawString("子弹数量:" + missiles.size(), 10, 40);	
+			goffScreenImage.drawString("爆炸数量:" + explodes.size(), 10, 60);
 			return image;
 		}
 	}

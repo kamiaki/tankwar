@@ -83,12 +83,18 @@ public class Tank implements InitValue{
 	 * @param g
 	 */
 	public void draw(Graphics g){	
+		TankPicture(g);		
+	}
+	/**
+	 * Ì¹¿ËÌùÍ¼
+	 * @param g
+	 */
+	private void TankPicture(Graphics g){
 		Color c = g.getColor();
 		g.setColor(tankColor);
 		g.fillOval(X, Y,tankX, tankY);
 		g.setColor(c);
 		paotong(g);
-		
 	}
 	/**
 	 * »­ÅÚÍ²
