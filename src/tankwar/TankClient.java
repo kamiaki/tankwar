@@ -16,15 +16,15 @@ import javax.swing.*;
 public class TankClient extends JFrame implements InitValue{	
 	
 	public static final int PanelX = -5,PanelY = -5;
-	
+	public static Random random = new Random();	
 	private mainPanel mPanel;
 	private JPanel Mmpanel;
-	Background background;
-	Tank myTank;
-	List<Tank> enemyTanks;
-	boolean enemytanksPD = true;
-	List<Missile> missiles;
-	List<Explode> explodes;
+	public Background background;
+	public Tank myTank;
+	public List<Tank> enemyTanks;
+	public boolean enemytanksPD = true;
+	public List<Missile> missiles;
+	public List<Explode> explodes;
 	
 	/**
 	 * 构造函数
@@ -43,7 +43,6 @@ public class TankClient extends JFrame implements InitValue{
 	 * @return
 	 */
 	public int random(int min, int max){
-		Random random = new Random();	
 		int jieguo = random.nextInt(max)%(max-min+1) + min;	
 		return jieguo;
 	}	
@@ -58,10 +57,10 @@ public class TankClient extends JFrame implements InitValue{
 			// TODO 自动生成的方法存根
 			while(enemytanksPD){
 				if(enemyTanks.size() < 5){
-					Tank enemyTank = new Tank(random(50, 750), random(50, 400), false, Color.GRAY, TankClient.this);
+					Tank enemyTank = new Tank(random(50, 750), random(50, 400), Tank.TANK_enemy, Color.GRAY, TankClient.this);
 					enemyTanks.add(enemyTank);
 				}
-				try {Thread.sleep(2000);} catch (Exception e) {}	//刷新间隔
+				try {Thread.sleep(1000);} catch (Exception e) {}	//刷新间隔
 			}
 		}
 	}
@@ -73,7 +72,7 @@ public class TankClient extends JFrame implements InitValue{
 		missiles = new ArrayList<Missile>();
 		explodes = new ArrayList<Explode>();
 		background = new Background(0, 0, WindowsXlength + PanelX * (-2),  WindowsYlength + PanelY * (-2), this);
-		myTank = new Tank(random(50, 750), random(50, 400), true, Color.RED, this);
+		myTank = new Tank(random(50, 750), random(50, 400), Tank.TANK_player, Color.RED, this);
 		new Thread(new CreatTank()).start();	
 	}
 	/**

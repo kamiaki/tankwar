@@ -8,30 +8,34 @@ import java.awt.event.KeyEvent;
 import java.util.Random;
 
 public class Tank implements InitValue{
+	public static final int TANK_player = 0;
+	public static final int TANK_enemy = 1;
+	public static final int TANK_boss = 2;
 	
-	private int X, Y, xspeed = 1, yspeed = 1;	
+	public static Random random = new Random();	
+	private int X, Y, xspeed = 3, yspeed = 3;	
 	private TankClient tankClient = null;
 	public static final int tankX = 30, tankY = 30;
 	private boolean Up = false, Down = false, Left = false, Right = false;
 	private Direction FangXiang = Direction.d5;
-	private Direction ptDir = Direction.d4;
-	private boolean Good;
+	private Direction ptDir = Direction.d4;				//子弹 和 炮筒方向
+	private int Type;
 	private Color tankColor;
 	private boolean tankLive = true;
-	
+	private boolean auto = false;
 	/**
-	 * 判断是好是坏
+	 * 判断是什么坦克
 	 * @return
 	 */
-	public boolean isGood() {
-		return Good;
+	public int isType() {
+		return Type;
 	}
 	/**
-	 * 设置是好是坏
+	 * 设置是什么坦克
 	 * @param good
 	 */
-	public void setGood(boolean good) {
-		Good = good;
+	public void setType(int type) {
+		Type = type;
 	}
 	/**
 	 * 判断死活
@@ -69,10 +73,10 @@ public class Tank implements InitValue{
 	 * @param Co
 	 * @param w
 	 */
-	public Tank(int x, int y, boolean good, Color Co, TankClient w){
+	public Tank(int x, int y, int type, Color Co, TankClient w){
 		this.X = x;
 		this.Y = y;
-		this.Good = good;
+		this.Type = type;
 		this.tankColor = Co;
 		this.tankClient = w;
 		this.tankLive = true;
@@ -138,12 +142,86 @@ public class Tank implements InitValue{
 	 * 启动坦克线程
 	 */
 	private void TankQD(){
+		if(this.Type == Tank.TANK_player){
+			PlayerMoveThread();
+		}else{
+			ZhuiMove();
+			autoMove();
+			PlayerMoveThread();
+		}
+	}
+	/**
+	 * 坦克移动线程
+	 */
+	private void PlayerMoveThread(){
 		new Thread(new Runnable() {
-			public void run() {	
+			public void run() {
 				while(tankLive){
-					move();					
+					move();	
 					try {Thread.sleep(10);} catch (Exception e) {}
-				}	
+				}
+			}
+		}).start();
+	}
+	/**
+	 * 追踪移动
+	 */
+	private void ZhuiMove(){
+		new Thread(new Runnable() {
+			public void run() {
+				int tankx = 0;
+				int tanky = 0;
+				while(tankLive){	
+					xspeed = 1;
+					yspeed = 1;
+					tankx = tankClient.myTank.X;
+					tanky = tankClient.myTank.Y;	
+					if( Math.sqrt(Math.pow(Math.abs(Tank.this.X - tankx), 2) + Math.pow(Math.abs(Tank.this.Y - tanky), 2)) < 100 ){
+						if(Tank.this.X < tankx && Tank.this.Y == tanky){
+							FangXiang = Direction.d6;
+						}else if(Tank.this.X < tankx && Tank.this.Y < tanky){
+							FangXiang = Direction.d3;
+						}else if(Tank.this.X == tankx && Tank.this.Y < tanky){
+							FangXiang = Direction.d2;
+						}else if(Tank.this.X > tankx && Tank.this.Y < tanky){
+							FangXiang = Direction.d1;
+						}else if(Tank.this.X > tankx && Tank.this.Y == tanky){
+							FangXiang = Direction.d4;
+						}else if(Tank.this.X > tankx && Tank.this.Y > tanky){
+							FangXiang = Direction.d7;
+						}else if(Tank.this.X == tankx && Tank.this.Y > tanky){
+							FangXiang = Direction.d8;
+						}else if(Tank.this.X < tankx && Tank.this.Y > tanky){
+							FangXiang = Direction.d9;
+						}		
+					}
+					try {Thread.sleep(10);} catch (Exception e) {}	
+				}
+			}
+		}).start();
+	}
+	/**
+	 * 自动移动
+	 */
+	private void autoMove(){
+		new Thread(new Runnable() {
+			public void run() {
+				int tankx = 0;
+				int tanky = 0;
+				int time = 0;
+				while(tankLive){
+					time = random.nextInt(2000);
+					xspeed = 1;
+					yspeed = 1;
+					tankx = tankClient.myTank.X;
+					tanky = tankClient.myTank.Y;
+					if(Math.sqrt(Math.pow(Math.abs(Tank.this.X - tankx), 2) + Math.pow(Math.abs(Tank.this.Y - tanky), 2))  >= 100){
+						auto = true;
+						Direction[] dirs = Direction.values();
+						FangXiang = dirs[ random.nextInt(dirs.length) ];
+					}
+					try {Thread.sleep(time);} catch (Exception e) {}	
+				}
 			}
 		}).start();
 	}
@@ -185,7 +263,7 @@ public class Tank implements InitValue{
 		default:
 			break;
 		}	
-		//子弹初始方向
+		//子弹初始方向 炮筒初始方向
 		if( FangXiang != Direction.d5 ) this.ptDir = this.FangXiang;
 		//坦克不能出界
 		if(X < 0) X = 0;
@@ -280,8 +358,7 @@ public class Tank implements InitValue{
 			Missile missile = new Missile(x, y, ptDir,tankClient);
 			tankClient.missiles.add(missile);	
 		}
-	}
-	
+	}	
 	/**
 	 * 获取坦克的矩形
 	 * @return
