@@ -3,6 +3,7 @@ package tankwar;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.RenderingHints.Key;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -25,7 +26,8 @@ public class TankClient extends JFrame implements InitValue{
 	public boolean enemytanksPD = true;
 	public List<Missile> missiles;
 	public List<Explode> explodes;
-	
+	public int killTankNumber = 0;
+	public int reTankNumber = 0;
 	/**
 	 * 构造函数
 	 */
@@ -57,7 +59,7 @@ public class TankClient extends JFrame implements InitValue{
 			// TODO 自动生成的方法存根
 			while(enemytanksPD){
 				if(enemyTanks.size() < 5){
-					Tank enemyTank = new Tank(random(50, 750), random(50, 400), Tank.TANK_enemy, Color.GRAY, TankClient.this);
+					Tank enemyTank = new Tank(random(50, 750), random(50, 400), type_enemy, Color.GRAY, TankClient.this);
 					enemyTanks.add(enemyTank);
 				}
 				try {Thread.sleep(1000);} catch (Exception e) {}	//刷新间隔
@@ -67,12 +69,13 @@ public class TankClient extends JFrame implements InitValue{
 	/**
 	 * 初始化坦克子弹等参数
 	 */
-	public void initObject(){	   
+	public void initObject(){	
+		reTankNumber = 3;
 		enemyTanks = new ArrayList<Tank>();
 		missiles = new ArrayList<Missile>();
 		explodes = new ArrayList<Explode>();
 		background = new Background(0, 0, WindowsXlength + PanelX * (-2),  WindowsYlength + PanelY * (-2), this);
-		myTank = new Tank(random(50, 750), random(50, 400), Tank.TANK_player, Color.RED, this);
+		myTank = new Tank(random(50, 750), random(50, 400), type_player, Color.RED, this);
 		new Thread(new CreatTank()).start();	
 	}
 	/**
@@ -176,7 +179,7 @@ public class TankClient extends JFrame implements InitValue{
 			background.draw(goffScreenImage);
 			
 			//对象信息
-			myTank.draw(goffScreenImage);											//画自己的 tank	
+			if( myTank.isTankLive() )myTank.draw(goffScreenImage);					//画自己的 tank	
 			for(int i = 0; i < enemyTanks.size(); i++){								//画敌人的坦克
 				Tank tank = enemyTanks.get(i);
 				tank.draw(goffScreenImage);		
@@ -185,6 +188,7 @@ public class TankClient extends JFrame implements InitValue{
 				Missile m = missiles.get(i);		
 				m.draw(goffScreenImage);
 				m.hitTanks(enemyTanks);
+				m.hitTank(myTank);
 			}
 			for(int i = 0; i < explodes.size(); i++){
 				Explode e = explodes.get(i);
@@ -196,6 +200,11 @@ public class TankClient extends JFrame implements InitValue{
 			goffScreenImage.drawString("子弹数量:" + missiles.size(), 10, 40);	
 			goffScreenImage.drawString("爆炸数量:" + explodes.size(), 10, 60);
 			goffScreenImage.drawString("坦克数量:" + enemyTanks.size(), 10, 80);
+			goffScreenImage.drawString("击杀坦克数量:" + killTankNumber, 200, 20);
+			goffScreenImage.drawString("生命值数量:" + reTankNumber, 200, 40);
+			if(reTankNumber < 0){
+				goffScreenImage.drawString("游戏结束，击杀坦克总数:" + killTankNumber, 320, 225);
+			}		
 			return image;
 		}
 	}
@@ -209,6 +218,16 @@ public class TankClient extends JFrame implements InitValue{
 		public void keyPressed(KeyEvent e) {
 			super.keyPressed(e);
 			myTank.KEY(e);
+			switch (e.getKeyCode()) {
+			case KeyEvent.VK_R:		
+				if(!myTank.isTankLive() && reTankNumber >= 0){
+					reTankNumber -= 1;
+					myTank = new Tank(random(50, 750), random(50, 400), type_player, Color.RED, TankClient.this);
+				}
+				break;
+			default:
+				break;
+			}
 		}
 		//抬起
 		public void keyReleased(KeyEvent e) {

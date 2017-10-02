@@ -10,7 +10,23 @@ public class Missile implements InitValue{
 	int X, Y, xspeed = 3, yspeed = 3;
 	public static final int missileX = 10, missileY = 10;
 	private boolean live = true;
+	private int MissileType = type_player;
 	Direction MissileFangXiang;
+	
+	/**
+	 * 获取子弹种类
+	 * @return
+	 */
+	public int getMissileType() {
+		return MissileType;
+	}
+	/**
+	 * 设置子弹种类
+	 * @param tankType
+	 */
+	public void setMissileType(int tankType) {
+		MissileType = tankType;
+	}
 	/**
 	 * 设置子弹存活状态
 	 * @param live
@@ -32,10 +48,11 @@ public class Missile implements InitValue{
 	 * @param missileFangXiang
 	 * @param tc
 	 */
-	public Missile(int x, int y, Direction missileFangXiang,TankClient tc) {
+	public Missile(int x, int y, Direction missileFangXiang, int tankType,TankClient tc) {
 		this.X = x;
 		this.Y = y;
 		MissileFangXiang = missileFangXiang;
+		this.MissileType = tankType;
 		this.TC = tc;
 		this.live = true;
 		MissileQD();
@@ -129,15 +146,24 @@ public class Missile implements InitValue{
 	 * @return
 	 */
 	public boolean hitTank(Tank t){
-		if(  this.getRect().intersects( t.getRect() )  && t.isTankLive()){			
+		if(  this.getRect().intersects( t.getRect() )  && t.isTankLive() && Missile.this.getMissileType() != t.getTankType() ){			
 			this.live = false;									//子弹生命判断为死
+			t.setTankLive(false);								//坦克生命判断为死
 			TC.missiles.remove(this);							//在队列中移除子弹
 			
 			TC.ZhenDong();										//大管家震动			
-			t.setTankLive(false);								//坦克生命判断为死
 			
 			Explode e = new Explode(this.X, this.Y, this.TC);	//添加一个爆炸
 			TC.explodes.add(e);
+			
+			if(t.getTankType() == type_enemy){
+				TC.killTankNumber += 1;
+			}
+			if(t.getTankType() == type_player){
+				if(TC.reTankNumber == 0){
+					TC.reTankNumber -= 1;
+				}
+			}
 			
 			return true;
 		}

@@ -7,11 +7,7 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.Random;
 
-public class Tank implements InitValue{
-	public static final int TANK_player = 0;
-	public static final int TANK_enemy = 1;
-	public static final int TANK_boss = 2;
-	
+public class Tank implements InitValue{	
 	public static Random random = new Random();	
 	private int X, Y, xspeed = 3, yspeed = 3;	
 	private TankClient tankClient = null;
@@ -19,23 +15,24 @@ public class Tank implements InitValue{
 	private boolean Up = false, Down = false, Left = false, Right = false;
 	private Direction FangXiang = Direction.d5;
 	private Direction ptDir = Direction.d4;				//子弹 和 炮筒方向
-	private int Type;
+	private int TankType = type_player;
 	private Color tankColor;
+	private int TrackingDistance = 200;
 	private boolean tankLive = true;
-	private boolean auto = false;
+
 	/**
 	 * 判断是什么坦克
 	 * @return
 	 */
-	public int isType() {
-		return Type;
+	public int getTankType() {
+		return TankType;
 	}
 	/**
 	 * 设置是什么坦克
 	 * @param good
 	 */
-	public void setType(int type) {
-		Type = type;
+	public void setTankType(int type) {
+		TankType = type;
 	}
 	/**
 	 * 判断死活
@@ -66,6 +63,13 @@ public class Tank implements InitValue{
 		return X;
 	}
 	/**
+	 * 获取坦克的矩形
+	 * @return
+	 */
+	public Rectangle getRect(){
+		return new Rectangle(X, Y, tankX, tankY);
+	}
+	/**
 	 * 坦克构造函数
 	 * @param x
 	 * @param y
@@ -76,7 +80,7 @@ public class Tank implements InitValue{
 	public Tank(int x, int y, int type, Color Co, TankClient w){
 		this.X = x;
 		this.Y = y;
-		this.Type = type;
+		this.TankType = type;
 		this.tankColor = Co;
 		this.tankClient = w;
 		this.tankLive = true;
@@ -142,16 +146,17 @@ public class Tank implements InitValue{
 	 * 启动坦克线程
 	 */
 	private void TankQD(){
-		if(this.Type == Tank.TANK_player){
+		if(this.TankType == type_player){
 			PlayerMoveThread();
 		}else{
 			ZhuiMove();
 			autoMove();
+			autofire();
 			PlayerMoveThread();
 		}
 	}
 	/**
-	 * 坦克移动线程
+	 * 手动移动线程
 	 */
 	private void PlayerMoveThread(){
 		new Thread(new Runnable() {
@@ -164,36 +169,39 @@ public class Tank implements InitValue{
 		}).start();
 	}
 	/**
-	 * 追踪移动
+	 * 追踪移动线程
 	 */
 	private void ZhuiMove(){
 		new Thread(new Runnable() {
 			public void run() {
 				int tankx = 0;
 				int tanky = 0;
-				while(tankLive){	
-					xspeed = 1;
-					yspeed = 1;
-					tankx = tankClient.myTank.X;
-					tanky = tankClient.myTank.Y;	
-					if( Math.sqrt(Math.pow(Math.abs(Tank.this.X - tankx), 2) + Math.pow(Math.abs(Tank.this.Y - tanky), 2)) < 100 ){
-						if(Tank.this.X < tankx && Tank.this.Y == tanky){
-							FangXiang = Direction.d6;
-						}else if(Tank.this.X < tankx && Tank.this.Y < tanky){
-							FangXiang = Direction.d3;
-						}else if(Tank.this.X == tankx && Tank.this.Y < tanky){
-							FangXiang = Direction.d2;
-						}else if(Tank.this.X > tankx && Tank.this.Y < tanky){
-							FangXiang = Direction.d1;
-						}else if(Tank.this.X > tankx && Tank.this.Y == tanky){
-							FangXiang = Direction.d4;
-						}else if(Tank.this.X > tankx && Tank.this.Y > tanky){
-							FangXiang = Direction.d7;
-						}else if(Tank.this.X == tankx && Tank.this.Y > tanky){
-							FangXiang = Direction.d8;
-						}else if(Tank.this.X < tankx && Tank.this.Y > tanky){
-							FangXiang = Direction.d9;
-						}		
+				while(tankLive){
+					//如果玩家坦克活着再追
+					if( tankClient.myTank.isTankLive() ){
+						xspeed = 1;
+						yspeed = 1;
+						tankx = tankClient.myTank.X;
+						tanky = tankClient.myTank.Y;	
+						if( Math.sqrt(Math.pow(Math.abs(Tank.this.X - tankx), 2) + Math.pow(Math.abs(Tank.this.Y - tanky), 2)) < TrackingDistance ){
+							if(Tank.this.X < tankx && Tank.this.Y == tanky){
+								FangXiang = Direction.d6;
+							}else if(Tank.this.X < tankx && Tank.this.Y < tanky){
+								FangXiang = Direction.d3;
+							}else if(Tank.this.X == tankx && Tank.this.Y < tanky){
+								FangXiang = Direction.d2;
+							}else if(Tank.this.X > tankx && Tank.this.Y < tanky){
+								FangXiang = Direction.d1;
+							}else if(Tank.this.X > tankx && Tank.this.Y == tanky){
+								FangXiang = Direction.d4;
+							}else if(Tank.this.X > tankx && Tank.this.Y > tanky){
+								FangXiang = Direction.d7;
+							}else if(Tank.this.X == tankx && Tank.this.Y > tanky){
+								FangXiang = Direction.d8;
+							}else if(Tank.this.X < tankx && Tank.this.Y > tanky){
+								FangXiang = Direction.d9;
+							}		
+						}
 					}
 					try {Thread.sleep(10);} catch (Exception e) {}	
 				}
@@ -201,7 +209,7 @@ public class Tank implements InitValue{
 		}).start();
 	}
 	/**
-	 * 自动移动
+	 * 自动移动线程
 	 */
 	private void autoMove(){
 		new Thread(new Runnable() {
@@ -210,13 +218,12 @@ public class Tank implements InitValue{
 				int tanky = 0;
 				int time = 0;
 				while(tankLive){
-					time = random.nextInt(2000);
+					time = random.nextInt(2000) + 500;
 					xspeed = 1;
 					yspeed = 1;
 					tankx = tankClient.myTank.X;
 					tanky = tankClient.myTank.Y;
-					if(Math.sqrt(Math.pow(Math.abs(Tank.this.X - tankx), 2) + Math.pow(Math.abs(Tank.this.Y - tanky), 2))  >= 100){
-						auto = true;
+					if(Math.sqrt(Math.pow(Math.abs(Tank.this.X - tankx), 2) + Math.pow(Math.abs(Tank.this.Y - tanky), 2))  >= TrackingDistance){
 						Direction[] dirs = Direction.values();
 						FangXiang = dirs[ random.nextInt(dirs.length) ];
 					}
@@ -271,6 +278,41 @@ public class Tank implements InitValue{
 		if(X + Tank.tankX > WindowsXlength) X = WindowsXlength - Tank.tankX;
 		if(Y + Tank.tankY + 30 > WindowsYlength) Y = WindowsYlength - Tank.tankY - 30;
 	}
+	/**
+	 * 自动开火
+	 */
+	public void autofire(){
+		new Thread(new Runnable() {
+			public void run() {
+				int sleepInt = 0;
+				int x = 0,y = 0;
+				while(tankLive){
+					sleepInt = random.nextInt(2000) + 500;
+					if(tankClient != null){
+						x = Tank.this.X + Tank.tankX/2 - Missile.missileX/2;
+						y = Tank.this.Y + Tank.tankY/2 - Missile.missileY/2;
+						if(ptDir == Direction.d5)ptDir = Direction.d6;//炮弹不能不动
+						Missile missile = new Missile(x, y, ptDir, type_enemy, tankClient);
+						tankClient.missiles.add(missile);	
+					}
+					try {Thread.sleep(sleepInt);} catch (Exception e) {}
+				}			
+			}
+		}).start();	
+	}
+	/**
+	 * 玩家开火 生成一个子弹
+	 * @return
+	 */
+	public void fire(){
+		if(tankClient != null && Tank.this.isTankLive()){
+			int x = this.X + Tank.tankX/2 - Missile.missileX/2;
+			int y = this.Y + Tank.tankY/2 - Missile.missileY/2;
+			if(ptDir == Direction.d5)ptDir = Direction.d6;//炮弹不能不动
+			Missile missile = new Missile(x, y, ptDir, type_player, tankClient);
+			tankClient.missiles.add(missile);	
+		}
+	}	
 	/**
 	 * 按下按键
 	 * @param e
@@ -346,24 +388,5 @@ public class Tank implements InitValue{
 		else if(Up && Down && !Left && !Right)FangXiang = Direction.d5;
 		else if(!Up && !Down && !Left && !Right)FangXiang = Direction.d5;
 		else if(Up && Down && Left && Right)FangXiang = Direction.d5;
-	}
-	/**
-	 * 生成一个子弹
-	 * @return
-	 */
-	public void fire(){
-		if(tankClient != null){
-			int x = this.X + Tank.tankX/2 - Missile.missileX/2;
-			int y = this.Y + Tank.tankY/2 - Missile.missileY/2;
-			Missile missile = new Missile(x, y, ptDir,tankClient);
-			tankClient.missiles.add(missile);	
-		}
-	}	
-	/**
-	 * 获取坦克的矩形
-	 * @return
-	 */
-	public Rectangle getRect(){
-		return new Rectangle(X, Y, tankX, tankY);
 	}
 }
