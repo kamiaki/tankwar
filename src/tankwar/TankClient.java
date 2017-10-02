@@ -196,12 +196,16 @@ public class TankClient extends JFrame implements InitValue{
 			}
 			
 			//数据信息
-			goffScreenImage.drawString("玩家坦克位置: X." + myTank.getX() + " Y." + myTank.getY(), 10, 20);
-			goffScreenImage.drawString("子弹数量:" + missiles.size(), 10, 40);	
-			goffScreenImage.drawString("爆炸数量:" + explodes.size(), 10, 60);
-			goffScreenImage.drawString("坦克数量:" + enemyTanks.size(), 10, 80);
-			goffScreenImage.drawString("击杀坦克数量:" + killTankNumber, 200, 20);
-			goffScreenImage.drawString("生命值数量:" + reTankNumber, 200, 40);
+//			goffScreenImage.drawString("玩家坦克位置: X." + myTank.getX() + " Y." + myTank.getY(), 10, 20);
+//			goffScreenImage.drawString("子弹数量:" + missiles.size(), 10, 40);	
+//			goffScreenImage.drawString("爆炸数量:" + explodes.size(), 10, 60);
+//			goffScreenImage.drawString("坦克数量:" + enemyTanks.size(), 10, 80);
+			goffScreenImage.drawString("击杀坦克数量:" + killTankNumber, 10, 20);
+			if(reTankNumber < 0){
+				goffScreenImage.drawString("生命值数量:0", 10, 40);
+			}else{
+				goffScreenImage.drawString("生命值数量:" + reTankNumber, 10, 40);
+			}		
 			if(reTankNumber < 0){
 				goffScreenImage.drawString("游戏结束，击杀坦克总数:" + killTankNumber, 320, 225);
 			}		
@@ -219,10 +223,15 @@ public class TankClient extends JFrame implements InitValue{
 			super.keyPressed(e);
 			myTank.KEY(e);
 			switch (e.getKeyCode()) {
-			case KeyEvent.VK_R:		
-				if(!myTank.isTankLive() && reTankNumber >= 0){
-					reTankNumber -= 1;
+			case KeyEvent.VK_R:	
+				if(!myTank.isTankLive() && reTankNumber > 0){
+					reTankNumber--;
 					myTank = new Tank(random(50, 750), random(50, 400), type_player, Color.RED, TankClient.this);
+				}
+				if(reTankNumber < 0){
+					myTank = new Tank(random(50, 750), random(50, 400), type_player, Color.RED, TankClient.this);
+					reTankNumber = 3;
+					killTankNumber = 0;
 				}
 				break;
 			default:

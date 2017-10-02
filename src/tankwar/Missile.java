@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Missile implements InitValue{
 	TankClient TC = null;
-	int X, Y, xspeed = 3, yspeed = 3;
+	int X, Y, xspeed = 10, yspeed = 10;
 	public static final int missileX = 10, missileY = 10;
 	private boolean live = true;
 	private int MissileType = type_player;
@@ -48,11 +48,13 @@ public class Missile implements InitValue{
 	 * @param missileFangXiang
 	 * @param tc
 	 */
-	public Missile(int x, int y, Direction missileFangXiang, int tankType,TankClient tc) {
+	public Missile(int x, int y, Direction missileFangXiang, int tankType,int speed,TankClient tc) {
 		this.X = x;
 		this.Y = y;
 		MissileFangXiang = missileFangXiang;
 		this.MissileType = tankType;
+		this.xspeed = speed;
+		this.yspeed = speed;
 		this.TC = tc;
 		this.live = true;
 		MissileQD();
@@ -71,8 +73,15 @@ public class Missile implements InitValue{
 	private void MissilePicture(Graphics g){
 		Color c = g.getColor();
 		g.setColor(Color.BLACK);
-		g.fillOval(X, Y, 10, 10);
+		g.fillOval(X, Y, missileX, missileY);
 		g.setColor(c);
+	}
+	/**
+	 * 获取子弹的矩形
+	 * @return
+	 */
+	public Rectangle getRect(){
+		return new Rectangle(X, Y, missileX, missileY);
 	}
 	/**
 	 * 启动子弹移动线程
@@ -133,13 +142,6 @@ public class Missile implements InitValue{
 			}
 		}
 	}	
-	/**
-	 * 获取子弹的矩形
-	 * @return
-	 */
-	public Rectangle getRect(){
-		return new Rectangle(X, Y, missileX, missileY);
-	}
 	/**
 	 * 击中坦克
 	 * @param t

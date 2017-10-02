@@ -292,7 +292,7 @@ public class Tank implements InitValue{
 						x = Tank.this.X + Tank.tankX/2 - Missile.missileX/2;
 						y = Tank.this.Y + Tank.tankY/2 - Missile.missileY/2;
 						if(ptDir == Direction.d5)ptDir = Direction.d6;//炮弹不能不动
-						Missile missile = new Missile(x, y, ptDir, type_enemy, tankClient);
+						Missile missile = new Missile(x, y, ptDir, type_enemy, 2, tankClient);
 						tankClient.missiles.add(missile);	
 					}
 					try {Thread.sleep(sleepInt);} catch (Exception e) {}
@@ -309,7 +309,7 @@ public class Tank implements InitValue{
 			int x = this.X + Tank.tankX/2 - Missile.missileX/2;
 			int y = this.Y + Tank.tankY/2 - Missile.missileY/2;
 			if(ptDir == Direction.d5)ptDir = Direction.d6;//炮弹不能不动
-			Missile missile = new Missile(x, y, ptDir, type_player, tankClient);
+			Missile missile = new Missile(x, y, ptDir, type_player, 10, tankClient);
 			tankClient.missiles.add(missile);	
 		}
 	}	
