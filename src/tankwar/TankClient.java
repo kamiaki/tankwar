@@ -59,7 +59,7 @@ public class TankClient extends JFrame implements InitValue{
 			// TODO 自动生成的方法存根
 			while(enemytanksPD){
 				if(enemyTanks.size() < 5){
-					Tank enemyTank = new Tank(random(50, 750), random(50, 400), type_enemy, Color.GRAY, 2, 2, TankClient.this);
+					Tank enemyTank = new Tank(random(50, 750), random(50, 400), type_enemy, Color.GRAY, 1, 1, TankClient.this);
 					enemyTanks.add(enemyTank);
 				}
 				try {Thread.sleep(1000);} catch (Exception e) {}	//刷新间隔
