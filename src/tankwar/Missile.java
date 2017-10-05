@@ -6,12 +6,12 @@ import java.awt.Rectangle;
 import java.util.List;
 
 public class Missile implements InitValue{
-	TankClient TC = null;
-	int X, Y, xspeed = 10, yspeed = 10;
-	public static final int missileX = 10, missileY = 10;
-	private boolean live = true;
-	private int MissileType = type_player;
-	Direction MissileFangXiang;
+	private TankClient tankClient = null;								//大管家指针
+	public static final int missileXlength = 10, missileYlength = 10;	//子弹的大小
+	private int X, Y, xspeed, yspeed;									//子弹位置 和 速度
+	private int MissileType = type_player;								//子弹种类
+	Direction MissileFangXiang;											//子弹方向
+	private boolean live = true;										//子弹是否活着
 	
 	/**
 	 * 获取子弹种类
@@ -48,14 +48,14 @@ public class Missile implements InitValue{
 	 * @param missileFangXiang
 	 * @param tc
 	 */
-	public Missile(int x, int y, Direction missileFangXiang, int tankType,int speed,TankClient tc) {
+	public Missile(int x, int y, Direction missileFangXiang, int tankType, int xspeed,int yspeed, TankClient tc) {
 		this.X = x;
 		this.Y = y;
 		MissileFangXiang = missileFangXiang;
 		this.MissileType = tankType;
-		this.xspeed = speed;
-		this.yspeed = speed;
-		this.TC = tc;
+		this.xspeed = xspeed;
+		this.yspeed = yspeed;
+		this.tankClient = tc;
 		this.live = true;
 		MissileQD();
 	}
@@ -73,7 +73,7 @@ public class Missile implements InitValue{
 	private void MissilePicture(Graphics g){
 		Color c = g.getColor();
 		g.setColor(Color.BLACK);
-		g.fillOval(X, Y, missileX, missileY);
+		g.fillOval(X, Y, missileXlength, missileYlength);
 		g.setColor(c);
 	}
 	/**
@@ -81,7 +81,7 @@ public class Missile implements InitValue{
 	 * @return
 	 */
 	public Rectangle getRect(){
-		return new Rectangle(X, Y, missileX, missileY);
+		return new Rectangle(X, Y, missileXlength, missileYlength);
 	}
 	/**
 	 * 启动子弹移动线程
@@ -135,10 +135,10 @@ public class Missile implements InitValue{
 			break;
 		}
 		
-		if(TC != null){
+		if(tankClient != null){
 			if(X < 0 || Y < 0 || X > WindowsXlength || Y > WindowsYlength){
-				this.live = false;			//子弹生命判断为死		
-				TC.missiles.remove(this);	//在队列中移除子弹
+				tankClient.missiles.remove(this);	//在队列中移除子弹
+				this.live = false;					//子弹生命判断为死		
 			}
 		}
 	}	
@@ -148,25 +148,24 @@ public class Missile implements InitValue{
 	 * @return
 	 */
 	public boolean hitTank(Tank t){
-		if(  this.getRect().intersects( t.getRect() )  && t.isTankLive() && Missile.this.getMissileType() != t.getTankType() ){			
-			this.live = false;									//子弹生命判断为死
-			t.setTankLive(false);								//坦克生命判断为死
-			TC.missiles.remove(this);							//在队列中移除子弹
+		if(this.getRect().intersects( t.getRect()) && t.isTankLive() && Missile.this.getMissileType() != t.getTankType() ){			
+			Explode e = new Explode(this.X, this.Y, this.tankClient);	//添加一个爆炸
+			tankClient.explodes.add(e);
 			
-			TC.ZhenDong();										//大管家震动			
+			tankClient.ZhenDong();										//大管家 震动方法			
 			
-			Explode e = new Explode(this.X, this.Y, this.TC);	//添加一个爆炸
-			TC.explodes.add(e);
+			tankClient.missiles.remove(this);							//在队列中移除子弹
+			this.live = false;											//子弹生命判断为死
+			t.setTankLive(false);										//坦克生命判断为死		
 			
 			if(t.getTankType() == type_enemy){
-				TC.killTankNumber += 1;
+				tankClient.killTankNumber += 1;
 			}
 			if(t.getTankType() == type_player){
-				if(TC.reTankNumber == 0){
-					TC.reTankNumber -= 1;
+				if(tankClient.reTankNumber == 0){
+					tankClient.reTankNumber -= 1;
 				}
-			}
-			
+			}			
 			return true;
 		}
 		return false;

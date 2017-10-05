@@ -59,7 +59,7 @@ public class TankClient extends JFrame implements InitValue{
 			// TODO 自动生成的方法存根
 			while(enemytanksPD){
 				if(enemyTanks.size() < 5){
-					Tank enemyTank = new Tank(random(50, 750), random(50, 400), type_enemy, Color.GRAY, TankClient.this);
+					Tank enemyTank = new Tank(random(50, 750), random(50, 400), type_enemy, Color.GRAY, 2, 2, TankClient.this);
 					enemyTanks.add(enemyTank);
 				}
 				try {Thread.sleep(1000);} catch (Exception e) {}	//刷新间隔
@@ -75,7 +75,7 @@ public class TankClient extends JFrame implements InitValue{
 		missiles = new ArrayList<Missile>();
 		explodes = new ArrayList<Explode>();
 		background = new Background(0, 0, WindowsXlength + PanelX * (-2),  WindowsYlength + PanelY * (-2), this);
-		myTank = new Tank(random(50, 750), random(50, 400), type_player, Color.RED, this);
+		myTank = new Tank(random(50, 750), random(50, 400), type_player, Color.RED, 3, 3, this);
 		new Thread(new CreatTank()).start();	
 	}
 	/**
@@ -226,10 +226,10 @@ public class TankClient extends JFrame implements InitValue{
 			case KeyEvent.VK_R:	
 				if(!myTank.isTankLive() && reTankNumber > 0){
 					reTankNumber--;
-					myTank = new Tank(random(50, 750), random(50, 400), type_player, Color.RED, TankClient.this);
+					myTank = new Tank(random(50, 750), random(50, 400), type_player, Color.RED, 3, 3, TankClient.this);
 				}
 				if(reTankNumber < 0){
-					myTank = new Tank(random(50, 750), random(50, 400), type_player, Color.RED, TankClient.this);
+					myTank = new Tank(random(50, 750), random(50, 400), type_player, Color.RED, 3, 3, TankClient.this);
 					reTankNumber = 3;
 					killTankNumber = 0;
 				}

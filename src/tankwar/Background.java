@@ -4,21 +4,22 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Background {
-	private int X,Y,width,height;
-	private TankClient TC;
-	
+	private TankClient tankClient;			//大管家指针
+	private int X,Y,width,height;			//背景的位置和长宽
 	/**
 	 * 构造函数
 	 * @param x
 	 * @param y
-	 * @param tC
+	 * @param width
+	 * @param height
+	 * @param tc
 	 */
 	public Background(int x, int y, int width, int height, TankClient tc) {
 		this.X = x;
 		this.Y = y;
 		this.width = width;
 		this.height = height;
-		TC = tc;
+		tankClient = tc;
 	}
 	/**
 	 * 画背景

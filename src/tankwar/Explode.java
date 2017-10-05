@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Explode {
-	private TankClient TC ;
-	int X, Y;
-	private boolean live = true;
-	private int diameter = 0;
-	private int diameterMAX = 20;
+	private TankClient tankClient;		//大管家指针
+	private int X, Y;					//爆炸 X Y 坐标
+	private int diameter = 0;			//爆炸直径
+	private int diameterMAX = 20;		//爆炸最大直径
+	private boolean live = true;		//爆炸是否存活
 	
 	/**
 	 * 爆炸是否存活
@@ -33,7 +33,7 @@ public class Explode {
 	public Explode(int x,int y,TankClient tc){
 		this.X = x;
 		this.Y = y;
-		this.TC =tc;
+		this.tankClient = tc;
 		BaoZhaQD();
 	}
 	/**
@@ -54,9 +54,6 @@ public class Explode {
 			public void run() {
 				while(live){				
 					ExplodePicture();
-					if(!live){
-						TC.explodes.remove(Explode.this);
-					}
 				}
 			}
 		}).start();
@@ -73,6 +70,7 @@ public class Explode {
 			diameter = i;
 			try {Thread.sleep(20);} catch (Exception e) {}
 		}
+		tankClient.explodes.remove(Explode.this);
 		live = false;
 	}
 }
