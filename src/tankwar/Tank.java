@@ -437,16 +437,16 @@ public class Tank implements InitValue{
 			break;
 		case KeyEvent.VK_NUMPAD2:
 			 
-			if(BaFangNumber > 7) {
+//			if(BaFangNumber > 7) {
 				BaFangNumber -= 8;
 				BaFangfire();
-			}
+//			}
 			break;
 		case KeyEvent.VK_NUMPAD3:
-			if(ZhuiZongNumber > 0) {
+//			if(ZhuiZongNumber > 0) {
 				ZhuiZongNumber -= 1;
 				ZhuiZongfire();
-			}
+//			}
 			break;
 		case KeyEvent.VK_W:
 			Up = false;
