@@ -2,7 +2,10 @@ package tankwar;
 
 import java.awt.Color;
 import java.awt.Graphics;
-
+/**
+ * ±¬Õ¨Àà
+ *
+ */
 public class Explode {
 	private TankClient tankClient;		//´ó¹Ü¼ÒÖ¸Õë
 	private int X, Y;					//±¬Õ¨ X Y ×ø±ê
@@ -40,7 +43,16 @@ public class Explode {
 	 * »­±¬Õ¨
 	 * @param g
 	 */
-	public void draw(Graphics g){		
+	public void draw(Graphics g){	
+		if(live) {
+			ExplodePicture(g);
+		}
+	}
+	/**
+	 * »­±¬Õ¨Í¼
+	 * @param g
+	 */
+	private void ExplodePicture(Graphics g) {
 		Color c = g.getColor();
 		g.setColor(Color.ORANGE);
 		g.fillOval(X, Y, diameter, diameter);
@@ -54,6 +66,7 @@ public class Explode {
 			public void run() {
 				while(live){				
 					ExplodePicture();
+					try {Thread.sleep(10);} catch (Exception e) {}
 				}
 			}
 		}).start();
@@ -70,7 +83,7 @@ public class Explode {
 			diameter = i;
 			try {Thread.sleep(20);} catch (Exception e) {}
 		}
-		tankClient.explodes.remove(Explode.this);
 		live = false;
+		tankClient.explodes.remove(Explode.this);
 	}
 }

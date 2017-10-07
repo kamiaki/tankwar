@@ -2,7 +2,10 @@ package tankwar;
 
 import java.awt.Color;
 import java.awt.Graphics;
-
+/**
+ * 背景类
+ *
+ */
 public class Background {
 	private TankClient tankClient;			//大管家指针
 	private int X,Y,width,height;			//背景的位置和长宽

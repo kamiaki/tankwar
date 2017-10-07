@@ -1,7 +1,6 @@
 package tankwar;
 /**
  * 8个方向的移动
- * @author Administrator
  *
  */
 public enum Direction {
