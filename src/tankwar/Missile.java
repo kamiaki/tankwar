@@ -2,8 +2,12 @@ package tankwar;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 /**
  * 子弹类
  *
@@ -18,7 +22,31 @@ public class Missile implements InitValue{
 	//各种子弹
 	private int MissileZhongLei = Misslie_putong;						//炮弹种类
 	public boolean ZhuiZongPD = false;									//追踪弹是否启动
-	
+	//贴图
+	private static Toolkit tk = Toolkit.getDefaultToolkit();
+	private static Image[] images = null;
+	private static Map<String, Image> imagesMap = new HashMap<String, Image>();
+	static {
+		images = new Image[]{
+				tk.getImage(Explode.class.getClassLoader().getResource("images/missileL.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/missileLU.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/missileU.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/missileRU.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/missileR.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/missileRD.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/missileD.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/missileLD.gif")),
+		}; 	
+		imagesMap.put("d4", images[0]);
+		imagesMap.put("d7", images[1]);
+		imagesMap.put("d8", images[2]);
+		imagesMap.put("d9", images[3]);
+		imagesMap.put("d6", images[4]);
+		imagesMap.put("d3", images[5]);
+		imagesMap.put("d2", images[6]);
+		imagesMap.put("d1", images[7]);
+	}
+		
 	/**
 	 * 获取子弹种类
 	 * @return
@@ -81,27 +109,36 @@ public class Missile implements InitValue{
 	 * 子弹贴图
 	 * @param g
 	 */
-	private void MissilePicture(Graphics g){
-		Color c = g.getColor();
-		if(MissileType == type_player) {
-			switch (MissileZhongLei) {
-			case Misslie_putong:
-				g.setColor(Color.BLACK);
-				break;
-			case Misslie_bafang:
-				g.setColor(Color.BLUE);
-				break;
-			case Misslie_zhuizong:
-				g.setColor(Color.MAGENTA);
-				break;
-			default:
-				break;
-			}
-		}else {
-			g.setColor(Color.GRAY);
+	private void MissilePicture(Graphics g){	
+		switch (MissileFangXiang) {
+		case d4:
+			g.drawImage(imagesMap.get("d4"), X, Y, null);	
+			break;
+		case d7:
+			g.drawImage(imagesMap.get("d7"), X, Y, null);
+			break;
+		case d8:
+			g.drawImage(imagesMap.get("d8"), X, Y, null);
+			break;
+		case d9:
+			g.drawImage(imagesMap.get("d9"), X, Y, null);
+			break;
+		case d6:
+			g.drawImage(imagesMap.get("d6"), X, Y, null);
+			break;
+		case d3:
+			g.drawImage(imagesMap.get("d3"), X, Y, null);
+			break;
+		case d2:
+			g.drawImage(imagesMap.get("d2"), X, Y, null);
+			break;
+		case d1:
+			g.drawImage(imagesMap.get("d1"), X, Y, null);
+			break;
+		default:
+			g.drawImage(imagesMap.get("d2"), X, Y, null);
+			break;
 		}
-		g.fillOval(X, Y, missileXlength, missileYlength);
-		g.setColor(c);
 	}
 	/**
 	 * 获取子弹的矩形

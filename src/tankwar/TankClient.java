@@ -68,8 +68,8 @@ public class TankClient extends JFrame implements InitValue{
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);
 		this.addWindowListener(new WindowAdapter() {
-			public void windowClosed(WindowEvent e) {
-				super.windowClosed(e);
+			public void windowClosing(WindowEvent e) {
+				super.windowClosing(e);
 				dispose();
 				mainWindows.frame.setVisible(true);
 			}
