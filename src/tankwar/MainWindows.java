@@ -19,8 +19,8 @@ public class MainWindows {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-					MainWindows window = new MainWindows();
-					window.frame.setVisible(true);
+		MainWindows window = new MainWindows();
+		window.frame.setVisible(true);
 	}
 	/**
 	 * ¹¹Ôìº¯Êý

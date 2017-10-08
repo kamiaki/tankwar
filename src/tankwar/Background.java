@@ -1,14 +1,19 @@
 package tankwar;
 
-import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
 /**
  * 背景类
  *
  */
-public class Background {
-	private TankClient tankClient;			//大管家指针
-	private int X,Y,width,height;			//背景的位置和长宽
+public class Background implements InitValue{
+	private TankClient tankClient;										//大管家指针
+	private int X,Y;													//背景的位置和长宽
+	private String Path;												//地址
+	private static Toolkit toolkit = Toolkit.getDefaultToolkit();		//工具包
+	private Image BackGround;											//背景图片
+	
 	/**
 	 * 构造函数
 	 * @param x
@@ -17,12 +22,12 @@ public class Background {
 	 * @param height
 	 * @param tc
 	 */
-	public Background(int x, int y, int width, int height, TankClient tc) {
+	public Background(int x, int y, String path, TankClient tc) {
 		this.X = x;
 		this.Y = y;
-		this.width = width;
-		this.height = height;
+		this.Path = path;
 		tankClient = tc;
+		HuaWall();
 	}
 	/**
 	 * 画背景
@@ -36,9 +41,13 @@ public class Background {
 	 * @param g
 	 */
 	private void BackgroundPicture(Graphics g){
-		Color c = g.getColor();
-		g.setColor(Color.GRAY);
-		g.fillRect(X, Y, width, height);
-		g.setColor(c);
+		g.drawImage(BackGround, X, Y, null);
+	}
+	/**
+	 * 画背景
+	 */
+	public void HuaWall(){			
+		BackGround = toolkit.getImage(Explode.class.getClassLoader().getResource(Path));		//背景图片
+		BackGround = BackGround.getScaledInstance(WindowsXlength + PanelX * (-2), WindowsYlength + PanelY * (-2), Image.SCALE_DEFAULT);
 	}
 }

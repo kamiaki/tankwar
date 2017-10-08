@@ -13,15 +13,18 @@ import java.util.Map;
  *
  */
 public class Missile implements InitValue{
+	//大管家指针
 	private TankClient tankClient = null;								//大管家指针
+	//子弹参数
+	private boolean live = true;										//子弹是否活着
 	public static final int missileXlength = 10, missileYlength = 10;	//子弹的大小
 	private int X, Y, xspeed, yspeed, oldX, oldY;						//子弹位置 和 速度
 	private int MissileType = type_player;								//子弹种类
-	Direction MissileFangXiang;											//子弹方向
-	private boolean live = true;										//子弹是否活着
+	private Direction MissileFangXiang;									//子弹方向
 	//各种子弹
 	private int MissileZhongLei = Misslie_putong;						//炮弹种类
 	public boolean ZhuiZongPD = false;									//追踪弹是否启动
+	private static int ZhuiJiDistance = 100;								//追击距离
 	//贴图
 	private static Toolkit tk = Toolkit.getDefaultToolkit();
 	private static Image[] images = null;
@@ -46,7 +49,29 @@ public class Missile implements InitValue{
 		imagesMap.put("d2", images[6]);
 		imagesMap.put("d1", images[7]);
 	}
-		
+	
+	/**
+	 * 构造函数
+	 * @param x
+	 * @param y
+	 * @param missileFangXiang
+	 * @param tc
+	 */
+	public Missile(int x, int y,int MissileZhongLei, Direction missileFangXiang, int tankType, int xspeed,int yspeed, TankClient tc) {
+		this.X = x;
+		this.Y = y;
+		this.MissileZhongLei = MissileZhongLei;
+		this.MissileFangXiang = missileFangXiang;
+		this.MissileType = tankType;
+		this.xspeed = xspeed;
+		this.yspeed = yspeed;
+		this.oldX = x;
+		this.oldY = y;
+		this.tankClient = tc;
+		this.live = true;
+		MissileQD();
+	}
+	//*****************************************************************************子弹参数设置
 	/**
 	 * 获取子弹种类
 	 * @return
@@ -75,27 +100,7 @@ public class Missile implements InitValue{
 	public boolean isLive() {
 		return live;
 	}
-	/**
-	 * 构造函数
-	 * @param x
-	 * @param y
-	 * @param missileFangXiang
-	 * @param tc
-	 */
-	public Missile(int x, int y,int MissileZhongLei, Direction missileFangXiang, int tankType, int xspeed,int yspeed, TankClient tc) {
-		this.X = x;
-		this.Y = y;
-		this.MissileZhongLei = MissileZhongLei;
-		MissileFangXiang = missileFangXiang;
-		this.MissileType = tankType;
-		this.xspeed = xspeed;
-		this.yspeed = yspeed;
-		this.oldX = x;
-		this.oldY = y;
-		this.tankClient = tc;
-		this.live = true;
-		MissileQD();
-	}
+	//*****************************************************************************画子弹
 	/**
 	 * 画子弹
 	 * @param g
@@ -151,9 +156,17 @@ public class Missile implements InitValue{
 	 * 启动子弹数据更新程序
 	 */
 	private void MissileQD(){
-		if(MissileType == type_player)Follow();  	//启动追踪弹线程
-		MissileMove();						  		//子弹移动线程
-		TimeMissileDead();								//子弹消亡线程
+		switch (MissileType) {
+		case type_player:
+			Follow();  				//启动追踪弹线程
+			MissileMove();			//子弹移动线程
+			TimeMissileDead();		//子弹消亡线程
+			break;
+		default:
+			MissileMove();			//子弹移动线程
+			TimeMissileDead();		//子弹消亡线程
+			break;
+		}
 	}
 	/**
 	 * 子弹移动线程
@@ -185,7 +198,7 @@ public class Missile implements InitValue{
 						for(int i = 0; i < enemytanks.size(); i++) {
 							Tank enemytank = enemytanks.get(i);
 							Distance = Math.sqrt(Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2) + Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2));
-							if(Distance < 100) {
+							if(Distance < ZhuiJiDistance) {
 								tankx = enemytank.getX();
 								tanky = enemytank.getY();	
 								if(Missile.this.X < tankx && Missile.this.Y == tanky){
@@ -277,11 +290,7 @@ public class Missile implements InitValue{
 			}		
 			if(tankClient != null){
 				if(X < 0 || Y < 0 || X > WindowsXlength || Y > WindowsYlength){
-					this.live = false;						//子弹生命判断为死
-					if(this != null) {
-						tankClient.missiles.remove(this);	//在队列中移除子弹		
-					}
-					
+					this.missileDead();	
 				}
 			}
 		}
@@ -295,6 +304,7 @@ public class Missile implements InitValue{
 			tankClient.missiles.remove(this);	
 		}
 	}
+	//*****************************************************************************子弹与其他对象 互动
 	/**
 	 * 击中坦克
 	 * @param t

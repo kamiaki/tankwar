@@ -18,17 +18,17 @@ import javax.swing.*;
  *
  */
 public class TankClient extends JFrame implements InitValue{	
-	public static final int PanelX = -5,PanelY = -5;	//游戏面板位置
-	public static final int CongZhiShengMing = 3;		//游戏面板位置
-	public static Random random = new Random();			//随机方法
+	//窗口面板
 	private MainWindows mainWindows;					//主窗口指针
-	public boolean StartGame = true;					//开始游戏
 	private JPanel MainPanel;							//窗口主面板
 	private mainPanel GamePanel;						//游戏面板
+	public boolean StartGame = true;					//开始游戏
+	//化游戏内容
 	public Background background;						//背景图案
 	public List<Item> Items;							//敌人坦克链表
 	public boolean CreateItemPD = true;					//是否生成敌人坦克
 	public Tank myTank;									//玩家坦克
+	public static final int setLift = 3;				//游戏面板位置
 	public List<Tank> enemyTanks;						//敌人坦克链表
 	public boolean CreateEnemyTanksPD = true;			//是否生成敌人坦克
 	public List<Missile> missiles;						//子弹链表
@@ -36,6 +36,8 @@ public class TankClient extends JFrame implements InitValue{
 	public List<Wall> walls;							//墙链表
 	public int killTankNumber = 0;						//杀死坦克数
 	public int reTankNumber = 0;						//玩家重生次数
+	//随机方法
+	public static Random random = new Random();			//随机方法
 	
 	/**
 	 * 构造函数1
@@ -58,6 +60,7 @@ public class TankClient extends JFrame implements InitValue{
 		new Thread(new PaintThread()).start();					//启动绘图线程
 		this.setVisible(true);									//显示窗口
 	}	
+	//**********************************************************构造窗口 初始化
 	/**
 	 * 初始化窗口
 	 */
@@ -96,20 +99,20 @@ public class TankClient extends JFrame implements InitValue{
 	 */
 	public void initObject(){
 		//生命数
-		reTankNumber = CongZhiShengMing;
+		reTankNumber = setLift;
 		//加载背景 障碍
-		background = new Background(0, 0, WindowsXlength + PanelX * (-2),  WindowsYlength + PanelY * (-2), this);
+		background = new Background(0, 0, "images/背景.png", this);
 		walls = new ArrayList<Wall>();
-		walls.add(new Wall(200, 100, 100, 50, TankClient.this));
-		walls.add(new Wall(400, 300, 50, 100, TankClient.this));
+		walls.add(new Wall(200, 100, 100, 50, "images/墙.png", TankClient.this));
+		walls.add(new Wall(400, 300, 50, 100, "images/墙.png", TankClient.this));
 		//加载物品
 		Items = new ArrayList<Item>();
 		new Thread(new CreatItem()).start();
 		//加载玩家坦克
-		myTank = new Tank(random(100, 650), random(100, 300), type_player, Color.RED, 2, 2, this);
+		myTank = new Tank(random(100, 650), random(100, 300), type_player, 2, 2, this);
 		while(myTank.ZhuangWalls(walls)) {
 			myTank.setTankLive(false);
-			myTank = new Tank(random(100, 650), random(100, 300), type_player, Color.RED, 2, 2, this);
+			myTank = new Tank(random(100, 650), random(100, 300), type_player, 2, 2, this);
 		}
 		//加载敌人坦克
 		enemyTanks = new ArrayList<Tank>();
@@ -121,6 +124,7 @@ public class TankClient extends JFrame implements InitValue{
 		//************************************启动数据刷新 线程
 		new Thread(new ShuJuShuaXin()).start();			
 	}
+	//**********************************************************各种线程
 	/**
 	 * 创建坦克线程
 	 * @author Administrator
@@ -132,10 +136,10 @@ public class TankClient extends JFrame implements InitValue{
 			// TODO 自动生成的方法存根
 			while(CreateEnemyTanksPD){
 				if(enemyTanks.size() < 5){
-					Tank enemyTank = new Tank(random(100, 650), random(100, 300), type_enemy, Color.GRAY, 1, 1, TankClient.this);
+					Tank enemyTank = new Tank(random(100, 650), random(100, 300), type_enemy, 1, 1, TankClient.this);
 					while(enemyTank.ZhuangWalls(walls) || enemyTank.ZhuangTanks(enemyTanks) || enemyTank.ZhuangTank(myTank)) {
 						enemyTank.setTankLive(false);
-						enemyTank = new Tank(random(100, 650), random(100, 300), type_enemy, Color.GRAY, 1, 1, TankClient.this);
+						enemyTank = new Tank(random(100, 650), random(100, 300), type_enemy, 1, 1, TankClient.this);
 					}
 					enemyTanks.add(enemyTank);
 				}
@@ -245,6 +249,7 @@ public class TankClient extends JFrame implements InitValue{
 			}
 		}
 	}
+	//**********************************************************画游戏面板 按键操作
 	/*
 	 * 主窗口面板
 	 */
@@ -329,20 +334,20 @@ public class TankClient extends JFrame implements InitValue{
 				//单轮游戏重生坦克
 				if(!myTank.isTankLive() && reTankNumber > 0){
 					reTankNumber--;
-					myTank = new Tank(random(100, 650), random(100, 300), type_player, Color.RED, 2, 2, TankClient.this);
+					myTank = new Tank(random(100, 650), random(100, 300), type_player, 2, 2, TankClient.this);
 					while(myTank.ZhuangWalls(walls) || myTank.ZhuangTanks(enemyTanks) ) {
 						myTank.setTankLive(false);
-						myTank = new Tank(random(100, 650), random(100, 300), type_player, Color.RED, 2, 2, TankClient.this);
+						myTank = new Tank(random(100, 650), random(100, 300), type_player, 2, 2, TankClient.this);
 					}
 				}
 				//重新开始新的一局
 				if(reTankNumber < 0){
-					myTank = new Tank(random(100, 650), random(100, 300), type_player, Color.RED, 2, 2, TankClient.this);
+					myTank = new Tank(random(100, 650), random(100, 300), type_player, 2, 2, TankClient.this);
 					while(myTank.ZhuangWalls(walls) || myTank.ZhuangTanks(enemyTanks) ) {
 						myTank.setTankLive(false);
-						myTank = new Tank(random(100, 650), random(100, 300), type_player, Color.RED, 2, 2, TankClient.this);
+						myTank = new Tank(random(100, 650), random(100, 300), type_player, 2, 2, TankClient.this);
 					}
-					reTankNumber = CongZhiShengMing;
+					reTankNumber = setLift;
 					killTankNumber = 0;
 				}
 				break;
@@ -362,6 +367,7 @@ public class TankClient extends JFrame implements InitValue{
 			myTank.noKEY(e);
 		}
 	}
+	//**********************************************************一些其他方法
 	/**
 	 * 随机范围数 只能是正数
 	 * @param min

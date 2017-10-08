@@ -2,7 +2,11 @@ package tankwar;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+
+import javax.swing.ImageIcon;
 /**
  * 墙类
  *
@@ -10,6 +14,9 @@ import java.awt.Rectangle;
 public class Wall {
 	TankClient tankClient;
 	private int x,y,w,h;
+	private String Path;
+	private ImageIcon wallImageIcon; 
+	private Image wallPicture;
 	
 	/**
 	 * 构造方法
@@ -19,12 +26,14 @@ public class Wall {
 	 * @param h
 	 * @param tankClient
 	 */
-	public Wall(int x, int y, int w, int h, TankClient tankClient) {
+	public Wall(int x, int y, int w, int h, String path, TankClient tankClient) {
 		this.x = x;
 		this.y = y;
 		this.w = w;
 		this.h = h;
+		this.Path = path;
 		this.tankClient = tankClient;
+		HuaWall();
 	}
 	/**
 	 * 画墙
@@ -37,11 +46,8 @@ public class Wall {
 	 * 画墙图片
 	 * @param g
 	 */
-	public void WallPicture(Graphics g) {
-		Color c = g.getColor();
-		g.setColor(Color.BLACK);
-		g.fillRect(x, y, w, h);
-		g.setColor(c);
+	public void WallPicture(Graphics g) {	
+		g.drawImage(wallPicture, x, y, null);
 	}
 	/**
 	 * 获取墙的矩形
@@ -49,5 +55,13 @@ public class Wall {
 	 */
 	public Rectangle getRect() {
 		return new Rectangle(x, y, w, h);
+	}
+	/**
+	 * 画墙壁
+	 */
+	public void HuaWall(){			
+		wallImageIcon = new ImageIcon(Explode.class.getClassLoader().getResource(Path));
+		wallPicture = wallImageIcon.getImage();
+		wallPicture = wallPicture.getScaledInstance(w, h, Image.SCALE_DEFAULT);
 	}
 }

@@ -1,40 +1,31 @@
 package tankwar;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
 /**
  * 爆炸类
  *
  */
-import java.awt.Toolkit;
 public class Explode {
 	private TankClient tankClient;		//大管家指针
 	private int X, Y;					//爆炸 X Y 坐标
 	private boolean live = true;		//爆炸是否存活
+	private int x1,y1,x2,y2;			//截取图片位置
 	//贴图
-	private int step;							//画到了第几步
-	private static Toolkit toolkit = Toolkit.getDefaultToolkit();			//工具包
-	private static Image[] images = {
-			toolkit.getImage(Explode.class.getClassLoader().getResource("images/0.gif")),
-			toolkit.getImage(Explode.class.getClassLoader().getResource("images/1.gif")),
-			toolkit.getImage(Explode.class.getClassLoader().getResource("images/2.gif")),
-			toolkit.getImage(Explode.class.getClassLoader().getResource("images/3.gif")),
-			toolkit.getImage(Explode.class.getClassLoader().getResource("images/4.gif")),
-			toolkit.getImage(Explode.class.getClassLoader().getResource("images/5.gif")),
-			toolkit.getImage(Explode.class.getClassLoader().getResource("images/6.gif")),
-			toolkit.getImage(Explode.class.getClassLoader().getResource("images/7.gif")),
-			toolkit.getImage(Explode.class.getClassLoader().getResource("images/8.gif")),
-			toolkit.getImage(Explode.class.getClassLoader().getResource("images/9.gif")),
-			toolkit.getImage(Explode.class.getClassLoader().getResource("images/10.gif"))
-	}; 							
+	private static Toolkit toolkit = Toolkit.getDefaultToolkit();			//工具包								
+	private static Image ExplodePicture1 = toolkit.getImage(Explode.class.getClassLoader().getResource("images/爆炸.png"));	//背景图片
+	private static int ExplodeXY1 = 50; 
+	static{
+		ExplodePicture1 = ExplodePicture1.getScaledInstance(200, 200, Image.SCALE_DEFAULT);
+	}
+	
 	/**
 	 * 爆炸是否存活
 	 * @return
 	 */
 	public boolean isLive() {
 		return live;
-	
 	}
 	/**
 	 * 设置爆炸死活
@@ -53,7 +44,7 @@ public class Explode {
 		this.X = x;
 		this.Y = y;
 		this.tankClient = tc;
-		BaoZhaQD();
+		BaoZhaQD1();
 	}
 	/**
 	 * 画爆炸
@@ -61,34 +52,40 @@ public class Explode {
 	 */
 	public void draw(Graphics g){	
 		if(live) {
-			ExplodePicture(g);
+			ExplodePicture1(g);
 		}
 	}
 	/**
-	 * 画爆炸图
+	 * 画爆炸图 切图片
 	 * @param g
 	 */
-	private void ExplodePicture(Graphics g) {
-		g.drawImage(images[step], X, Y, null);
+	private void ExplodePicture1(Graphics g) {
+		g.drawImage(ExplodePicture1, X, Y, X + ExplodeXY1, Y + ExplodeXY1, x1, y1, x2, y2, null);
 	}
 	/**
-	 * 启动爆炸线程
+	 * 启动爆炸线程 切图片
 	 */
-	private void BaoZhaQD(){
+	private void BaoZhaQD1(){
 		new Thread(new Runnable() {
 			public void run() {
 				if(live){				
-					ExplodeXC();
+					ExplodeXC1();
 				}
 			}
 		}).start();
 	}
 	/**
-	 * 爆炸贴图数据更新
+	 * 爆炸贴图数据更新 切图片
 	 */
-	private void ExplodeXC(){				
-		for(step = 0; step < images.length; step++){
-			try {Thread.sleep(10);} catch (Exception e) {}
+	private void ExplodeXC1(){			
+		for(int i = 0; i < 4; i++){
+			for(int j = 0; j < 4; i++){
+				x1 = j * ExplodeXY1;
+				y1 = i * ExplodeXY1;
+				x2 = (j + 1) * ExplodeXY1;
+				y2 = (i + 1) * ExplodeXY1;
+				try {Thread.sleep(100);} catch (Exception e) {}
+			}
 		}
 		live = false;
 		tankClient.explodes.remove(Explode.this);
