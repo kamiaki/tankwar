@@ -37,10 +37,10 @@ public class Tank implements InitValue{
 	private static Toolkit toolkit = Toolkit.getDefaultToolkit();			//工具包
 	private Image Player1Picture;											//人物图片1
 	public static final int Player1X = 79;									//人物大小1
-	public static final int Player1Y = 108;								//人物大小1
+	public static final int Player1Y = 108;									//人物大小1
 	private Image Player2Picture;											//人物图片2
 	public static final int Player2X = 79;									//人物大小2
-	public static final int Player2Y = 108;								//人物大小2
+	public static final int Player2Y = 108;									//人物大小2
 	private int step;														//动画步骤
 	private boolean AtkKey;													//按下射击键
 
@@ -177,11 +177,11 @@ public class Tank implements InitValue{
 	private void TankPicture(Graphics g){
 		switch (TankType) {
 		case type_player:
-			HuaPlayer(g,Player1Picture);
+			HuaPlayer(g,Player1Picture,Player1X,Player1Y);
 			bloodBar.draw(g);
 			break;
 		default:
-			HuaPlayer(g,Player2Picture);
+			HuaPlayer(g,Player2Picture,Player2X,Player2Y);
 			bloodBar.draw(g);
 			break;
 		}
@@ -204,34 +204,34 @@ public class Tank implements InitValue{
 	 * 画玩家1
 	 * @param g
 	 */
-	private void HuaPlayer(Graphics g , Image player){
+	private void HuaPlayer(Graphics g , Image player , int playerX, int playerY){
 		switch (ptDir) {
 		case d4:
-			g.drawImage(player, X, Y, X + Player1X, Y + Player1Y, step * Player1X, Player1Y * 1, (step+1) * Player1X, Player1Y * 2, null);
+			g.drawImage(player, X, Y, X + playerX, Y + playerY, step * playerX, playerY * 1, (step+1) * Player1X, Player1Y * 2, null);
 			break;
 		case d7:
-			g.drawImage(player, X, Y, X + Player1X, Y + Player1Y, step * Player1X, Player1Y * 6, (step+1) * Player1X, Player1Y * 7, null);
+			g.drawImage(player, X, Y, X + playerX, Y + playerY, step * playerX, playerY * 6, (step+1) * Player1X, Player1Y * 7, null);
 			break;
 		case d8:
-			g.drawImage(player, X, Y, X + Player1X, Y + Player1Y, step * Player1X, Player1Y * 3, (step+1) * Player1X, Player1Y * 4, null);
+			g.drawImage(player, X, Y, X + playerX, Y + playerY, step * playerX, playerY * 3, (step+1) * Player1X, Player1Y * 4, null);
 			break;
 		case d9:
-			g.drawImage(player, X, Y, X + Player1X, Y + Player1Y, step * Player1X, Player1Y * 7, (step+1) * Player1X, Player1Y * 8, null);
+			g.drawImage(player, X, Y, X + playerX, Y + playerY, step * playerX, playerY * 7, (step+1) * Player1X, Player1Y * 8, null);
 			break;
 		case d6:
-			g.drawImage(player, X, Y, X + Player1X, Y + Player1Y, step * Player1X, Player1Y * 2, (step+1) * Player1X, Player1Y * 3, null);
+			g.drawImage(player, X, Y, X + playerX, Y + playerY, step * playerX, playerY * 2, (step+1) * Player1X, Player1Y * 3, null);
 			break;
 		case d3:
-			g.drawImage(player, X, Y, X + Player1X, Y + Player1Y, step * Player1X, Player1Y * 5, (step+1) * Player1X, Player1Y * 6, null);
+			g.drawImage(player, X, Y, X + playerX, Y + playerY, step * playerX, playerY * 5, (step+1) * Player1X, Player1Y * 6, null);
 			break;
 		case d2:
-			g.drawImage(player, X, Y, X + Player1X, Y + Player1Y, step * Player1X, Player1Y * 0, (step+1) * Player1X, Player1Y * 1, null);
+			g.drawImage(player, X, Y, X + playerX, Y + playerY, step * playerX, playerY * 0, (step+1) * Player1X, Player1Y * 1, null);
 			break;
 		case d1:
-			g.drawImage(player, X, Y, X + Player1X, Y + Player1Y, step * Player1X, Player1Y * 4, (step+1) * Player1X, Player1Y * 5, null);
+			g.drawImage(player, X, Y, X + playerX, Y + playerY, step * playerX, playerY * 4, (step+1) * Player1X, Player1Y * 5, null);
 			break;
 		default:
-			g.drawImage(player, X, Y, X + Player1X, Y + Player1Y, step * Player1X, Player1Y * 0, (step+1) * Player1X, Player1Y * 1, null);
+			g.drawImage(player, X, Y, X + playerX, Y + playerY, step * playerX, playerY * 0, (step+1) * Player1X, Player1Y * 1, null);
 			break;
 		}
 	}
