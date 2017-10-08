@@ -35,13 +35,17 @@ public class Tank implements InitValue{
 	public int ZhuiZongNumber = 0;						//追踪弹数量
 	//贴图
 	private static Toolkit toolkit = Toolkit.getDefaultToolkit();			//工具包
-	private Image Player1Picture;											//人物图片1
+	private static Image Player1Picture;									//人物图片1
 	public static final int Player1X = 79;									//人物大小1
 	public static final int Player1Y = 108;									//人物大小1
-	private Image Player2Picture;											//人物图片2
+	private static Image Player2Picture;									//人物图片2
 	public static final int Player2X = 79;									//人物大小2
 	public static final int Player2Y = 108;									//人物大小2
+	private static Image FirePicture;										//fire
+	public static final int FireX = 160;									//fire
+	public static final int FireY = 160;									//fire
 	private int step;														//动画步骤
+	private int stepfire;														//动画步骤
 	private boolean AtkKey;													//按下射击键
 
 	/**
@@ -66,10 +70,10 @@ public class Tank implements InitValue{
 		PlayerDongHua();
 		HuaPlayer1Picture();
 		HuaPlayer2Picture();
+		firePicture();
 		TankQD();
 	}
-	//******************************************************************坦克参数设置
-	/**
+ 	/**
 	 * 根据坦克种类设置血量
 	 */
 	public void SetTypeBlood(int Type){
@@ -86,6 +90,7 @@ public class Tank implements InitValue{
 			break;
 		}
 	}
+	//******************************************************************坦克参数设置
 	/**
 	 * 获取血量
 	 * @return
@@ -150,13 +155,19 @@ public class Tank implements InitValue{
 		new Thread(new Runnable() {
 			public void run() {
 				while(live){
-					if(Up || Down || Left || Right || AtkKey || TankType != type_player){
+					if(Up || Down || Left || Right || TankType != type_player){
 						if(step >= 8)step = 0;
 					}else{
 						step = 0;
 					}
-					try {Thread.sleep(100);} catch (Exception e) {}
+					if(AtkKey){
+						if(stepfire >= 8)stepfire = 0;
+					}else{
+						stepfire = 0;
+					};
+					try {Thread.sleep(50);} catch (Exception e) {}
 					step += 1;
+					stepfire += 1;
 				}			
 			}
 		}).start();
@@ -178,6 +189,7 @@ public class Tank implements InitValue{
 		switch (TankType) {
 		case type_player:
 			HuaPlayer(g,Player1Picture,Player1X,Player1Y);
+			Huafire(g,FirePicture,FireX,FireY);
 			bloodBar.draw(g);
 			break;
 		default:
@@ -191,14 +203,30 @@ public class Tank implements InitValue{
 	 */
 	public void HuaPlayer1Picture(){			
 		Player1Picture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/KG1.png"));	//人物1图片
-		Player1Picture = Player1Picture.getScaledInstance(632, 864, Image.SCALE_DEFAULT);
+		Player1Picture = Player1Picture.getScaledInstance(Player1X * 8, Player1Y * 8, Image.SCALE_DEFAULT);
 	}
 	/**
 	 * 画人物2
 	 */
 	public void HuaPlayer2Picture(){			
 		Player2Picture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/KG2.png"));	//人物2图片
-		Player2Picture = Player2Picture.getScaledInstance(632, 864, Image.SCALE_DEFAULT);
+		Player2Picture = Player2Picture.getScaledInstance(Player2X * 8, Player2Y * 8, Image.SCALE_DEFAULT);
+	}
+	/**
+	 * fire
+	 */
+	public void firePicture(){			
+		 FirePicture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/发射.png"));	//发射图片
+		 FirePicture = FirePicture.getScaledInstance(FireX * 8, FireY * 1, Image.SCALE_DEFAULT);
+	}
+	/**
+	 * 画发射
+	 * @param g
+	 */
+	private void Huafire(Graphics g , Image fire , int fireX, int fireY){
+		if(AtkKey){
+			g.drawImage(fire  , X - 45, Y, X - 45 + fireX, Y + fireY, stepfire * fireX, fireY * 0, (stepfire+1) * fireX, fireX * 1, null);
+		}
 	}
 	/**
 	 * 画玩家1
@@ -243,10 +271,10 @@ public class Tank implements InitValue{
 		Rectangle rectangle = null;
 		switch (TankType) {
 		case type_player:
-			rectangle = new Rectangle(X + 13, Y + 13, Player1X - 26, Player1Y - 26);
+			rectangle = new Rectangle(X + 25, Y + 15, Player1X - 50, Player1Y - 30);
 			break;
 		default:
-			rectangle = new Rectangle(X + 13, Y + 13, Player2X - 26, Player2Y - 26);
+			rectangle = new Rectangle(X + 25, Y + 15, Player2X - 50, Player2Y - 30);
 			break;
 		}
 		return rectangle;
@@ -449,7 +477,7 @@ public class Tank implements InitValue{
 			for(int i = 0; i < 8; i++) {
 				direction = directions[i];
 				Missile missile = new Missile(x, y, Misslie_bafang, direction, type_player, 4, 4, tankClient);
-				missile.ZhuiZongPD = false;
+				missile.ZhuiZongPD = true;
 				tankClient.missiles.add(missile);	
 			}			
 		}
@@ -513,17 +541,17 @@ public class Tank implements InitValue{
 			AtkKey = false;
 			break;
 		case KeyEvent.VK_NUMPAD2:		 
-//			if(BaFangNumber > 7) {
+			if(BaFangNumber > 7) {
 				BaFangNumber -= 8;
 				BaFangfire();
-//			}
+			}
 			AtkKey = false;
 			break;
 		case KeyEvent.VK_NUMPAD3:
-//			if(ZhuiZongNumber > 0) {
+			if(ZhuiZongNumber > 0) {
 				ZhuiZongNumber -= 1;
 				ZhuiZongfire();
-//			}
+			}
 			AtkKey = false;
 			break;
 		case KeyEvent.VK_W:

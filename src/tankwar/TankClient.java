@@ -195,7 +195,7 @@ public class TankClient extends JFrame implements InitValue{
 						break;
 					}
 				}
-				try {Thread.sleep(10000);} catch (Exception e) {}	//刷新间隔
+				try {Thread.sleep(4000);} catch (Exception e) {}	//刷新间隔
 			}
 		}
 	}
@@ -307,12 +307,12 @@ public class TankClient extends JFrame implements InitValue{
 			//坦克血量
 			ImageG.drawString("坦克血量:" + myTank.getBlood(), 10, 60);
 			//和子弹数
-			ImageG.drawString("AOE弹数量:" + myTank.BaFangNumber, 710, 20);
-			ImageG.drawString("追踪弹数量:" + myTank.ZhuiZongNumber, 710, 40);
+			ImageG.drawString("AOE弹数量:" + myTank.BaFangNumber, 10, 80);
+			ImageG.drawString("追踪弹数量:" + myTank.ZhuiZongNumber, 10, 100);
 			//******游戏结束 显示总共击杀数
 			if(reTankNumber < 0){
 				background.draw(ImageG);	
-				ImageG.drawString("游戏结束，击杀坦克总数:" + killTankNumber, 320, 225);		
+				ImageG.drawString("游戏结束，击杀坦克总数:" + killTankNumber, 10, 120);		
 			}
 			return image;
 		}
