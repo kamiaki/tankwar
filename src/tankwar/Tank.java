@@ -4,8 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 /**
  * 坦克类
@@ -29,7 +32,31 @@ public class Tank implements InitValue{
 	//各种子弹数量
 	public int BaFangNumber = 0;						//八方炮数量
 	public int ZhuiZongNumber = 0;						//追踪弹数量
-	
+	//贴图
+	private static Toolkit tk = Toolkit.getDefaultToolkit();
+	private static Image[] images = null;
+	private static Map<String, Image> imagesMap = new HashMap<String, Image>();
+	static {
+		images = new Image[]{
+				tk.getImage(Explode.class.getClassLoader().getResource("images/tankL.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/tankLU.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/tankU.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/tankRU.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/tankR.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/tankRD.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/tankD.gif")),
+				tk.getImage(Explode.class.getClassLoader().getResource("images/tankLD.gif")),
+		}; 	
+		imagesMap.put("d4", images[0]);
+		imagesMap.put("d7", images[1]);
+		imagesMap.put("d8", images[2]);
+		imagesMap.put("d9", images[3]);
+		imagesMap.put("d6", images[4]);
+		imagesMap.put("d3", images[5]);
+		imagesMap.put("d2", images[6]);
+		imagesMap.put("d1", images[7]);
+	}
+
 	/**
 	 * 坦克构造函数
 	 * @param x
@@ -134,10 +161,6 @@ public class Tank implements InitValue{
 	 * @param g
 	 */
 	private void TankPicture(Graphics g){
-		Color c = g.getColor();
-		g.setColor(tankColor);
-		g.fillOval(X, Y,tankX, tankY);
-		g.setColor(c);
 		paotong(g);
 		bloodBar.draw(g);
 	}
@@ -153,38 +176,35 @@ public class Tank implements InitValue{
 	 * @param g
 	 */
 	private void paotong(Graphics g){
-		Color c = g.getColor();
-		int shenchu = 3;					//伸出的长度
-		g.setColor(Color.BLACK);
 		switch (ptDir) {
 		case d4:
-			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X - shenchu, Y + Tank.tankY/2);
+			g.drawImage(imagesMap.get("d4"), X, Y, null);	
 			break;
 		case d7:
-			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X, Y);
+			g.drawImage(imagesMap.get("d7"), X, Y, null);
 			break;
 		case d8:
-			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X + Tank.tankX/2, Y - shenchu);
+			g.drawImage(imagesMap.get("d8"), X, Y, null);
 			break;
 		case d9:
-			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X + Tank.tankX, Y);
+			g.drawImage(imagesMap.get("d9"), X, Y, null);
 			break;
 		case d6:
-			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X + Tank.tankX + shenchu, Y + Tank.tankY/2);
+			g.drawImage(imagesMap.get("d6"), X, Y, null);
 			break;
 		case d3:
-			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X + Tank.tankX, Y + Tank.tankY);
+			g.drawImage(imagesMap.get("d3"), X, Y, null);
 			break;
 		case d2:
-			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X + Tank.tankX/2, Y + Tank.tankY + shenchu);
+			g.drawImage(imagesMap.get("d2"), X, Y, null);
 			break;
 		case d1:
-			g.drawLine(X + Tank.tankX/2, Y + Tank.tankY/2, X, Y + Tank.tankY);
+			g.drawImage(imagesMap.get("d1"), X, Y, null);
 			break;
 		default:
+			g.drawImage(imagesMap.get("d2"), X, Y, null);
 			break;
 		}
-		g.setColor(c);
 	}
 	/**
 	 * 启动坦克数据更新程序

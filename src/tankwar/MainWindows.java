@@ -5,6 +5,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 
 public class MainWindows {
@@ -18,8 +19,8 @@ public class MainWindows {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		MainWindows window = new MainWindows();
-		window.frame.setVisible(true);
+					MainWindows window = new MainWindows();
+					window.frame.setVisible(true);
 	}
 	/**
 	 * ¹¹Ôìº¯Êý
