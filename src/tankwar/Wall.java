@@ -39,7 +39,7 @@ public class Wall {
 	 */
 	public void WallPicture(Graphics g) {
 		Color c = g.getColor();
-		g.setColor(Color.GRAY);
+		g.setColor(Color.BLACK);
 		g.fillRect(x, y, w, h);
 		g.setColor(c);
 	}

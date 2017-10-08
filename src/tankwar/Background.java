@@ -37,7 +37,7 @@ public class Background {
 	 */
 	private void BackgroundPicture(Graphics g){
 		Color c = g.getColor();
-		g.setColor(Color.BLACK);
+		g.setColor(Color.GRAY);
 		g.fillRect(X, Y, width, height);
 		g.setColor(c);
 	}
