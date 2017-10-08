@@ -2,23 +2,39 @@ package tankwar;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 /**
  * 爆炸类
  *
  */
+import java.awt.Toolkit;
 public class Explode {
 	private TankClient tankClient;		//大管家指针
 	private int X, Y;					//爆炸 X Y 坐标
-	private int diameter = 0;			//爆炸直径
-	private int diameterMAX = 20;		//爆炸最大直径
 	private boolean live = true;		//爆炸是否存活
-	
+	//贴图
+	private int step;							//画到了第几步
+	private static Toolkit toolkit = Toolkit.getDefaultToolkit();			//工具包
+	private static Image[] images = {
+			toolkit.getImage(Explode.class.getClassLoader().getResource("images/0.gif")),
+			toolkit.getImage(Explode.class.getClassLoader().getResource("images/1.gif")),
+			toolkit.getImage(Explode.class.getClassLoader().getResource("images/2.gif")),
+			toolkit.getImage(Explode.class.getClassLoader().getResource("images/3.gif")),
+			toolkit.getImage(Explode.class.getClassLoader().getResource("images/4.gif")),
+			toolkit.getImage(Explode.class.getClassLoader().getResource("images/5.gif")),
+			toolkit.getImage(Explode.class.getClassLoader().getResource("images/6.gif")),
+			toolkit.getImage(Explode.class.getClassLoader().getResource("images/7.gif")),
+			toolkit.getImage(Explode.class.getClassLoader().getResource("images/8.gif")),
+			toolkit.getImage(Explode.class.getClassLoader().getResource("images/9.gif")),
+			toolkit.getImage(Explode.class.getClassLoader().getResource("images/10.gif"))
+	}; 							
 	/**
 	 * 爆炸是否存活
 	 * @return
 	 */
 	public boolean isLive() {
 		return live;
+	
 	}
 	/**
 	 * 设置爆炸死活
@@ -53,10 +69,7 @@ public class Explode {
 	 * @param g
 	 */
 	private void ExplodePicture(Graphics g) {
-		Color c = g.getColor();
-		g.setColor(Color.ORANGE);
-		g.fillOval(X, Y, diameter, diameter);
-		g.setColor(c);
+		g.drawImage(images[step], X, Y, null);
 	}
 	/**
 	 * 启动爆炸线程
@@ -64,24 +77,18 @@ public class Explode {
 	private void BaoZhaQD(){
 		new Thread(new Runnable() {
 			public void run() {
-				while(live){				
-					ExplodePicture();
-					try {Thread.sleep(10);} catch (Exception e) {}
+				if(live){				
+					ExplodeXC();
 				}
 			}
 		}).start();
 	}
 	/**
-	 * 爆炸贴图
+	 * 爆炸贴图数据更新
 	 */
-	private void ExplodePicture(){
-		for(int i = 1; i < diameterMAX; i += 5){
-			diameter = i;
-			try {Thread.sleep(20);} catch (Exception e) {}
-		}
-		for(int i = diameterMAX; i > 0; i -= 10){
-			diameter = i;
-			try {Thread.sleep(20);} catch (Exception e) {}
+	private void ExplodeXC(){				
+		for(step = 0; step < images.length; step++){
+			try {Thread.sleep(10);} catch (Exception e) {}
 		}
 		live = false;
 		tankClient.explodes.remove(Explode.this);

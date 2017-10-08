@@ -36,8 +36,19 @@ public class TankClient extends JFrame implements InitValue{
 	public List<Wall> walls;							//墙链表
 	public int killTankNumber = 0;						//杀死坦克数
 	public int reTankNumber = 0;						//玩家重生次数
+	
 	/**
-	 * 构造函数
+	 * 构造函数1
+	 */
+	public TankClient(){
+		launchFrame();											//画主窗口
+		initObject();											//初始化一些参数
+		launchGamePanel();										//游戏面板加载
+		new Thread(new PaintThread()).start();					//启动绘图线程
+		this.setVisible(true);									//显示窗口
+	}	
+	/**
+	 * 构造函数2
 	 */
 	public TankClient(MainWindows mainWindows){
 		this.mainWindows = mainWindows;							//主窗口指针赋值
