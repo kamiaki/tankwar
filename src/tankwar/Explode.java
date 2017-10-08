@@ -17,7 +17,7 @@ public class Explode {
 	private static Image ExplodePicture1 = toolkit.getImage(Explode.class.getClassLoader().getResource("images/±¬Õ¨.png"));	//±³¾°Í¼Æ¬
 	private static int ExplodeXY1 = 50; 
 	static{
-		ExplodePicture1 = ExplodePicture1.getScaledInstance(200, 200, Image.SCALE_DEFAULT);
+		ExplodePicture1 = ExplodePicture1.getScaledInstance(ExplodeXY1 * 4, ExplodeXY1 * 4, Image.SCALE_DEFAULT);
 	}
 	
 	/**

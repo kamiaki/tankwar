@@ -31,14 +31,14 @@ public class Missile implements InitValue{
 	private static Map<String, Image> imagesMap = new HashMap<String, Image>();
 	static {
 		images = new Image[]{
-				tk.getImage(Explode.class.getClassLoader().getResource("images/missileL.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/missileLU.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/missileU.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/missileRU.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/missileR.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/missileRD.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/missileD.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/missileLD.gif")),
+				tk.getImage(Missile.class.getClassLoader().getResource("images/missileL.gif")),
+				tk.getImage(Missile.class.getClassLoader().getResource("images/missileLU.gif")),
+				tk.getImage(Missile.class.getClassLoader().getResource("images/missileU.gif")),
+				tk.getImage(Missile.class.getClassLoader().getResource("images/missileRU.gif")),
+				tk.getImage(Missile.class.getClassLoader().getResource("images/missileR.gif")),
+				tk.getImage(Missile.class.getClassLoader().getResource("images/missileRD.gif")),
+				tk.getImage(Missile.class.getClassLoader().getResource("images/missileD.gif")),
+				tk.getImage(Missile.class.getClassLoader().getResource("images/missileLD.gif")),
 		}; 	
 		imagesMap.put("d4", images[0]);
 		imagesMap.put("d7", images[1]);

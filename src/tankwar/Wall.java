@@ -60,7 +60,7 @@ public class Wall {
 	 * »­Ç½±Ú
 	 */
 	public void HuaWall(){			
-		wallImageIcon = new ImageIcon(Explode.class.getClassLoader().getResource(Path));
+		wallImageIcon = new ImageIcon(Wall.class.getClassLoader().getResource(Path));
 		wallPicture = wallImageIcon.getImage();
 		wallPicture = wallPicture.getScaledInstance(w, h, Image.SCALE_DEFAULT);
 	}

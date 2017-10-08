@@ -47,7 +47,7 @@ public class Background implements InitValue{
 	 * »­±³¾°
 	 */
 	public void HuaWall(){			
-		BackGround = toolkit.getImage(Explode.class.getClassLoader().getResource(Path));		//±³¾°Í¼Æ¬
+		BackGround = toolkit.getImage(Background.class.getClassLoader().getResource(Path));		//±³¾°Í¼Æ¬
 		BackGround = BackGround.getScaledInstance(WindowsXlength + PanelX * (-2), WindowsYlength + PanelY * (-2), Image.SCALE_DEFAULT);
 	}
 }

@@ -1,9 +1,7 @@
 package tankwar;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.RenderingHints.Key;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -101,7 +99,7 @@ public class TankClient extends JFrame implements InitValue{
 		//…˙√¸ ˝
 		reTankNumber = setLift;
 		//º”‘ÿ±≥æ∞ ’œ∞≠
-		background = new Background(0, 0, "images/±≥æ∞.png", this);
+		background = new Background(0, 0, "images/±≥æ∞2.png", this);
 		walls = new ArrayList<Wall>();
 		walls.add(new Wall(200, 100, 100, 50, "images/«Ω.png", TankClient.this));
 		walls.add(new Wall(400, 300, 50, 100, "images/«Ω.png", TankClient.this));

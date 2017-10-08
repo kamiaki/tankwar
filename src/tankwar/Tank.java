@@ -23,7 +23,6 @@ public class Tank implements InitValue{
 	private int blood = 100;							//生命值
 	private int bloodZong = 100;						//生命值总数
 	private BloodBar bloodBar = new BloodBar();			//血条类
-	public static final int tankX = 30, tankY = 30;		//坦克大小
 	private int X, Y, xspeed, yspeed, oldX, oldY;		//坦克位置 速度
 	private boolean Up = false, Down = false,Left = false, Right = false;//坦克按键方向
 	private Direction FangXiang = Direction.d5;			//坦克移动方向
@@ -35,29 +34,13 @@ public class Tank implements InitValue{
 	public int BaFangNumber = 0;						//八方炮数量
 	public int ZhuiZongNumber = 0;						//追踪弹数量
 	//贴图
-	private static Toolkit tk = Toolkit.getDefaultToolkit();
-	private static Image[] images = null;
-	private static Map<String, Image> imagesMap = new HashMap<String, Image>();
-	static {
-		images = new Image[]{
-				tk.getImage(Explode.class.getClassLoader().getResource("images/tankL.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/tankLU.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/tankU.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/tankRU.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/tankR.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/tankRD.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/tankD.gif")),
-				tk.getImage(Explode.class.getClassLoader().getResource("images/tankLD.gif")),
-		}; 	
-		imagesMap.put("d4", images[0]);
-		imagesMap.put("d7", images[1]);
-		imagesMap.put("d8", images[2]);
-		imagesMap.put("d9", images[3]);
-		imagesMap.put("d6", images[4]);
-		imagesMap.put("d3", images[5]);
-		imagesMap.put("d2", images[6]);
-		imagesMap.put("d1", images[7]);
-	}
+	private static Toolkit toolkit = Toolkit.getDefaultToolkit();			//工具包
+	private Image Player1Picture;											//人物图片1
+	private static final int Player1XY = 50;								//人物大小1
+	private Image Player2Picture;											//人物图片2
+	private static final int Player2XY = 50;								//人物大小2
+	private int step;														//动画步骤
+	private boolean AtkKey;													//按下射击键
 
 	/**
 	 * 坦克构造函数
@@ -67,7 +50,7 @@ public class Tank implements InitValue{
 	 * @param Co
 	 * @param w
 	 */
-	public Tank(int x, int y, int type, int xspeed, int yspeed, TankClient w){
+ 	public Tank(int x, int y, int type, int xspeed, int yspeed, TankClient w){
 		this.X = x;
 		this.Y = y;
 		this.TankType = type;
@@ -78,6 +61,9 @@ public class Tank implements InitValue{
 		this.tankClient = w;
 		this.live = true;
 		SetTypeBlood(this.TankType);
+		PlayerDongHua();
+		HuaPlayer1Picture();
+		HuaPlayer2Picture();
 		TankQD();
 	}
 	//******************************************************************坦克参数设置
@@ -154,7 +140,25 @@ public class Tank implements InitValue{
 	public int getX() {
 		return X;
 	}
-	//******************************************************************画出坦克
+	//******************************************************************画出人物
+	/**
+	 * 玩家动画 帧数
+	 */
+	private void PlayerDongHua(){
+		new Thread(new Runnable() {
+			public void run() {
+				while(live){
+					if(Up || Down || Left || Right || AtkKey){
+						step += 1;
+						if(step > 20)step = 1;
+					}else{
+						step = 0;
+					}
+					try {Thread.sleep(10);} catch (Exception e) {}
+				}			
+			}
+		}).start();
+	}	
 	/**
 	 * 画坦克
 	 * @param g
@@ -169,41 +173,119 @@ public class Tank implements InitValue{
 	 * @param g
 	 */
 	private void TankPicture(Graphics g){
-		HuaTank(g);
-		bloodBar.draw(g);
-	}
-	/**
-	 * 画坦克
-	 * @param g
-	 */
-	private void HuaTank(Graphics g){
-		switch (ptDir) {
-		case d4:
-			g.drawImage(imagesMap.get("d4"), X, Y, null);	
-			break;
-		case d7:
-			g.drawImage(imagesMap.get("d7"), X, Y, null);
-			break;
-		case d8:
-			g.drawImage(imagesMap.get("d8"), X, Y, null);
-			break;
-		case d9:
-			g.drawImage(imagesMap.get("d9"), X, Y, null);
-			break;
-		case d6:
-			g.drawImage(imagesMap.get("d6"), X, Y, null);
-			break;
-		case d3:
-			g.drawImage(imagesMap.get("d3"), X, Y, null);
-			break;
-		case d2:
-			g.drawImage(imagesMap.get("d2"), X, Y, null);
-			break;
-		case d1:
-			g.drawImage(imagesMap.get("d1"), X, Y, null);
+		switch (TankType) {
+		case type_player:
+			HuaPlayer1(g);
+			bloodBar.draw(g);
 			break;
 		default:
-			g.drawImage(imagesMap.get("d2"), X, Y, null);
+			HuaPlayer2(g);
+			bloodBar.draw(g);
+			break;
+		}
+	}
+	/**
+	 * 画人物1
+	 */
+	public void HuaPlayer1Picture(){			
+		Player1Picture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/人物1.png"));	//人物1图片
+		Player1Picture = Player1Picture.getScaledInstance(Player1XY * 4, Player1XY * 4, Image.SCALE_DEFAULT);
+	}
+	/**
+	 * 画人物2
+	 */
+	public void HuaPlayer2Picture(){			
+		Player2Picture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/人物2.png"));	//人物2图片
+		Player2Picture = Player2Picture.getScaledInstance(Player1XY * 4, Player1XY * 4, Image.SCALE_DEFAULT);
+	}
+	/**
+	 * 画玩家1
+	 * @param g
+	 */
+	private void HuaPlayer1(Graphics g){
+		switch (ptDir) {
+		case d4:
+			if(AtkKey){
+				if(step < 5){
+					g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, Player1XY * 0, Player1XY, Player1XY * 1, Player1XY * 2, null);
+				}else if(step < 10){
+					g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, Player1XY * 1, Player1XY, Player1XY * 2, Player1XY * 2, null);
+				}else if(step < 15){
+					g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, Player1XY * 2, Player1XY, Player1XY * 3, Player1XY * 2, null);
+				}else{
+					g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, Player1XY * 3, Player1XY, Player1XY * 4, Player1XY * 2, null);
+				}
+			}
+			if(step == 0){
+				g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, Player1XY * 0, Player1XY, Player1XY * 1, Player1XY * 2, null);
+			}else if(step < 5){
+				g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, Player1XY * 0, Player1XY, Player1XY * 1, Player1XY * 2, null);
+			}else if(step < 10){
+				g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, Player1XY * 1, Player1XY, Player1XY * 2, Player1XY * 2, null);
+			}else if(step < 15){
+				g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, Player1XY * 2, Player1XY, Player1XY * 3, Player1XY * 2, null);
+			}else{
+				g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, Player1XY * 3, Player1XY, Player1XY * 4, Player1XY * 2, null);
+			}
+			break;
+		case d7:
+			g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, 0, Player1XY, Player1XY, Player1XY * 2, null);
+			break;
+		case d8:
+			g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, 0, Player1XY * 3, Player1XY, Player1XY * 4, null);
+			break;
+		case d9:
+			g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, 0, Player1XY * 2, Player1XY, Player1XY * 3, null);
+			break;
+		case d6:
+			g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, 0, Player1XY * 2, Player1XY, Player1XY * 3, null);
+			break;
+		case d3:
+			g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, 0, Player1XY * 2, Player1XY, Player1XY * 3, null);
+			break;
+		case d2:
+			g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, 0, 0, Player1XY, Player1XY, null);
+			break;
+		case d1:
+			g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, 0, Player1XY, Player1XY, Player1XY * 2, null);
+			break;
+		default:
+			g.drawImage(Player1Picture, X, Y, X + Player1XY, Y + Player1XY, 0, Player1XY, Player1XY, Player1XY * 2, null);
+			break;
+		}
+	}
+	/**
+	 * 画玩家1
+	 * @param g
+	 */
+	private void HuaPlayer2(Graphics g){
+		switch (ptDir) {
+		case d4:
+			g.drawImage(Player2Picture, X, Y, X + Player2XY, Y + Player2XY, 0, Player2XY, Player2XY, Player2XY * 2, null);
+			break;
+		case d7:
+			g.drawImage(Player2Picture, X, Y, X + Player2XY, Y + Player2XY, 0, Player2XY, Player2XY, Player2XY * 2, null);
+			break;
+		case d8:
+			g.drawImage(Player2Picture, X, Y, X + Player2XY, Y + Player2XY, 0, Player2XY * 3, Player2XY, Player2XY * 4, null);
+			break;
+		case d9:
+			g.drawImage(Player2Picture, X, Y, X + Player2XY, Y + Player2XY, 0, Player2XY * 2, Player2XY, Player2XY * 3, null);
+			break;
+		case d6:
+			g.drawImage(Player2Picture, X, Y, X + Player2XY, Y + Player2XY, 0, Player2XY * 2, Player2XY, Player2XY * 3, null);
+			break;
+		case d3:
+			g.drawImage(Player2Picture, X, Y, X + Player2XY, Y + Player2XY, 0, Player2XY * 2, Player2XY, Player2XY * 3, null);
+			break;
+		case d2:
+			g.drawImage(Player2Picture, X, Y, X + Player2XY, Y + Player2XY, 0, 0, Player2XY, Player2XY, null);
+			break;
+		case d1:
+			g.drawImage(Player2Picture, X, Y, X + Player2XY, Y + Player2XY, 0, Player2XY, Player2XY, Player2XY * 2, null);
+			break;
+		default:
+			g.drawImage(Player2Picture, X, Y, X + Player2XY, Y + Player2XY, 0, Player2XY, Player2XY, Player2XY * 2, null);
 			break;
 		}
 	}
@@ -212,8 +294,18 @@ public class Tank implements InitValue{
 	 * @return
 	 */
 	public Rectangle getRect(){
-		return new Rectangle(X, Y, tankX, tankY);
+		Rectangle rectangle = null;
+		switch (TankType) {
+		case type_player:
+			rectangle = new Rectangle(X, Y, Player1XY, Player1XY);
+			break;
+		default:
+			rectangle = new Rectangle(X, Y, Player2XY, Player2XY);
+			break;
+		}
+		return rectangle;
 	}
+	//******************************************************************人物线程更新
 	/**
 	 * 启动坦克数据更新程序
 	 */
@@ -348,7 +440,7 @@ public class Tank implements InitValue{
 			//子弹初始方向 炮筒初始方向  //如果没有动就不改变方向了
 			if( FangXiang != Direction.d5 ) this.ptDir = this.FangXiang; 
 			//坦克不能出界
-			if(X < 0 || Y < 0 || X + Tank.tankX > WindowsXlength || Y + Tank.tankY + 30 > WindowsYlength) {
+			if(X < 0 || Y < 0 || X + Tank.Player1XY > WindowsXlength || Y + Tank.Player1XY + 30 > WindowsYlength) {
 				this.stay();
 			}
 		}
@@ -371,8 +463,8 @@ public class Tank implements InitValue{
 				while(live){
 					sleepInt = random.nextInt(2000) + 500;
 					if(tankClient != null){
-						x = Tank.this.X + Tank.tankX/2 - Missile.missileXlength/2;	//从对象中心发射子弹
-						y = Tank.this.Y + Tank.tankY/2 - Missile.missileYlength/2;	//从对象中心发射子弹
+						x = Tank.this.X + Tank.Player1XY/2 - Missile.missileXlength/2;	//从对象中心发射子弹
+						y = Tank.this.Y + Tank.Player1XY/2 - Missile.missileYlength/2;	//从对象中心发射子弹
 						if(ptDir == Direction.d5)ptDir = Direction.d6;				//炮弹不能不动
 						//new 出一发子弹
 						Missile missile = new Missile(x, y, Misslie_putong, ptDir, type_enemy, 2, 2, tankClient);
@@ -389,11 +481,12 @@ public class Tank implements InitValue{
 	 */
 	public void fire(){
 		if(tankClient != null && Tank.this.isTankLive()){
-			int x = this.X + Tank.tankX/2 - Missile.missileXlength/2;	//从对象中心发射子弹
-			int y = this.Y + Tank.tankY/2 - Missile.missileYlength/2;	//从对象中心发射子弹
+			int x = this.X + Tank.Player1XY/2 - Missile.missileXlength/2;	//从对象中心发射子弹
+			int y = this.Y + Tank.Player1XY/2 - Missile.missileYlength/2;	//从对象中心发射子弹
 			if(ptDir == Direction.d5)ptDir = Direction.d6;				//炮弹不能不动
 			//new 出一发子弹
 			Missile missile = new Missile(x, y, Misslie_putong, ptDir, type_player, 5, 5, tankClient);
+			missile.ZhuiZongPD = false;
 			tankClient.missiles.add(missile);	
 		}
 	}		
@@ -403,13 +496,14 @@ public class Tank implements InitValue{
 	 */
 	public void BaFangfire(){
 		if(tankClient != null && Tank.this.isTankLive()){
-			int x = this.X + Tank.tankX/2 - Missile.missileXlength/2;	//从对象中心发射子弹
-			int y = this.Y + Tank.tankY/2 - Missile.missileYlength/2;	//从对象中心发射子弹
+			int x = this.X + Tank.Player1XY/2 - Missile.missileXlength/2;	//从对象中心发射子弹
+			int y = this.Y + Tank.Player1XY/2 - Missile.missileYlength/2;	//从对象中心发射子弹
 			Direction[] directions = Direction.values();
 			Direction direction = Direction.d1;
 			for(int i = 0; i < 8; i++) {
 				direction = directions[i];
 				Missile missile = new Missile(x, y, Misslie_bafang, direction, type_player, 4, 4, tankClient);
+				missile.ZhuiZongPD = false;
 				tankClient.missiles.add(missile);	
 			}			
 		}
@@ -420,8 +514,8 @@ public class Tank implements InitValue{
 	 */
 	public void ZhuiZongfire(){
 		if(tankClient != null && Tank.this.isTankLive()){
-			int x = this.X + Tank.tankX/2 - Missile.missileXlength/2;	//从对象中心发射子弹
-			int y = this.Y + Tank.tankY/2 - Missile.missileYlength/2;	//从对象中心发射子弹
+			int x = this.X + Tank.Player1XY/2 - Missile.missileXlength/2;	//从对象中心发射子弹
+			int y = this.Y + Tank.Player1XY/2 - Missile.missileYlength/2;	//从对象中心发射子弹
 			if(ptDir == Direction.d5)ptDir = Direction.d6;				//炮弹不能不动
 			Missile missile = new Missile(x, y, Misslie_zhuizong, ptDir, type_player, 3, 3, tankClient);
 			missile.ZhuiZongPD = true;
@@ -435,7 +529,14 @@ public class Tank implements InitValue{
 	public void KEY(KeyEvent e){
 		int Key = e.getKeyCode();
 		switch (Key) {
-		case KeyEvent.VK_NUMPAD0:		
+		case KeyEvent.VK_NUMPAD1:
+			AtkKey = true;
+			break;
+		case KeyEvent.VK_NUMPAD2:
+			AtkKey = true;
+			break;
+		case KeyEvent.VK_NUMPAD3:
+			AtkKey = true;
 			break;
 		case KeyEvent.VK_W:
 			Up = true;
@@ -463,19 +564,21 @@ public class Tank implements InitValue{
 		switch (Key) {
 		case KeyEvent.VK_NUMPAD1:
 			fire();
+			AtkKey = false;
 			break;
-		case KeyEvent.VK_NUMPAD2:
-			 
+		case KeyEvent.VK_NUMPAD2:		 
 //			if(BaFangNumber > 7) {
 				BaFangNumber -= 8;
 				BaFangfire();
 //			}
+			AtkKey = false;
 			break;
 		case KeyEvent.VK_NUMPAD3:
 //			if(ZhuiZongNumber > 0) {
 				ZhuiZongNumber -= 1;
 				ZhuiZongfire();
 //			}
+			AtkKey = false;
 			break;
 		case KeyEvent.VK_W:
 			Up = false;
@@ -524,8 +627,8 @@ public class Tank implements InitValue{
 		private void BloodBarPicture(Graphics g) {
 			Color c = g.getColor();
 			g.setColor(Color.RED);
-			g.drawRect(X, Y-12, tankX, 5);
-			int w = tankX * blood/bloodZong;
+			g.drawRect(X, Y-12, Player1XY, 5);
+			int w = Player1XY * blood/bloodZong;
 			g.fillRect(X, Y-12, w, 5);
 			g.setColor(c);
 		}
