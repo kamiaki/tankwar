@@ -84,7 +84,7 @@ public class Explode {
 				y1 = i * ExplodeXY1;
 				x2 = (j + 1) * ExplodeXY1;
 				y2 = (i + 1) * ExplodeXY1;
-				try {Thread.sleep(100);} catch (Exception e) {}
+				try {Thread.sleep(70);} catch (Exception e) {}
 			}
 		}
 		live = false;

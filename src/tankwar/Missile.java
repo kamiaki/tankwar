@@ -199,8 +199,8 @@ public class Missile implements InitValue{
 							Tank enemytank = enemytanks.get(i);
 							Distance = Math.sqrt(Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2) + Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2));
 							if(Distance < ZhuiJiDistance) {
-								tankx = enemytank.getX();
-								tanky = enemytank.getY();	
+								tankx = enemytank.getX() + enemytank.Player2X/2;
+								tanky = enemytank.getY() + enemytank.Player2Y/2;	
 								if(Missile.this.X < tankx && Missile.this.Y == tanky){
 									MissileFangXiang = Direction.d6;
 								}else if(Missile.this.X < tankx && Missile.this.Y < tanky){
@@ -312,7 +312,7 @@ public class Missile implements InitValue{
 	 */
 	public boolean hitTank(Tank t){
 		if(this.getRect().intersects( t.getRect()) && t.isTankLive() && Missile.this.getMissileType() != t.getTankType() ){			
-			Explode e = new Explode(this.X, this.Y, this.tankClient);	//添加一个爆炸
+			Explode e = new Explode(t.getX() + t.Player1X/2, t.getY() + t.Player1Y/2, this.tankClient);	//添加一个爆炸
 			tankClient.explodes.add(e);
 			
 			tankClient.ZhenDong();										//大管家 震动方法			

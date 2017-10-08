@@ -101,8 +101,8 @@ public class TankClient extends JFrame implements InitValue{
 		//º”‘ÿ±≥æ∞ ’œ∞≠
 		background = new Background(0, 0, "images/±≥æ∞2.png", this);
 		walls = new ArrayList<Wall>();
-		walls.add(new Wall(200, 100, 100, 50, "images/«Ω.png", TankClient.this));
-		walls.add(new Wall(400, 300, 50, 100, "images/«Ω.png", TankClient.this));
+		walls.add(new Wall(500, 100, 200, 50, "images/«Ω.png", TankClient.this));
+		walls.add(new Wall(1000, 10, 50, 500, "images/«Ω.png", TankClient.this));
 		//º”‘ÿŒÔ∆∑
 		Items = new ArrayList<Item>();
 		new Thread(new CreatItem()).start();
