@@ -271,10 +271,10 @@ public class Tank implements InitValue{
 		Rectangle rectangle = null;
 		switch (TankType) {
 		case type_player:
-			rectangle = new Rectangle(X + 25, Y + 15, Player1X - 50, Player1Y - 30);
+			rectangle = new Rectangle(X + 25, Y + 25, Player1X - 50, Player1Y - 30);
 			break;
 		default:
-			rectangle = new Rectangle(X + 25, Y + 15, Player2X - 50, Player2Y - 30);
+			rectangle = new Rectangle(X + 25, Y + 25, Player2X - 50, Player2Y - 30);
 			break;
 		}
 		return rectangle;
@@ -477,7 +477,7 @@ public class Tank implements InitValue{
 			for(int i = 0; i < 8; i++) {
 				direction = directions[i];
 				Missile missile = new Missile(x, y, Misslie_bafang, direction, type_player, 4, 4, tankClient);
-				missile.ZhuiZongPD = true;
+				missile.ZhuiZongPD = false;
 				tankClient.missiles.add(missile);	
 			}			
 		}
@@ -698,7 +698,7 @@ public class Tank implements InitValue{
 		for(int i = 0; i < items.size(); i++) {
 			itemsType = eat(items.get(i));
 			if(itemsType != ItemsType.NoItem) {
-				items.remove(items.get(i));
+				if(items.get(i) != null)items.remove(items.get(i));
 				return itemsType;
 			}
 		}

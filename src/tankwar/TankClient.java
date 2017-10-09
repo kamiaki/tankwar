@@ -101,16 +101,16 @@ public class TankClient extends JFrame implements InitValue{
 		//加载背景 障碍
 		background = new Background(0, 0, "images/背景2.png", this);
 		walls = new ArrayList<Wall>();
-		walls.add(new Wall(500, 100, 200, 50, "images/墙.png", TankClient.this));
-		walls.add(new Wall(1000, 10, 50, 500, "images/墙.png", TankClient.this));
+		walls.add(new Wall(500, 400, 400, 50, "images/墙.png", TankClient.this));
+		walls.add(new Wall(1200, 200, 50, 500, "images/墙.png", TankClient.this));
 		//加载物品
 		Items = new ArrayList<Item>();
 		new Thread(new CreatItem()).start();
 		//加载玩家坦克
-		myTank = new Tank(random(100, 650), random(100, 300), type_player, 2, 2, this);
+		myTank = new Tank(random(100, 650), random(100, 300), type_player, 3, 3, this);
 		while(myTank.ZhuangWalls(walls)) {
 			myTank.setTankLive(false);
-			myTank = new Tank(random(100, 650), random(100, 300), type_player, 2, 2, this);
+			myTank = new Tank(random(100, 650), random(100, 300), type_player, 3, 3, this);
 		}
 		//加载敌人坦克
 		enemyTanks = new ArrayList<Tank>();
@@ -162,7 +162,7 @@ public class TankClient extends JFrame implements InitValue{
 						Items.remove(Items.get(0));
 					}				
 				}
-				if(Items.size() < 3){
+				if(Items.size() < 5){
 					switch (itemsType) {
 					case Blood:
 						//添加血
@@ -195,7 +195,7 @@ public class TankClient extends JFrame implements InitValue{
 						break;
 					}
 				}
-				try {Thread.sleep(4000);} catch (Exception e) {}	//刷新间隔
+				try {Thread.sleep(3000);} catch (Exception e) {}	//刷新间隔
 			}
 		}
 	}
@@ -224,8 +224,8 @@ public class TankClient extends JFrame implements InitValue{
 				for(int i = 0; i < missiles.size(); i++){						//炮弹 触碰检测
 					Missile missile = missiles.get(i);	
 					if(missile != null) {
-						missile.hitTanks(enemyTanks);
-						missile.hitTank(myTank);
+						if(enemyTanks != null)missile.hitTanks(enemyTanks);
+						if(myTank != null)missile.hitTank(myTank);
 					}
 				}
 				//刷新玩家吃到物品事件
@@ -332,18 +332,18 @@ public class TankClient extends JFrame implements InitValue{
 				//单轮游戏重生坦克
 				if(!myTank.isTankLive() && reTankNumber > 0){
 					reTankNumber--;
-					myTank = new Tank(random(100, 650), random(100, 300), type_player, 2, 2, TankClient.this);
+					myTank = new Tank(random(100, 650), random(100, 300), type_player, 3, 3, TankClient.this);
 					while(myTank.ZhuangWalls(walls) || myTank.ZhuangTanks(enemyTanks) ) {
 						myTank.setTankLive(false);
-						myTank = new Tank(random(100, 650), random(100, 300), type_player, 2, 2, TankClient.this);
+						myTank = new Tank(random(100, 650), random(100, 300), type_player, 3, 3, TankClient.this);
 					}
 				}
 				//重新开始新的一局
 				if(reTankNumber < 0){
-					myTank = new Tank(random(100, 650), random(100, 300), type_player, 2, 2, TankClient.this);
+					myTank = new Tank(random(100, 650), random(100, 300), type_player, 3, 3, TankClient.this);
 					while(myTank.ZhuangWalls(walls) || myTank.ZhuangTanks(enemyTanks) ) {
 						myTank.setTankLive(false);
-						myTank = new Tank(random(100, 650), random(100, 300), type_player, 2, 2, TankClient.this);
+						myTank = new Tank(random(100, 650), random(100, 300), type_player, 3, 3, TankClient.this);
 					}
 					reTankNumber = setLift;
 					killTankNumber = 0;

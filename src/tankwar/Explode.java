@@ -94,7 +94,7 @@ public class Explode {
 			}
 		}
 		live = false;
-		tankClient.explodes.remove(Explode.this);
+		if(Explode.this != null)tankClient.explodes.remove(Explode.this);
 	}	
 	//*********************************************************************************±¬Õ¨2
 	/**
@@ -129,7 +129,7 @@ public class Explode {
 				try {Thread.sleep(30);} catch (Exception e) {}
 			}
 		live = false;
-		tankClient.explodes.remove(Explode.this);
+		if(Explode.this != null)tankClient.explodes.remove(Explode.this);
 		}
 	}
 }
