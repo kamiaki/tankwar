@@ -191,7 +191,7 @@ public class Missile implements InitValue{
 	 * @return
 	 */
 	public Rectangle getRect(){
-		return new Rectangle(X + 15, Y + 15, missileXlength - 30, missileYlength - 30);
+		return new Rectangle(X + 25, Y + 25, missileXlength - 50, missileYlength - 50);
 	}
 	//*****************************************************************************子弹更新线程
 	/**
@@ -241,8 +241,8 @@ public class Missile implements InitValue{
 							Tank enemytank = enemytanks.get(i);
 							Distance = Math.sqrt(Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2) + Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2));
 							if(Distance < ZhuiJiDistance) {
-								tankx = enemytank.getX() + enemytank.Player2X/2;
-								tanky = enemytank.getY() + enemytank.Player2Y/2;	
+								tankx = enemytank.getX() + Tank.Player2X/3;
+								tanky = enemytank.getY() + Tank.Player2Y/3;	
 								if(Missile.this.X < tankx && Missile.this.Y == tanky){
 									MissileFangXiang = Direction.d6;
 								}else if(Missile.this.X < tankx && Missile.this.Y < tanky){
