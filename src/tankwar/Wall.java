@@ -1,10 +1,8 @@
 package tankwar;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
 /**
@@ -14,10 +12,15 @@ import javax.swing.ImageIcon;
 public class Wall {
 	TankClient tankClient;
 	private int x,y,w,h;
-	private String Path;
-	private ImageIcon wallImageIcon; 
 	private Image wallPicture;
 	
+	private static ImageIcon wallImageIcon; 
+	static{
+		/**
+		 * »­Ç½±Ú
+		 */
+		wallImageIcon = new ImageIcon(Wall.class.getClassLoader().getResource("images/Ç½.png"));
+	}
 	/**
 	 * ¹¹Ôì·½·¨
 	 * @param x
@@ -26,12 +29,11 @@ public class Wall {
 	 * @param h
 	 * @param tankClient
 	 */
-	public Wall(int x, int y, int w, int h, String path, TankClient tankClient) {
+	public Wall(int x, int y, int w, int h,TankClient tankClient) {
 		this.x = x;
 		this.y = y;
 		this.w = w;
 		this.h = h;
-		this.Path = path;
 		this.tankClient = tankClient;
 		HuaWall();
 	}
@@ -60,7 +62,6 @@ public class Wall {
 	 * »­Ç½±Ú
 	 */
 	public void HuaWall(){			
-		wallImageIcon = new ImageIcon(Wall.class.getClassLoader().getResource(Path));
 		wallPicture = wallImageIcon.getImage();
 		wallPicture = wallPicture.getScaledInstance(w, h, Image.SCALE_DEFAULT);
 	}

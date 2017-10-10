@@ -6,6 +6,7 @@ package tankwar;
 public interface InitValue {
 	public static final int WindowsXlength = 1600;		//窗口长
 	public static final int WindowsYlength = 900;		//窗口宽
+	public static final int WindowsSide = 200;			//边距
 	public static final int PanelX = -5,PanelY = -5;	//游戏面板位置
 	
 	public static final int type_player = 0;			//玩家类别

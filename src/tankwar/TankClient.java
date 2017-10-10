@@ -99,18 +99,18 @@ public class TankClient extends JFrame implements InitValue{
 		//生命数
 		reTankNumber = setLift;
 		//加载背景 障碍
-		background = new Background(0, 0, "images/背景2.png", this);
+		background = new Background(0, 0, this);
 		walls = new ArrayList<Wall>();
-		walls.add(new Wall(500, 400, 400, 50, "images/墙.png", TankClient.this));
-		walls.add(new Wall(1200, 200, 50, 500, "images/墙.png", TankClient.this));
+		walls.add(new Wall(500, 400, 400, 50, TankClient.this));
+		walls.add(new Wall(1200, 200, 50, 500, TankClient.this));
 		//加载物品
 		Items = new ArrayList<Item>();
 		new Thread(new CreatItem()).start();
 		//加载玩家坦克
-		myTank = new Tank(random(100, 650), random(100, 300), type_player, 3, 3, this);
+		myTank = new Tank(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, this);
 		while(myTank.ZhuangWalls(walls)) {
 			myTank.setTankLive(false);
-			myTank = new Tank(random(100, 650), random(100, 300), type_player, 3, 3, this);
+			myTank = new Tank(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, this);
 		}
 		//加载敌人坦克
 		enemyTanks = new ArrayList<Tank>();
@@ -134,10 +134,10 @@ public class TankClient extends JFrame implements InitValue{
 			// TODO 自动生成的方法存根
 			while(CreateEnemyTanksPD){
 				if(enemyTanks.size() < 5){
-					Tank enemyTank = new Tank(random(100, 650), random(100, 300), type_enemy, 1, 1, TankClient.this);
+					Tank enemyTank = new Tank(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_enemy, 1, 1, TankClient.this);
 					while(enemyTank.ZhuangWalls(walls) || enemyTank.ZhuangTanks(enemyTanks) || enemyTank.ZhuangTank(myTank)) {
 						enemyTank.setTankLive(false);
-						enemyTank = new Tank(random(100, 650), random(100, 300), type_enemy, 1, 1, TankClient.this);
+						enemyTank = new Tank(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_enemy, 1, 1, TankClient.this);
 					}
 					enemyTanks.add(enemyTank);
 				}
@@ -166,28 +166,28 @@ public class TankClient extends JFrame implements InitValue{
 					switch (itemsType) {
 					case Blood:
 						//添加血
-						item = new Item(random(100, 650), random(100, 300), 10, 10, ItemsType.Blood, TankClient.this);
+						item = new Item(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), 10, 10, ItemsType.Blood, TankClient.this);
 						while(item.ZhuangWalls(walls)) {
 							item.setLive(false);
-							item = new Item(random(100, 650), random(100, 300), 10, 10, ItemsType.Blood, TankClient.this);
+							item = new Item(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), 10, 10, ItemsType.Blood, TankClient.this);
 						}
 						Items.add(item);
 						break;
 					case WeaponBaFang:
 						//添加枪八方炮
-						item = new Item(random(100, 650), random(100, 300), 10, 10, ItemsType.WeaponBaFang, TankClient.this);
+						item = new Item(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), 10, 10, ItemsType.WeaponBaFang, TankClient.this);
 						while(item.ZhuangWalls(walls)) {
 							item.setLive(false);
-							item = new Item(random(100, 650), random(100, 300), 10, 10, ItemsType.WeaponBaFang, TankClient.this);
+							item = new Item(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), 10, 10, ItemsType.WeaponBaFang, TankClient.this);
 						}
 						Items.add(item);
 						break;
 					case WeaponZhuiZong:
 						//添加枪追踪炮
-						item = new Item(random(100, 650), random(100, 300), 10, 10, ItemsType.WeaponZhuiZong, TankClient.this);
+						item = new Item(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), 10, 10, ItemsType.WeaponZhuiZong, TankClient.this);
 						while(item.ZhuangWalls(walls)) {
 							item.setLive(false);
-							item = new Item(random(100, 650), random(100, 300), 10, 10, ItemsType.WeaponZhuiZong, TankClient.this);
+							item = new Item(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), 10, 10, ItemsType.WeaponZhuiZong, TankClient.this);
 						}
 						Items.add(item);
 						break;
@@ -272,11 +272,13 @@ public class TankClient extends JFrame implements InitValue{
 				wall.draw(ImageG);
 			}
 			//对象信息
-			if( myTank.isTankLive() )myTank.draw(ImageG);					//画自己的 tank	
 			for(int i = 0; i < enemyTanks.size(); i++){						//画敌人的坦克
 				Tank tank = enemyTanks.get(i);
 				tank.draw(ImageG);	
-			}											
+			}
+			
+			if( myTank.isTankLive() )myTank.draw(ImageG);					//画自己的 tank	
+			
 			for(int i = 0; i < missiles.size(); i++){						//画炮弹
 				Missile missile = missiles.get(i);		
 				missile.draw(ImageG);
@@ -332,18 +334,18 @@ public class TankClient extends JFrame implements InitValue{
 				//单轮游戏重生坦克
 				if(!myTank.isTankLive() && reTankNumber > 0){
 					reTankNumber--;
-					myTank = new Tank(random(100, 650), random(100, 300), type_player, 3, 3, TankClient.this);
+					myTank = new Tank(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, TankClient.this);
 					while(myTank.ZhuangWalls(walls) || myTank.ZhuangTanks(enemyTanks) ) {
 						myTank.setTankLive(false);
-						myTank = new Tank(random(100, 650), random(100, 300), type_player, 3, 3, TankClient.this);
+						myTank = new Tank(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, TankClient.this);
 					}
 				}
 				//重新开始新的一局
 				if(reTankNumber < 0){
-					myTank = new Tank(random(100, 650), random(100, 300), type_player, 3, 3, TankClient.this);
+					myTank = new Tank(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, TankClient.this);
 					while(myTank.ZhuangWalls(walls) || myTank.ZhuangTanks(enemyTanks) ) {
 						myTank.setTankLive(false);
-						myTank = new Tank(random(100, 650), random(100, 300), type_player, 3, 3, TankClient.this);
+						myTank = new Tank(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, TankClient.this);
 					}
 					reTankNumber = setLift;
 					killTankNumber = 0;

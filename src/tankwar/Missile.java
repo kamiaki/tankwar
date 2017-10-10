@@ -24,13 +24,60 @@ public class Missile implements InitValue{
 	private int MissileZhongLei = Misslie_putong;						//炮弹种类
 	public boolean ZhuiZongPD = false;									//追踪弹是否启动
 	private static int ZhuiJiDistance = 100;								//追击距离
-	//贴图
+	//************************************************************************************************贴图
+	private int stepBF;																//八方子弹步数
+	private int stepPTX;															//普通子弹步数
+	private int stepPTY;															//普通子弹步数
+	private int stepZZX;															//zz子弹步数
+	private int stepZZY;															//zz子弹步数
 	private static Toolkit tk = Toolkit.getDefaultToolkit();
+	public static final int missileXlength = 50;									//子弹的大小
+	public static final int missileYlength = 50;									//子弹的大小
+	//敌人子弹
+	private int step;																//步数
 	private static Image[] MissileImages = new Image[10];							//八个图片
-	public static final int missileXlength = 100;									//子弹的大小
-	public static final int missileYlength = 100;									//子弹的大小
 	private static Map<String, Image> MapImage = new HashMap<String, Image>();		//哈希表
-	private int step;
+	static{																			// 画子弹
+		MissileImages[4] = tk.getImage(Tank.class.getClassLoader().getResource("images/D4.png"));	
+		MissileImages[4] = MissileImages[4].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
+		MissileImages[7] = tk.getImage(Tank.class.getClassLoader().getResource("images/D7.png"));	
+		MissileImages[7] = MissileImages[7].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
+		MissileImages[8] = tk.getImage(Tank.class.getClassLoader().getResource("images/D8.png"));	
+		MissileImages[8] = MissileImages[8].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
+		MissileImages[9] = tk.getImage(Tank.class.getClassLoader().getResource("images/D9.png"));	
+		MissileImages[9] = MissileImages[9].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
+		MissileImages[6] = tk.getImage(Tank.class.getClassLoader().getResource("images/D6.png"));	
+		MissileImages[6] = MissileImages[6].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
+		MissileImages[3] = tk.getImage(Tank.class.getClassLoader().getResource("images/D3.png"));	
+		MissileImages[3] = MissileImages[3].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
+		MissileImages[2] = tk.getImage(Tank.class.getClassLoader().getResource("images/D2.png"));	
+		MissileImages[2] = MissileImages[2].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
+		MissileImages[1] = tk.getImage(Tank.class.getClassLoader().getResource("images/D1.png"));	
+		MissileImages[1] = MissileImages[1].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
+		MapImage.put("D4", MissileImages[4]);
+		MapImage.put("D7", MissileImages[7]);
+		MapImage.put("D8", MissileImages[8]);
+		MapImage.put("D9", MissileImages[9]);
+		MapImage.put("D6", MissileImages[6]);
+		MapImage.put("D3", MissileImages[3]);
+		MapImage.put("D2", MissileImages[2]);
+		MapImage.put("D1", MissileImages[1]);
+	}
+	//普通子弹
+	private static Image missilePT = tk.getImage(Missile.class.getClassLoader().getResource("images/石头.png"));
+	static{
+		missilePT = missilePT.getScaledInstance(missileXlength * 5, missileXlength * 2, Image.SCALE_DEFAULT);
+	}	
+	//八方子弹
+	private static Image missileBF = tk.getImage(Missile.class.getClassLoader().getResource("images/风.png"));
+	static{
+		missileBF = missileBF.getScaledInstance(missileXlength * 4, missileXlength, Image.SCALE_DEFAULT);
+	}	
+	//追踪子弹
+	private static Image missileZZ = tk.getImage(Missile.class.getClassLoader().getResource("images/气功弹.png"));
+	static{
+		missileZZ = missileZZ.getScaledInstance(missileXlength * 5, missileXlength * 2, Image.SCALE_DEFAULT);
+	}	
 	
 	/**
 	 * 构造函数
@@ -52,7 +99,6 @@ public class Missile implements InitValue{
 		this.tankClient = tc;
 		this.live = true;
 		MissileDongHua();
-		HuaMissilePicture();
 		MissileQD();
 	}
 	//*****************************************************************************子弹参数设置
@@ -92,41 +138,28 @@ public class Missile implements InitValue{
 		new Thread(new Runnable() {
 			public void run() {
 				while(live){				
-						if(step >= 3)step = 0;
+					if(step > 2)step = 0;
+					if(stepBF > 3)stepBF = 0;
+					if(stepPTY > 1) stepPTY = 0;
+					if(stepPTX > 4)	stepPTX = 0;
+					if(stepZZY > 1) stepZZY = 0;
+					if(stepZZX > 4)	stepZZX = 0;
 					try {Thread.sleep(50);} catch (Exception e) {}
+					
 					step += 1;
-				}			
+					stepBF += 1;
+					stepPTX += 1;
+					if(stepPTX > 4){
+						stepPTY += 1;
+					}
+					stepZZX += 1;
+					if(stepZZX > 4){
+						stepZZY += 1;
+					}
+				}				
+					
 			}
 		}).start();
-	}
-	/**
-	 * 画子弹
-	 */
-	public void HuaMissilePicture(){			
-		MissileImages[4] = tk.getImage(Tank.class.getClassLoader().getResource("images/D4.png"));	
-		MissileImages[4] = MissileImages[4].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[7] = tk.getImage(Tank.class.getClassLoader().getResource("images/D7.png"));	
-		MissileImages[7] = MissileImages[7].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[8] = tk.getImage(Tank.class.getClassLoader().getResource("images/D8.png"));	
-		MissileImages[8] = MissileImages[8].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[9] = tk.getImage(Tank.class.getClassLoader().getResource("images/D9.png"));	
-		MissileImages[9] = MissileImages[9].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[6] = tk.getImage(Tank.class.getClassLoader().getResource("images/D6.png"));	
-		MissileImages[6] = MissileImages[6].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[3] = tk.getImage(Tank.class.getClassLoader().getResource("images/D3.png"));	
-		MissileImages[3] = MissileImages[3].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[2] = tk.getImage(Tank.class.getClassLoader().getResource("images/D2.png"));	
-		MissileImages[2] = MissileImages[2].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[1] = tk.getImage(Tank.class.getClassLoader().getResource("images/D1.png"));	
-		MissileImages[1] = MissileImages[1].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MapImage.put("D4", MissileImages[4]);
-		MapImage.put("D7", MissileImages[7]);
-		MapImage.put("D8", MissileImages[8]);
-		MapImage.put("D9", MissileImages[9]);
-		MapImage.put("D6", MissileImages[6]);
-		MapImage.put("D3", MissileImages[3]);
-		MapImage.put("D2", MissileImages[2]);
-		MapImage.put("D1", MissileImages[1]);
 	}
 	/**
 	 * 画子弹
@@ -144,7 +177,19 @@ public class Missile implements InitValue{
 	private void MissilePicture(Graphics g){	
 		switch (MissileType) {
 		case type_player:
-			HuaMissile(g,MapImage,missileXlength,missileYlength);
+			switch (MissileZhongLei) {
+			case Misslie_putong:
+				HuaMissilePT(g,missileXlength,missileYlength);
+				break;
+			case Misslie_bafang:
+				HuaMissileBF(g,missileXlength,missileYlength);
+				break;
+			case Misslie_zhuizong:
+				HuaMissileZZ(g,missileXlength,missileYlength);
+				break;
+			default:
+				break;
+			}		
 			break;
 		default:
 			HuaMissile(g,MapImage,missileXlength,missileYlength);
@@ -152,7 +197,7 @@ public class Missile implements InitValue{
 		}
 	}
 	/**
-	 * 画子弹
+	 * 画敌人子弹
 	 * @param g
 	 */
 	private void HuaMissile(Graphics g ,  Map<String, Image> mapImage , int missileX, int missileY){
@@ -185,13 +230,34 @@ public class Missile implements InitValue{
 			g.drawImage(MapImage.get("D4"), X, Y, X + missileXlength, Y + missileYlength, step * missileXlength, missileYlength * 0, (step+1) * missileXlength, missileYlength * 1, null);
 			break;
 		}
+	}	
+	/**
+	 * 画普通子弹
+	 * @param g
+	 */
+	private void HuaMissilePT(Graphics g , int missileX, int missileY){
+		g.drawImage(missilePT, X, Y, X + missileXlength, Y + missileYlength, stepPTX * missileXlength, stepPTY * missileYlength, (stepPTX+1) * missileXlength, (stepPTY+1) * missileYlength, null);
+	}
+	/**
+	 * 画八方子弹
+	 * @param g
+	 */
+	private void HuaMissileBF(Graphics g , int missileX, int missileY){
+		g.drawImage(missileBF, X, Y, X + missileXlength, Y + missileYlength, stepBF * missileXlength, 0 * missileYlength, (stepBF+1) * missileXlength, 1 * missileYlength, null);
+	}
+	/**
+	 * 追踪子弹
+	 * @param g
+	 */
+	private void HuaMissileZZ(Graphics g , int missileX, int missileY){
+		g.drawImage(missileZZ, X, Y, X + missileXlength, Y + missileYlength, stepZZX * missileXlength, stepZZY * missileYlength, (stepZZX+1) * missileXlength, (stepZZY+1) * missileYlength, null);
 	}
 	/**
 	 * 获取子弹的矩形
 	 * @return
 	 */
 	public Rectangle getRect(){
-		return new Rectangle(X + 40, Y + 40, missileXlength - 80, missileYlength - 80);
+		return new Rectangle(X + missileXlength/2, Y + missileXlength/2, missileXlength/2, missileYlength/2);
 	}
 	//*****************************************************************************子弹更新线程
 	/**

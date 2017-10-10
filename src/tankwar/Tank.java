@@ -34,6 +34,11 @@ public class Tank implements InitValue{
 	public int BaFangNumber = 0;						//八方炮数量
 	public int ZhuiZongNumber = 0;						//追踪弹数量
 	//贴图
+	private int step;														//动画步骤
+	private int stepfireX;													//动画步骤
+	private int stepfireY;													//动画步骤
+	private boolean AtkKey;													//按下射击键
+	
 	private static Toolkit toolkit = Toolkit.getDefaultToolkit();			//工具包
 	private static Image Player1Picture;									//人物图片1
 	public static final int Player1X = 79;									//人物大小1
@@ -42,11 +47,18 @@ public class Tank implements InitValue{
 	public static final int Player2X = 79;									//人物大小2
 	public static final int Player2Y = 108;									//人物大小2
 	private static Image FirePicture;										//fire
-	public static final int FireX = 160;									//fire
-	public static final int FireY = 160;									//fire
-	private int step;														//动画步骤
-	private int stepfire;														//动画步骤
-	private boolean AtkKey;													//按下射击键
+	public static final int FireX = 120;									//fire
+	public static final int FireY = 120;									//fire
+	static{	
+			Player1Picture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/KG1.png"));	//人物1图片
+			Player1Picture = Player1Picture.getScaledInstance(Player1X * 8, Player1Y * 8, Image.SCALE_DEFAULT);
+		
+			Player2Picture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/KG2.png"));	//人物2图片
+			Player2Picture = Player2Picture.getScaledInstance(Player2X * 8, Player2Y * 8, Image.SCALE_DEFAULT);
+	
+			FirePicture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/使用技能.png"));	//发射图片
+			FirePicture = FirePicture.getScaledInstance(FireX * 5, FireY * 4, Image.SCALE_DEFAULT);
+	}
 
 	/**
 	 * 坦克构造函数
@@ -67,10 +79,8 @@ public class Tank implements InitValue{
 		this.tankClient = w;
 		this.live = true;
 		SetTypeBlood(this.TankType);
-		PlayerDongHua();
-		HuaPlayer1Picture();
-		HuaPlayer2Picture();
-		firePicture();
+		PlayerMoveDongHua();
+		PlayerFireDongHua();
 		TankQD();
 	}
  	/**
@@ -149,25 +159,53 @@ public class Tank implements InitValue{
 	}
 	//******************************************************************画出人物
 	/**
-	 * 玩家动画 帧数
+	 * 玩家动画 运动帧数
 	 */
-	private void PlayerDongHua(){
+	private void PlayerMoveDongHua(){
 		new Thread(new Runnable() {
 			public void run() {
 				while(live){
 					if(Up || Down || Left || Right || TankType != type_player){
-						if(step >= 8)step = 0;
+						if(step > 7)step = 0;
 					}else{
 						step = 0;
 					}
 					if(AtkKey){
-						if(stepfire >= 8)stepfire = 0;
+						if(stepfireY > 3) stepfireY = 0;
+						if(stepfireX > 4) stepfireX = 0;
 					}else{
-						stepfire = 0;
+						stepfireX = 0;
+						stepfireY = 0;
 					};
 					try {Thread.sleep(50);} catch (Exception e) {}
 					step += 1;
-					stepfire += 1;
+					stepfireX += 1;
+					if(stepfireX > 4){
+						stepfireY += 1;
+					}
+				}			
+			}
+		}).start();
+	}	
+	/**
+	 * 玩家动画 发射招式帧数
+	 */
+	private void PlayerFireDongHua(){
+		new Thread(new Runnable() {
+			public void run() {
+				while(live){
+					if(AtkKey){
+						if(stepfireY > 3) stepfireY = 0;
+						if(stepfireX > 4) stepfireX = 0;
+					}else{
+						stepfireX = 0;
+						stepfireY = 0;
+					};
+					try {Thread.sleep(20);} catch (Exception e) {}
+					stepfireX += 1;
+					if(stepfireX > 4){
+						stepfireY += 1;
+					}
 				}			
 			}
 		}).start();
@@ -178,14 +216,14 @@ public class Tank implements InitValue{
 	 */
 	public void draw(Graphics g){	
 		if(live) {
-			TankPicture(g);	
+			PlayerPicture(g);	
 		}	
 	}
 	/**
-	 * 坦克贴图
+	 * 对象贴图贴图
 	 * @param g
 	 */
-	private void TankPicture(Graphics g){
+	private void PlayerPicture(Graphics g){
 		switch (TankType) {
 		case type_player:
 			HuaPlayer(g,Player1Picture,Player1X,Player1Y);
@@ -196,36 +234,6 @@ public class Tank implements InitValue{
 			HuaPlayer(g,Player2Picture,Player2X,Player2Y);
 			bloodBar.draw(g);
 			break;
-		}
-	}
-	/**
-	 * 画人物1
-	 */
-	public void HuaPlayer1Picture(){			
-		Player1Picture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/KG1.png"));	//人物1图片
-		Player1Picture = Player1Picture.getScaledInstance(Player1X * 8, Player1Y * 8, Image.SCALE_DEFAULT);
-	}
-	/**
-	 * 画人物2
-	 */
-	public void HuaPlayer2Picture(){			
-		Player2Picture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/KG2.png"));	//人物2图片
-		Player2Picture = Player2Picture.getScaledInstance(Player2X * 8, Player2Y * 8, Image.SCALE_DEFAULT);
-	}
-	/**
-	 * fire
-	 */
-	public void firePicture(){			
-		 FirePicture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/发射.png"));	//发射图片
-		 FirePicture = FirePicture.getScaledInstance(FireX * 8, FireY * 1, Image.SCALE_DEFAULT);
-	}
-	/**
-	 * 画发射
-	 * @param g
-	 */
-	private void Huafire(Graphics g , Image fire , int fireX, int fireY){
-		if(AtkKey){
-			g.drawImage(fire  , X - 45, Y, X - 45 + fireX, Y + fireY, stepfire * fireX, fireY * 0, (stepfire+1) * fireX, fireX * 1, null);
 		}
 	}
 	/**
@@ -261,6 +269,15 @@ public class Tank implements InitValue{
 		default:
 			g.drawImage(player, X, Y, X + playerX, Y + playerY, step * playerX, playerY * 0, (step+1) * Player1X, Player1Y * 1, null);
 			break;
+		}
+	}
+	/**
+	 * 画发射
+	 * @param g
+	 */
+	private void Huafire(Graphics g , Image fire , int fireX, int fireY){
+		if(AtkKey){
+			g.drawImage(fire  , X - 35, Y - 15, X + fireX, Y + fireY, stepfireX * fireX, stepfireY * fireY, (stepfireX+1) * fireX, (stepfireY+1) * fireY, null);
 		}
 	}
 	/**
