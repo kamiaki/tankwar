@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class Missile implements InitValue{
 	//大管家指针
-	private TankClient tankClient = null;								//大管家指针
+	private PlayerClient tankClient = null;								//大管家指针
 	//子弹参数
 	private boolean live = true;										//子弹是否活着
 	private int X, Y, xspeed, yspeed, oldX, oldY;						//子弹位置 和 速度
@@ -31,28 +31,28 @@ public class Missile implements InitValue{
 	private int stepZZX;															//zz子弹步数
 	private int stepZZY;															//zz子弹步数
 	private static Toolkit tk = Toolkit.getDefaultToolkit();
-	public static final int missileXlength = 50;									//子弹的大小
-	public static final int missileYlength = 50;									//子弹的大小
+	public static final int missileXlength = 80;									//子弹的大小
+	public static final int missileYlength = 80;									//子弹的大小
 	//敌人子弹
 	private int step;																//步数
 	private static Image[] MissileImages = new Image[10];							//八个图片
 	private static Map<String, Image> MapImage = new HashMap<String, Image>();		//哈希表
 	static{																			// 画子弹
-		MissileImages[4] = tk.getImage(Tank.class.getClassLoader().getResource("images/D4.png"));	
+		MissileImages[4] = tk.getImage(Player.class.getClassLoader().getResource("images/D4.png"));	
 		MissileImages[4] = MissileImages[4].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[7] = tk.getImage(Tank.class.getClassLoader().getResource("images/D7.png"));	
+		MissileImages[7] = tk.getImage(Player.class.getClassLoader().getResource("images/D7.png"));	
 		MissileImages[7] = MissileImages[7].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[8] = tk.getImage(Tank.class.getClassLoader().getResource("images/D8.png"));	
+		MissileImages[8] = tk.getImage(Player.class.getClassLoader().getResource("images/D8.png"));	
 		MissileImages[8] = MissileImages[8].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[9] = tk.getImage(Tank.class.getClassLoader().getResource("images/D9.png"));	
+		MissileImages[9] = tk.getImage(Player.class.getClassLoader().getResource("images/D9.png"));	
 		MissileImages[9] = MissileImages[9].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[6] = tk.getImage(Tank.class.getClassLoader().getResource("images/D6.png"));	
+		MissileImages[6] = tk.getImage(Player.class.getClassLoader().getResource("images/D6.png"));	
 		MissileImages[6] = MissileImages[6].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[3] = tk.getImage(Tank.class.getClassLoader().getResource("images/D3.png"));	
+		MissileImages[3] = tk.getImage(Player.class.getClassLoader().getResource("images/D3.png"));	
 		MissileImages[3] = MissileImages[3].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[2] = tk.getImage(Tank.class.getClassLoader().getResource("images/D2.png"));	
+		MissileImages[2] = tk.getImage(Player.class.getClassLoader().getResource("images/D2.png"));	
 		MissileImages[2] = MissileImages[2].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
-		MissileImages[1] = tk.getImage(Tank.class.getClassLoader().getResource("images/D1.png"));	
+		MissileImages[1] = tk.getImage(Player.class.getClassLoader().getResource("images/D1.png"));	
 		MissileImages[1] = MissileImages[1].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
 		MapImage.put("D4", MissileImages[4]);
 		MapImage.put("D7", MissileImages[7]);
@@ -86,7 +86,7 @@ public class Missile implements InitValue{
 	 * @param missileFangXiang
 	 * @param tc
 	 */
-	public Missile(int x, int y,int MissileZhongLei, Direction missileFangXiang, int tankType, int xspeed,int yspeed, TankClient tc) {
+	public Missile(int x, int y,int MissileZhongLei, Direction missileFangXiang, int tankType, int xspeed,int yspeed, PlayerClient tc) {
 		this.X = x;
 		this.Y = y;
 		this.MissileZhongLei = MissileZhongLei;
@@ -298,13 +298,13 @@ public class Missile implements InitValue{
 				int tankx = 0;
 				int tanky = 0;
 				double Distance = 0;
-				List<Tank> enemytanks = tankClient.enemyTanks;
+				List<Player> enemytanks = tankClient.enemyPlayers;
 				//如果玩家坦克活着再追
 				while(live){
 					//吃到追踪弹再追踪
 					while(ZhuiZongPD) {
 						for(int i = 0; i < enemytanks.size(); i++) {
-							Tank enemytank = enemytanks.get(i);
+							Player enemytank = enemytanks.get(i);
 							Distance = Math.sqrt(Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2) + Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2));
 							if(Distance < ZhuiJiDistance) {
 								tankx = enemytank.getX();
@@ -418,7 +418,7 @@ public class Missile implements InitValue{
 	 * @param t
 	 * @return
 	 */
-	public boolean hitTank(Tank t){
+	public boolean hitTank(Player t){
 		if(this.getRect().intersects( t.getRect()) && t.isTankLive() && Missile.this.getMissileType() != t.getTankType() ){			
 			Explode e = new Explode(this.X, this.Y, this.tankClient);	//添加一个爆炸
 			tankClient.explodes.add(e);
@@ -464,7 +464,7 @@ public class Missile implements InitValue{
 	 * 击中坦克链表
 	 * @param enemyTanks
 	 */
-	public boolean hitTanks(List<Tank> enemyTanks) {
+	public boolean hitTanks(List<Player> enemyTanks) {
 		for(int i = 0; i < enemyTanks.size(); i++){
 			if(hitTank(enemyTanks.get(i))){
 				if(enemyTanks.get(i) != null) {

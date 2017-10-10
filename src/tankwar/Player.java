@@ -11,98 +11,120 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 /**
- * 坦克类
+ * 角色类
  *
  */
-public class Tank implements InitValue{	
+public class Player implements InitValue{	
 	//大客户指针
-	private TankClient tankClient;						//大管家
-	//坦克属性
-	private boolean live = true;						//坦克是否活着
-	private int TankType = type_player;					//坦克种类
-	private int blood = 100;							//生命值
-	private int bloodZong = 100;						//生命值总数
-	private BloodBar bloodBar = new BloodBar();			//血条类
-	private int X, Y, xspeed, yspeed, oldX, oldY;		//坦克位置 速度
-	private boolean Up = false, Down = false,Left = false, Right = false;//坦克按键方向
-	private Direction FangXiang = Direction.d5;			//坦克移动方向
-	private Direction ptDir = Direction.d4;				//子弹 和 炮筒方向
-	private int TrackingDistance = 1000;					//坦克追击半径
+	private PlayerClient playerClient;										//大管家
+	//角色属性
+	private boolean live = true;											//角色是否活着
+	private int playerType = type_player;									//角色身份
+	private int blood = 100;												//生命值
+	private int bloodZong = 100;											//生命值总数
+	private int Mana = 100;													//生命值
+	private int ManaZong = 100;												//生命值总数
+	private Bar bar = new Bar();								//血条类
+	private int X, Y, oldX, oldY, xspeed, yspeed;							//角色位置 速度
+	private boolean Up = false, Down = false,Left = false, Right = false;	//玩家角色 按键方向
+	private Direction MoveFangXiang = Direction.d5;							//角色 移动方向
+	private Direction DrawFangXiang = Direction.d4;							//子弹 和 炮筒方向
+	private int FollowDistance = 1000;										//角色追击距离
+	private int XuLi = 0;													//角色蓄力
+	private int XuLiZhi = 30;												//角色蓄力值
 	//随机器
-	public static Random random = new Random();			//随机器
-	//各种子弹数量
-	public int BaFangNumber = 0;						//八方炮数量
-	public int ZhuiZongNumber = 0;						//追踪弹数量
+	public static Random random = new Random();								//随机器
 	//贴图
-	private int step;														//动画步骤
-	private int stepfireX;													//动画步骤
-	private int stepfireY;													//动画步骤
-	private boolean AtkKey;													//按下射击键
+	private int step;														//移动动画步数
+	private int stepfireX;													//出招动画步数 图片x坐标
+	private int stepfireY;													//出招动画步数 图片y坐标
+	private boolean AtkKey;													//按下射击键 判断
 	
 	private static Toolkit toolkit = Toolkit.getDefaultToolkit();			//工具包
 	private static Image Player1Picture;									//人物图片1
-	public static final int Player1X = 79;									//人物大小1
-	public static final int Player1Y = 108;									//人物大小1
+	public static final int Player1X = 79;									//人物X大小1
+	public static final int Player1Y = 108;									//人物Y大小1
 	private static Image Player2Picture;									//人物图片2
-	public static final int Player2X = 79;									//人物大小2
-	public static final int Player2Y = 108;									//人物大小2
-	private static Image FirePicture;										//fire
-	public static final int FireX = 120;									//fire
-	public static final int FireY = 120;									//fire
+	public static final int Player2X = 79;									//人物X大小2
+	public static final int Player2Y = 108;									//人物Y大小2
+	private static Image FirePicture;										//出招贴图
+	public static final int FireX = 120;									//出招大小X
+	public static final int FireY = 120;									//出招大小Y
 	static{	
-			Player1Picture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/KG1.png"));	//人物1图片
-			Player1Picture = Player1Picture.getScaledInstance(Player1X * 8, Player1Y * 8, Image.SCALE_DEFAULT);
-		
-			Player2Picture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/KG2.png"));	//人物2图片
-			Player2Picture = Player2Picture.getScaledInstance(Player2X * 8, Player2Y * 8, Image.SCALE_DEFAULT);
-	
-			FirePicture = toolkit.getImage(Tank.class.getClassLoader().getResource("images/使用技能.png"));	//发射图片
-			FirePicture = FirePicture.getScaledInstance(FireX * 5, FireY * 4, Image.SCALE_DEFAULT);
+		//人物1图片
+		Player1Picture = toolkit.getImage(Player.class.getClassLoader().getResource("images/KG1.png"));	
+		Player1Picture = Player1Picture.getScaledInstance(Player1X * 8, Player1Y * 8, Image.SCALE_DEFAULT);
+		//人物2图片
+		Player2Picture = toolkit.getImage(Player.class.getClassLoader().getResource("images/KG2.png"));	
+		Player2Picture = Player2Picture.getScaledInstance(Player2X * 8, Player2Y * 8, Image.SCALE_DEFAULT);
+		FirePicture = toolkit.getImage(Player.class.getClassLoader().getResource("images/使用技能.png"));	
+		//发射图片
+		FirePicture = FirePicture.getScaledInstance(FireX * 5, FireY * 4, Image.SCALE_DEFAULT);
 	}
 
 	/**
-	 * 坦克构造函数
+	 * 角色构造函数
 	 * @param x
 	 * @param y
 	 * @param good
 	 * @param Co
 	 * @param w
 	 */
- 	public Tank(int x, int y, int type, int xspeed, int yspeed, TankClient w){
+ 	public Player(int x, int y, int type, int xspeed, int yspeed, PlayerClient w){
 		this.X = x;
 		this.Y = y;
-		this.TankType = type;
+		this.playerType = type;
 		this.xspeed = xspeed;
 		this.yspeed = xspeed;
 		this.oldX = x;
 		this.oldY = y;
-		this.tankClient = w;
+		this.playerClient = w;
 		this.live = true;
-		SetTypeBlood(this.TankType);
-		PlayerMoveDongHua();
-		PlayerFireDongHua();
-		TankQD();
+		SetTypeBar(this.playerType);	//设置血量 魔法值
+		PlayerMoveDongHua();			//启动角色移动动画
+		PlayerFireDongHua();			//启动角色出招动画
+		PlayerQD();						//启动角色线程程序
 	}
  	/**
-	 * 根据坦克种类设置血量
+	 * 根据角色种类设置血量
 	 */
-	public void SetTypeBlood(int Type){
+	public void SetTypeBar(int Type){
 		switch (Type) {
 		case type_player:
-			blood = 100;
+			blood = 200;
 			bloodZong = blood;
+			Mana = 200;													
+			ManaZong = Mana;
 			break;
 		case type_enemy:
 			blood = 60;
+			bloodZong = blood;
+			break;
+		case type_boss:
+			blood = 2000;
 			bloodZong = blood;
 			break;
 		default:
 			break;
 		}
 	}
-	//******************************************************************坦克参数设置
+	//******************************************************************角色参数设置
 	/**
-	 * 获取血量
+	 *  * 获取魔法值
+	 * @return
+	 */
+	public int getMana() {
+		return Mana;
+	}
+	/**
+	 *  * 改变魔法值
+	 * @return
+	 */
+	public void setMana(int mana) {
+		Mana = mana;
+	}
+	/**
+	 *  * 获取血量
 	 * @return
 	 */
 	public int getBlood() {
@@ -116,18 +138,18 @@ public class Tank implements InitValue{
 		this.blood = blood;
 	}
 	/**
-	 * 判断是什么坦克
+	 * 判断是什么角色
 	 * @return
 	 */
 	public int getTankType() {
-		return TankType;
+		return playerType;
 	}
 	/**
-	 * 设置是什么坦克
+	 * 设置是什么角色
 	 * @param good
 	 */
 	public void setTankType(int type) {
-		TankType = type;
+		playerType = type;
 	}
 	/**
 	 * 判断死活
@@ -144,14 +166,14 @@ public class Tank implements InitValue{
 		this.live = tankLive;
 	}	
 	/**
-	 * 坦克x位置
+	 * 角色x位置
 	 * @return
 	 */
 	public int getY() {
 		return Y;
 	}
 	/**
-	 * 坦克Y位置
+	 * 角色Y位置
 	 * @return
 	 */
 	public int getX() {
@@ -165,24 +187,13 @@ public class Tank implements InitValue{
 		new Thread(new Runnable() {
 			public void run() {
 				while(live){
-					if(Up || Down || Left || Right || TankType != type_player){
+					if(Up || Down || Left || Right || playerType != type_player){
 						if(step > 7)step = 0;
 					}else{
 						step = 0;
 					}
-					if(AtkKey){
-						if(stepfireY > 3) stepfireY = 0;
-						if(stepfireX > 4) stepfireX = 0;
-					}else{
-						stepfireX = 0;
-						stepfireY = 0;
-					};
 					try {Thread.sleep(50);} catch (Exception e) {}
 					step += 1;
-					stepfireX += 1;
-					if(stepfireX > 4){
-						stepfireY += 1;
-					}
 				}			
 			}
 		}).start();
@@ -195,6 +206,7 @@ public class Tank implements InitValue{
 			public void run() {
 				while(live){
 					if(AtkKey){
+						if(XuLi < XuLiZhi)XuLi++;
 						if(stepfireY > 3) stepfireY = 0;
 						if(stepfireX > 4) stepfireX = 0;
 					}else{
@@ -211,7 +223,7 @@ public class Tank implements InitValue{
 		}).start();
 	}	
 	/**
-	 * 画坦克
+	 * 画角色
 	 * @param g
 	 */
 	public void draw(Graphics g){	
@@ -224,15 +236,15 @@ public class Tank implements InitValue{
 	 * @param g
 	 */
 	private void PlayerPicture(Graphics g){
-		switch (TankType) {
+		switch (playerType) {
 		case type_player:
 			HuaPlayer(g,Player1Picture,Player1X,Player1Y);
 			Huafire(g,FirePicture,FireX,FireY);
-			bloodBar.draw(g);
+			bar.draw(g);
 			break;
 		default:
 			HuaPlayer(g,Player2Picture,Player2X,Player2Y);
-			bloodBar.draw(g);
+			bar.draw(g);
 			break;
 		}
 	}
@@ -241,7 +253,7 @@ public class Tank implements InitValue{
 	 * @param g
 	 */
 	private void HuaPlayer(Graphics g , Image player , int playerX, int playerY){
-		switch (ptDir) {
+		switch (DrawFangXiang) {
 		case d4:
 			g.drawImage(player, X, Y, X + playerX, Y + playerY, step * playerX, playerY * 1, (step+1) * Player1X, Player1Y * 2, null);
 			break;
@@ -281,12 +293,12 @@ public class Tank implements InitValue{
 		}
 	}
 	/**
-	 * 获取坦克的矩形
+	 * 获取角色的矩形
 	 * @return
 	 */
 	public Rectangle getRect(){
 		Rectangle rectangle = null;
-		switch (TankType) {
+		switch (playerType) {
 		case type_player:
 			rectangle = new Rectangle(X + 25, Y + 25, Player1X - 50, Player1Y - 30);
 			break;
@@ -298,10 +310,10 @@ public class Tank implements InitValue{
 	}
 	//******************************************************************人物线程更新
 	/**
-	 * 启动坦克数据更新程序
+	 * 启动角色数据更新程序
 	 */
-	private void TankQD(){
-		if(this.TankType == type_player){
+	private void PlayerQD(){
+		if(this.playerType == type_player){
 			MoveThread();
 		}else{
 			autoMove();
@@ -332,27 +344,27 @@ public class Tank implements InitValue{
 				int tankx = 0;
 				int tanky = 0;
 				while(live){
-					//如果玩家坦克活着再追
-					if( tankClient.myTank.isTankLive() ){
-						tankx = tankClient.myTank.X;
-						tanky = tankClient.myTank.Y;	
-						if( Math.sqrt(Math.pow(Math.abs(Tank.this.X - tankx), 2) + Math.pow(Math.abs(Tank.this.Y - tanky), 2)) < TrackingDistance ){
-							if(Tank.this.X < tankx && Tank.this.Y == tanky){
-								FangXiang = Direction.d6;
-							}else if(Tank.this.X < tankx && Tank.this.Y < tanky){
-								FangXiang = Direction.d3;
-							}else if(Tank.this.X == tankx && Tank.this.Y < tanky){
-								FangXiang = Direction.d2;
-							}else if(Tank.this.X > tankx && Tank.this.Y < tanky){
-								FangXiang = Direction.d1;
-							}else if(Tank.this.X > tankx && Tank.this.Y == tanky){
-								FangXiang = Direction.d4;
-							}else if(Tank.this.X > tankx && Tank.this.Y > tanky){
-								FangXiang = Direction.d7;
-							}else if(Tank.this.X == tankx && Tank.this.Y > tanky){
-								FangXiang = Direction.d8;
-							}else if(Tank.this.X < tankx && Tank.this.Y > tanky){
-								FangXiang = Direction.d9;
+					//如果玩家角色活着再追
+					if( playerClient.myPlayer.isTankLive() ){
+						tankx = playerClient.myPlayer.X;
+						tanky = playerClient.myPlayer.Y;	
+						if( Math.sqrt(Math.pow(Math.abs(Player.this.X - tankx), 2) + Math.pow(Math.abs(Player.this.Y - tanky), 2)) < FollowDistance ){
+							if(Player.this.X < tankx && Player.this.Y == tanky){
+								MoveFangXiang = Direction.d6;
+							}else if(Player.this.X < tankx && Player.this.Y < tanky){
+								MoveFangXiang = Direction.d3;
+							}else if(Player.this.X == tankx && Player.this.Y < tanky){
+								MoveFangXiang = Direction.d2;
+							}else if(Player.this.X > tankx && Player.this.Y < tanky){
+								MoveFangXiang = Direction.d1;
+							}else if(Player.this.X > tankx && Player.this.Y == tanky){
+								MoveFangXiang = Direction.d4;
+							}else if(Player.this.X > tankx && Player.this.Y > tanky){
+								MoveFangXiang = Direction.d7;
+							}else if(Player.this.X == tankx && Player.this.Y > tanky){
+								MoveFangXiang = Direction.d8;
+							}else if(Player.this.X < tankx && Player.this.Y > tanky){
+								MoveFangXiang = Direction.d9;
 							}		
 						}
 					}
@@ -372,11 +384,11 @@ public class Tank implements InitValue{
 				int time = 0;
 				while(live){
 					time = random.nextInt(2000) + 500;
-					tankx = tankClient.myTank.X;
-					tanky = tankClient.myTank.Y;
-					if(Math.sqrt(Math.pow(Math.abs(Tank.this.X - tankx), 2) + Math.pow(Math.abs(Tank.this.Y - tanky), 2))  >= TrackingDistance){
+					tankx = playerClient.myPlayer.X;
+					tanky = playerClient.myPlayer.Y;
+					if(Math.sqrt(Math.pow(Math.abs(Player.this.X - tankx), 2) + Math.pow(Math.abs(Player.this.Y - tanky), 2))  >= FollowDistance){
 						Direction[] dirs = Direction.values();
-						FangXiang = dirs[ random.nextInt(dirs.length) ];
+						MoveFangXiang = dirs[ random.nextInt(dirs.length) ];
 					}
 					try {Thread.sleep(time);} catch (Exception e) {}	
 				}
@@ -384,17 +396,17 @@ public class Tank implements InitValue{
 		}).start();
 	}
 	/**
-	 * 坦克移动
+	 * 角色移动
 	 */
 	private void move() {
-		if( Tank.this.ZhuangWalls(tankClient.walls) || Tank.this.ZhuangTank(tankClient.myTank) || Tank.this.ZhuangTanks(tankClient.enemyTanks) ) {
+		if( Player.this.ZhuangWalls(playerClient.walls) || Player.this.ZhuangTank(playerClient.myPlayer) || Player.this.ZhuangTanks(playerClient.enemyPlayers) ) {
 			this.stay();
 		}else {
 			//上一次移动的坐标
 			this.oldX = X;
 			this.oldY = Y;		
 			//开始移动
-			switch (FangXiang) {
+			switch (MoveFangXiang) {
 			case d4:
 				X = X - xspeed;
 				break;
@@ -429,9 +441,9 @@ public class Tank implements InitValue{
 				break;
 			}	
 			//子弹初始方向 炮筒初始方向  //如果没有动就不改变方向了
-			if( FangXiang != Direction.d5 ) this.ptDir = this.FangXiang; 
-			//坦克不能出界
-			if(X < 0 || Y < 0 || X + Tank.Player1X > WindowsXlength || Y + Tank.Player1Y + 30 > WindowsYlength) {
+			if( MoveFangXiang != Direction.d5 ) this.DrawFangXiang = this.MoveFangXiang; 
+			//角色不能出界
+			if(X < 0 || Y < 0 || X + Player.Player1X > WindowsXlength || Y + Player.Player1Y + 30 > WindowsYlength) {
 				this.stay();
 			}
 		}
@@ -453,13 +465,13 @@ public class Tank implements InitValue{
 				int x = 0,y = 0;
 				while(live){
 					sleepInt = random.nextInt(2000) + 500;
-					if(tankClient != null){
-						x = Tank.this.X + Tank.Player1X/2 - Missile.missileXlength/2;	//从对象中心发射子弹
-						y = Tank.this.Y + Tank.Player1Y/2 - Missile.missileYlength/2;	//从对象中心发射子弹
-						if(ptDir == Direction.d5)ptDir = Direction.d6;				//炮弹不能不动
+					if(playerClient != null){
+						x = Player.this.X + Player.Player1X/2 - Missile.missileXlength/2;	//从对象中心发射子弹
+						y = Player.this.Y + Player.Player1Y/2 - Missile.missileYlength/2;	//从对象中心发射子弹
+						if(DrawFangXiang == Direction.d5)DrawFangXiang = Direction.d6;				//炮弹不能不动
 						//new 出一发子弹
-						Missile missile = new Missile(x, y, Misslie_putong, ptDir, type_enemy, 2, 2, tankClient);
-						tankClient.missiles.add(missile);	
+						Missile missile = new Missile(x, y, Misslie_putong, DrawFangXiang, type_enemy, 2, 2, playerClient);
+						playerClient.missiles.add(missile);	
 					}
 					try {Thread.sleep(sleepInt);} catch (Exception e) {}
 				}			
@@ -471,14 +483,14 @@ public class Tank implements InitValue{
 	 * @return
 	 */
 	public void fire(){
-		if(tankClient != null && Tank.this.isTankLive()){
-			int x = this.X + Tank.Player1X/2 - Missile.missileXlength/2;	//从对象中心发射子弹
-			int y = this.Y + Tank.Player1Y/2 - Missile.missileYlength/2;	//从对象中心发射子弹
-			if(ptDir == Direction.d5)ptDir = Direction.d6;				//炮弹不能不动
+		if(playerClient != null && Player.this.isTankLive()){
+			int x = this.X + Player.Player1X/2 - Missile.missileXlength/2;	//从对象中心发射子弹
+			int y = this.Y + Player.Player1Y/2 - Missile.missileYlength/2;	//从对象中心发射子弹
+			if(DrawFangXiang == Direction.d5)DrawFangXiang = Direction.d6;				//炮弹不能不动
 			//new 出一发子弹
-			Missile missile = new Missile(x, y, Misslie_putong, ptDir, type_player, 5, 5, tankClient);
+			Missile missile = new Missile(x, y, Misslie_putong, DrawFangXiang, type_player, 5, 5, playerClient);
 			missile.ZhuiZongPD = false;
-			tankClient.missiles.add(missile);	
+			playerClient.missiles.add(missile);	
 		}
 	}		
 	/**
@@ -486,16 +498,16 @@ public class Tank implements InitValue{
 	 * @return
 	 */
 	public void BaFangfire(){
-		if(tankClient != null && Tank.this.isTankLive()){
-			int x = this.X + Tank.Player1X/2 - Missile.missileXlength/2;	//从对象中心发射子弹
-			int y = this.Y + Tank.Player1Y/2 - Missile.missileYlength/2;	//从对象中心发射子弹
+		if(playerClient != null && Player.this.isTankLive()){
+			int x = this.X + Player.Player1X/2 - Missile.missileXlength/2;	//从对象中心发射子弹
+			int y = this.Y + Player.Player1Y/2 - Missile.missileYlength/2;	//从对象中心发射子弹
 			Direction[] directions = Direction.values();
 			Direction direction = Direction.d1;
 			for(int i = 0; i < 8; i++) {
 				direction = directions[i];
-				Missile missile = new Missile(x, y, Misslie_bafang, direction, type_player, 4, 4, tankClient);
+				Missile missile = new Missile(x, y, Misslie_bafang, direction, type_player, 4, 4, playerClient);
 				missile.ZhuiZongPD = false;
-				tankClient.missiles.add(missile);	
+				playerClient.missiles.add(missile);	
 			}			
 		}
 	}
@@ -504,13 +516,13 @@ public class Tank implements InitValue{
 	 * @return
 	 */
 	public void ZhuiZongfire(){
-		if(tankClient != null && Tank.this.isTankLive()){
-			int x = this.X + Tank.Player1X/2 - Missile.missileXlength/2;	//从对象中心发射子弹
-			int y = this.Y + Tank.Player1Y/2 - Missile.missileYlength/2;	//从对象中心发射子弹
-			if(ptDir == Direction.d5)ptDir = Direction.d6;				//炮弹不能不动
-			Missile missile = new Missile(x, y, Misslie_zhuizong, ptDir, type_player, 3, 3, tankClient);
+		if(playerClient != null && Player.this.isTankLive()){
+			int x = this.X + Player.Player1X/2 - Missile.missileXlength/2;	//从对象中心发射子弹
+			int y = this.Y + Player.Player1Y/2 - Missile.missileYlength/2;	//从对象中心发射子弹
+			if(DrawFangXiang == Direction.d5)DrawFangXiang = Direction.d6;				//炮弹不能不动
+			Missile missile = new Missile(x, y, Misslie_zhuizong, DrawFangXiang, type_player, 3, 3, playerClient);
 			missile.ZhuiZongPD = true;
-			tankClient.missiles.add(missile);	
+			playerClient.missiles.add(missile);	
 		}
 	}	
 	/**
@@ -553,22 +565,25 @@ public class Tank implements InitValue{
 	public void noKEY(KeyEvent e){
 		int Key = e.getKeyCode();
 		switch (Key) {
-		case KeyEvent.VK_NUMPAD1:
+		case KeyEvent.VK_NUMPAD1:	
 			fire();
+			XuLi = 0;
 			AtkKey = false;
 			break;
-		case KeyEvent.VK_NUMPAD2:		 
-			if(BaFangNumber > 7) {
-				BaFangNumber -= 8;
+		case KeyEvent.VK_NUMPAD2:
+			if(XuLi >= XuLiZhi && Mana >= 20){
 				BaFangfire();
-			}
+				Mana -= 20;
+			}		
+			XuLi = 0;
 			AtkKey = false;
 			break;
 		case KeyEvent.VK_NUMPAD3:
-			if(ZhuiZongNumber > 0) {
-				ZhuiZongNumber -= 1;
+			if(XuLi >= XuLiZhi && Mana >= 10){
 				ZhuiZongfire();
-			}
+				Mana -= 10;
+			}	
+			XuLi = 0;
 			AtkKey = false;
 			break;
 		case KeyEvent.VK_W:
@@ -592,57 +607,75 @@ public class Tank implements InitValue{
 	 * 判断方向
 	 */
 	private void PDFangXiang(){
-		if(!Up && !Down && Left && !Right)FangXiang = Direction.d4;
-		else if(Up && !Down && Left && !Right)FangXiang = Direction.d7;
-		else if(Up && !Down && !Left && !Right)FangXiang = Direction.d8;
-		else if(Up && !Down && !Left && Right)FangXiang = Direction.d9;
-		else if(!Up && !Down && !Left && Right)FangXiang = Direction.d6;
-		else if(!Up && Down && !Left && Right)FangXiang = Direction.d3;
-		else if(!Up && Down && !Left && !Right)FangXiang = Direction.d2;
-		else if(!Up && Down && Left && !Right)FangXiang = Direction.d1;
-		else if(!Up && !Down && Left && Right)FangXiang = Direction.d5;
-		else if(Up && Down && !Left && !Right)FangXiang = Direction.d5;
-		else if(!Up && !Down && !Left && !Right)FangXiang = Direction.d5;
-		else if(Up && Down && Left && Right)FangXiang = Direction.d5;
+		if(!Up && !Down && Left && !Right)MoveFangXiang = Direction.d4;
+		else if(Up && !Down && Left && !Right)MoveFangXiang = Direction.d7;
+		else if(Up && !Down && !Left && !Right)MoveFangXiang = Direction.d8;
+		else if(Up && !Down && !Left && Right)MoveFangXiang = Direction.d9;
+		else if(!Up && !Down && !Left && Right)MoveFangXiang = Direction.d6;
+		else if(!Up && Down && !Left && Right)MoveFangXiang = Direction.d3;
+		else if(!Up && Down && !Left && !Right)MoveFangXiang = Direction.d2;
+		else if(!Up && Down && Left && !Right)MoveFangXiang = Direction.d1;
+		else if(!Up && !Down && Left && Right)MoveFangXiang = Direction.d5;
+		else if(Up && Down && !Left && !Right)MoveFangXiang = Direction.d5;
+		else if(!Up && !Down && !Left && !Right)MoveFangXiang = Direction.d5;
+		else if(Up && Down && Left && Right)MoveFangXiang = Direction.d5;
 	}
 	/**
-	 * 血条类
+	 * 条类
 	 *
 	 */
-	private class BloodBar {
-		//画血条
+	private class Bar {
+		//画条
 		public void draw(Graphics g) {
-			BloodBarPicture(g);
+			BarPicture(g);
 		}
-		//画血条图
-		private void BloodBarPicture(Graphics g) {
+		//画条图
+		private void BarPicture(Graphics g) {
+			int BarLength = 0;
+			int BarHeight = 5;
+			int offset = -120;
+			int offsetXuLi = -10;
+			//保存画笔颜色
 			Color c = g.getColor();
-			g.setColor(Color.BLUE);
-			g.drawRect(X, Y-12, Player1X, 5);
-			int w = Player1X * blood/bloodZong;
-			if(blood>50){
-				g.setColor(Color.GREEN);
-			}else{
-				g.setColor(Color.RED);
+			//血条
+			g.setColor(Color.BLACK);
+			g.drawRect(X, Y-(offset + BarHeight * 2), Player1X, BarHeight);
+			BarLength = Player1X * blood / bloodZong;
+			if( blood > bloodZong / 5 ){g.setColor(Color.GREEN);}
+			else{g.setColor(Color.RED);}
+			g.fillRect(X + 1, Y-(offset + BarHeight * 2) + 1, BarLength - 1, BarHeight - 1);
+			//如果是玩家
+			if(playerType == type_player){
+				//魔法条
+				g.setColor(Color.BLACK);
+				g.drawRect(X, Y-(offset + BarHeight * 1), Player1X, BarHeight);
+				BarLength = Player1X * Mana / ManaZong;
+				if( Mana > ManaZong / 5 ){g.setColor(Color.BLUE);}
+				else{g.setColor(Color.RED);}
+				g.fillRect(X + 1, Y-(offset + BarHeight * 1) + 1, BarLength - 1, BarHeight - 1);
+				//蓄力条
+				BarLength = Player1X * XuLi / XuLiZhi;
+				g.setColor(Color.YELLOW);
+				g.fillRect(X + 1, Y-(offsetXuLi + BarHeight * 0) + 1, BarLength - 1, BarHeight - 1);
 			}
-			g.fillRect(X, Y-11, w, 4);
+			//还原画笔颜色
 			g.setColor(c);
 		}
 	}	
-	//******************************************************************坦克与其他对象互动
+	//******************************************************************角色与其他对象互动
 	/**
-	 * 坦克撞墙
+	 * 角色撞墙
 	 * @param w
 	 * @return
 	 */
 	public boolean ZhuangWall(Wall w) {
-		if(this.live && Tank.this.getRect().intersects(w.getRect())) {
+		if(this.live && Player.this.getRect().intersects(w.getRect())) {
 			return true;
 		}
 		return false;
 	}
 	/**
-	 * 坦克撞链表墙
+	 * 角色撞链表墙
 	 * @param w
 	 * @return
 	 */
@@ -655,22 +688,22 @@ public class Tank implements InitValue{
 		return false;
 	}
 	/**
-	 * 坦克与坦克相撞
+	 * 角色与角色相撞
 	 * @param t
 	 * @return
 	 */
-	public boolean ZhuangTank(Tank t) {
+	public boolean ZhuangTank(Player t) {
 		if(this.live == true && t.live == true && this.getRect().intersects(t.getRect()) && this != t   ) {
 			return true;
 		}
 		return false;
 	}
 	/**
-	 * 坦克与坦克相撞 读取链表
+	 * 角色与角色相撞 读取链表
 	 * @param t
 	 * @return
 	 */
-	public boolean ZhuangTanks(List<Tank> tanks) {
+	public boolean ZhuangTanks(List<Player> tanks) {
 		for(int i = 0; i < tanks.size(); i++) {
 			if( ZhuangTank(tanks.get(i)) ) {
 				return true;

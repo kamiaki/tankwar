@@ -8,7 +8,7 @@ import java.awt.Toolkit;
  *
  */
 public class Background implements InitValue{
-	private TankClient tankClient;										//大管家指针
+	private PlayerClient tankClient;										//大管家指针
 	private int X,Y;													//背景的位置和长宽
 	
 	//贴图
@@ -31,7 +31,7 @@ public class Background implements InitValue{
 	 * @param height
 	 * @param tc
 	 */
-	public Background(int x, int y, TankClient tc) {
+	public Background(int x, int y, PlayerClient tc) {
 		this.X = x;
 		this.Y = y;
 		tankClient = tc;

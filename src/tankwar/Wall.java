@@ -10,7 +10,7 @@ import javax.swing.ImageIcon;
  *
  */
 public class Wall {
-	TankClient tankClient;
+	PlayerClient tankClient;
 	private int x,y,w,h;
 	private Image wallPicture;
 	
@@ -29,7 +29,7 @@ public class Wall {
 	 * @param h
 	 * @param tankClient
 	 */
-	public Wall(int x, int y, int w, int h,TankClient tankClient) {
+	public Wall(int x, int y, int w, int h,PlayerClient tankClient) {
 		this.x = x;
 		this.y = y;
 		this.w = w;

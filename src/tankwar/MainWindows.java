@@ -9,7 +9,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 
 public class MainWindows {
-	private TankClient tankClient;
+	private PlayerClient tankClient;
 	public JFrame frame;
 	private JPanel mainPanel;
 	private JButton button_StartGame;
@@ -46,7 +46,7 @@ public class MainWindows {
 		button_StartGame.setBounds(30, 22, 128, 31);
 		button_StartGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				tankClient = new TankClient(MainWindows.this);
+				tankClient = new PlayerClient(MainWindows.this);
 				frame.dispose();
 			}
 		});

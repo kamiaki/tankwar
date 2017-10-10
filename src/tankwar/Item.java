@@ -10,7 +10,7 @@ import java.util.Random;
  * 物品类
  */
 public class Item {
-	private TankClient tankClient;				//大管家类
+	private PlayerClient tankClient;				//大管家类
 	private int x, y, w, h;						//x y坐标 何种物品
 	private ItemsType itemsType; 				//物品种类
 	private int[][] GuiJi = new int[3][2];		//随机晃动位置
@@ -52,7 +52,7 @@ public class Item {
 	 * @param Item_type
 	 * @param tankClient
 	 */
-	public Item(int x, int y, int w, int h,ItemsType Item_type,TankClient tankClient) {
+	public Item(int x, int y, int w, int h,ItemsType Item_type,PlayerClient tankClient) {
 		this.live = true;
 		this.x = x;
 		this.y = y;

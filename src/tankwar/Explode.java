@@ -8,7 +8,7 @@ import java.awt.Toolkit;
  *
  */
 public class Explode {
-	private TankClient tankClient;		//大管家指针
+	private PlayerClient tankClient;		//大管家指针
 	private int X, Y;					//爆炸 X Y 坐标
 	private boolean live = true;		//爆炸是否存活
 	private int x1,y1,x2,y2;			//截取图片位置
@@ -43,7 +43,7 @@ public class Explode {
 	 * @param y
 	 * @param tc
 	 */
-	public Explode(int x,int y,TankClient tc){
+	public Explode(int x,int y,PlayerClient tc){
 		this.X = x;
 		this.Y = y;
 		this.tankClient = tc;
