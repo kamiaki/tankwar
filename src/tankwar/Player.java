@@ -499,16 +499,22 @@ public class Player implements InitValue{
 	 */
 	public void BaFangfire(){
 		if(playerClient != null && Player.this.isTankLive()){
-			int x = this.X + Player.Player1X/2 - Missile.missileXlength/2;	//从对象中心发射子弹
-			int y = this.Y + Player.Player1Y/2 - Missile.missileYlength/2;	//从对象中心发射子弹
-			Direction[] directions = Direction.values();
-			Direction direction = Direction.d1;
-			for(int i = 0; i < 8; i++) {
-				direction = directions[i];
-				Missile missile = new Missile(x, y, Misslie_bafang, direction, type_player, 4, 4, playerClient);
-				missile.ZhuiZongPD = false;
-				playerClient.missiles.add(missile);	
-			}			
+			new Thread(new Runnable() {
+				public void run() {		
+					for(int i = 0; i < 8; i++) {
+						int x = Player.this.X + Player.Player1X/2 - Missile.missileXlength/2;	//从对象中心发射子弹
+						int y = Player.this.Y + Player.Player1Y/2 - Missile.missileYlength/2;	//从对象中心发射子弹
+						Direction[] directions = Direction.values();
+						Direction direction = Direction.d1;
+						direction = directions[i];
+						Missile missile = new Missile(x, y, Misslie_bafang, direction, type_player, 4, 4, playerClient);
+						missile.ZhuiZongPD = false;
+						playerClient.missiles.add(missile);	
+						try {Thread.sleep(100);} catch (Exception e) {}	
+					}				
+				}
+			}).start();
+					
 		}
 	}
 	/**

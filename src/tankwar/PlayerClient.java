@@ -36,6 +36,8 @@ public class PlayerClient extends JFrame implements InitValue{
 	public int reTankNumber = 0;						//玩家重生次数
 	//随机方法
 	public static Random random = new Random();			//随机方法
+	//多线程
+	public Thread SXSjThread = null;					//刷新数据线程			
 	
 	/**
 	 * 构造函数1
@@ -120,7 +122,8 @@ public class PlayerClient extends JFrame implements InitValue{
 		//加载爆炸
 		explodes = new ArrayList<Explode>();
 		//************************************启动数据刷新 线程
-		new Thread(new ShuJuShuaXin()).start();			
+		SXSjThread = new Thread(new ShuJuShuaXin());
+		SXSjThread.start();
 	}
 	//**********************************************************各种线程
 	/**
@@ -220,16 +223,6 @@ public class PlayerClient extends JFrame implements InitValue{
 		public void run() {
 			ItemsType itemsType = ItemsType.NoItem;				//吃到了何种物品
 			while(StartGame){
-				//刷新子弹击中坦克事件		
-				Missile missile = null;
-				for(int i = 0; i < missiles.size(); i++){						//炮弹 触碰检测	
-					if( i >= missiles.size() ) break;
-					missile = missiles.get(i);	
-					if(missile != null) {
-						if(enemyPlayers != null)missile.hitTanks(enemyPlayers);
-						if(myPlayer != null)missile.hitTank(myPlayer);
-					}
-				}
 				//刷新玩家吃到物品事件
 				itemsType = myPlayer.eats(Items);
 				switch (itemsType) {

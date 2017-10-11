@@ -268,11 +268,9 @@ public class Missile implements InitValue{
 		case type_player:
 			Follow();  				//启动追踪弹线程
 			MissileMove();			//子弹移动线程
-			TimeMissileDead();		//子弹消亡线程
 			break;
 		default:
 			MissileMove();			//子弹移动线程
-			TimeMissileDead();		//子弹消亡线程
 			break;
 		}
 	}
@@ -336,22 +334,6 @@ public class Missile implements InitValue{
 		}).start();
 	}
 	/**
-	 * 子弹随时间消亡线程
-	 */
-	private void TimeMissileDead(){
-		new Thread(new Runnable() {
-			public void run() {	
-				try {Thread.sleep(5000);} catch (Exception e) {}
-				if(Missile.this.live){
-					Missile.this.live = false;											//子弹生命判断为死
-					if(Missile.this != null) {
-						tankClient.missiles.remove(Missile.this);						//在队列中移除子弹
-					}
-				}	
-			}
-		}).start();
-	}
-	/**
 	 * 移动子弹
 	 */
 	private void move() {	
@@ -399,6 +381,15 @@ public class Missile implements InitValue{
 			if(tankClient != null){
 				if(X < 0 || Y < 0 || X > WindowsXlength || Y > WindowsYlength){
 					this.missileDead();	
+				}
+			}
+			//刷新子弹击中坦克事件		
+			Missile missile = null;
+			for(int i = 0; i < tankClient.missiles.size(); i++){						//炮弹 触碰检测	
+				missile = tankClient.missiles.get(i);	
+				if(missile != null) {
+					if(tankClient.enemyPlayers != null)missile.hitTanks(tankClient.enemyPlayers);
+					if(tankClient.myPlayer != null)missile.hitTank(tankClient.myPlayer);
 				}
 			}
 		}
