@@ -508,9 +508,9 @@ public class Player implements InitValue{
 						Direction direction = Direction.d1;
 						direction = directions[i];
 						Missile missile = new Missile(x, y, Misslie_bafang, direction, type_player, 4, 4, playerClient);
-						missile.ZhuiZongPD = false;
+						missile.ZhuiZongPD = true;
 						playerClient.missiles.add(missile);	
-						try {Thread.sleep(100);} catch (Exception e) {}	
+						try {Thread.sleep(50);} catch (Exception e) {}	
 					}				
 				}
 			}).start();

@@ -383,15 +383,6 @@ public class Missile implements InitValue{
 					this.missileDead();	
 				}
 			}
-			//刷新子弹击中坦克事件		
-			Missile missile = null;
-			for(int i = 0; i < tankClient.missiles.size(); i++){						//炮弹 触碰检测	
-				missile = tankClient.missiles.get(i);	
-				if(missile != null) {
-					if(tankClient.enemyPlayers != null)missile.hitTanks(tankClient.enemyPlayers);
-					if(tankClient.myPlayer != null)missile.hitTank(tankClient.myPlayer);
-				}
-			}
 		}
 	}
 	/**

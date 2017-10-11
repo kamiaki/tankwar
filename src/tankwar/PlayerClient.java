@@ -223,6 +223,15 @@ public class PlayerClient extends JFrame implements InitValue{
 		public void run() {
 			ItemsType itemsType = ItemsType.NoItem;				//吃到了何种物品
 			while(StartGame){
+				//刷新子弹击中坦克事件		
+				Missile missile = null;
+				for(int i = 0; i < missiles.size(); i++){						//炮弹 触碰检测	
+					missile = missiles.get(i);	
+					if(missile != null) {
+						if(enemyPlayers != null)missile.hitTanks(enemyPlayers);
+						if(myPlayer != null)missile.hitTank(myPlayer);
+					}
+				}
 				//刷新玩家吃到物品事件
 				itemsType = myPlayer.eats(Items);
 				switch (itemsType) {
