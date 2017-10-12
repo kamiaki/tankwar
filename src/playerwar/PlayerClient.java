@@ -213,7 +213,7 @@ public class PlayerClient extends JFrame implements InitValue{
 	public class ShuJuShuaXin implements Runnable{
 		@Override
 		public void run() {
-			ItemsType itemsType = ItemsType.NoItem;				//吃到了何种物品
+			ItemsType itemsType = ItemsType.NoItem;								//吃到了何种物品
 			while(StartGame){
 				//刷新子弹击中坦克事件		
 				Missile missile = null;
