@@ -268,9 +268,11 @@ public class Missile implements InitValue{
 		case type_player:
 			Follow();  				//启动追踪弹线程
 			MissileMove();			//子弹移动线程
+			TimeMissileDead();		//子弹消亡线程
 			break;
 		default:
 			MissileMove();			//子弹移动线程
+			TimeMissileDead();		//子弹消亡线程
 			break;
 		}
 	}
@@ -393,6 +395,22 @@ public class Missile implements InitValue{
 		if(this != null) {
 			tankClient.missiles.remove(this);	
 		}
+	}
+	/**
+	 * 子弹随时间消亡线程
+	 */
+	private void TimeMissileDead(){
+		new Thread(new Runnable() {
+			public void run() {	
+				try {Thread.sleep(5000);} catch (Exception e) {}
+				if(Missile.this.live){
+					Missile.this.live = false;											//子弹生命判断为死
+					if(Missile.this != null) {
+						tankClient.missiles.remove(Missile.this);						//在队列中移除子弹
+					}
+				}	
+			}
+		}).start();
 	}
 	//*****************************************************************************子弹与其他对象 互动
 	/**
