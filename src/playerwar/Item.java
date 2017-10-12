@@ -1,4 +1,4 @@
-package tankwar;
+package playerwar;
 
 import java.awt.Color;
 import java.awt.Graphics;

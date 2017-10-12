@@ -1,4 +1,4 @@
-package tankwar;
+package playerwar;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -10,7 +10,6 @@ import java.awt.Toolkit;
 public class Background implements InitValue{
 	private PlayerClient tankClient;										//大管家指针
 	private int X,Y;													//背景的位置和长宽
-	
 	//贴图
 	private static Toolkit toolkit = Toolkit.getDefaultToolkit();		//工具包
 	private static Image BackGround;									//背景图片
@@ -22,7 +21,6 @@ public class Background implements InitValue{
 		BackGround = BackGround.getScaledInstance(WindowsXlength + PanelX * (-2), WindowsYlength + PanelY * (-2), Image.SCALE_DEFAULT);
 	}
 
-	
 	/**
 	 * 构造函数
 	 * @param x

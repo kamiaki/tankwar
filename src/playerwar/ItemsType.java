@@ -1,4 +1,4 @@
-package tankwar;
+package playerwar;
 /**
  * ÎïÆ· Ã¶¾Ù
  *

@@ -1,4 +1,4 @@
-package tankwar;
+package playerwar;
 /**
  * Ёёа©юЮ
  *
@@ -17,7 +17,7 @@ public interface InitValue {
 	public static final int Misslie_bafang = 1;			//╟к╥╫ез
 	public static final int Misslie_zhuizong = 2;		//в╥выез
 	
-	public static final int Misslie_putongX = 20;		//фум╗ез
-	public static final int Misslie_bafangX = 100;		//╟к╥╫ез
-	public static final int Misslie_zhuizongX = 30;		//в╥выез
+	public static final int Misslie_putongX = 20;			//фум╗ез
+	public static final int Misslie_bafangX = 30;			//╟к╥╫ез
+	public static final int Misslie_zhuizongX = 100;		//в╥выез
 }

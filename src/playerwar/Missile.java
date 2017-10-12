@@ -1,4 +1,4 @@
-package tankwar;
+package playerwar;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -419,7 +419,7 @@ public class Missile implements InitValue{
 	 * @return
 	 */
 	public boolean hitTank(Player t){
-		if(this.getRect().intersects( t.getRect()) && t.isTankLive() && Missile.this.getMissileType() != t.getTankType() ){			
+		if(this.getRect().intersects( t.getRect()) && t.isPlayerLive() && Missile.this.getMissileType() != t.getPlayerType() ){			
 			Explode e = new Explode(this.X, this.Y, this.tankClient);	//添加一个爆炸
 			tankClient.explodes.add(e);
 			
@@ -430,15 +430,15 @@ public class Missile implements InitValue{
 				tankClient.missiles.remove(this);						//在队列中移除子弹
 			}
 				
-			if(t.getTankType() == type_player) {
+			if(t.getPlayerType() == type_player) {
 				t.setBlood(t.getBlood() - 20);
 				if(t.getBlood() <= 0) {
-					t.setTankLive(false);								//玩家坦克生命判断为死	
-					if(tankClient.reTankNumber == 0){
-						tankClient.reTankNumber -= 1;
+					t.setPlayerLive(false);								//玩家坦克生命判断为死	
+					if(tankClient.rePlayerNumber == 0){
+						tankClient.rePlayerNumber -= 1;
 					}
 				}
-			}else if(t.getTankType() == type_enemy){	
+			}else if(t.getPlayerType() == type_enemy){	
 				//什么样的子弹掉什么样的血
 				if( this.MissileZhongLei == Misslie_bafang ) {
 					t.setBlood(t.getBlood() - Misslie_bafangX);
@@ -449,8 +449,8 @@ public class Missile implements InitValue{
 				}	
 				//杀死敌人后 数量 + 1
 				if(t.getBlood() <= 0) {
-					t.setTankLive(false);								//敌人坦克生命判断为死
-					tankClient.killTankNumber += 1;
+					t.setPlayerLive(false);								//敌人坦克生命判断为死
+					tankClient.killPlayerNumber += 1;
 					return true;
 				}else {
 					return false;

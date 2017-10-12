@@ -1,4 +1,4 @@
-package tankwar;
+package playerwar;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -141,28 +141,28 @@ public class Player implements InitValue{
 	 * 判断是什么角色
 	 * @return
 	 */
-	public int getTankType() {
+	public int getPlayerType() {
 		return playerType;
 	}
 	/**
 	 * 设置是什么角色
 	 * @param good
 	 */
-	public void setTankType(int type) {
+	public void setPlayerType(int type) {
 		playerType = type;
 	}
 	/**
 	 * 判断死活
 	 * @return
 	 */
-	public boolean isTankLive() {
+	public boolean isPlayerLive() {
 		return live;
 	}
 	/**
 	 * 设置死活
 	 * @param tankLive
 	 */
-	public void setTankLive(boolean tankLive) {
+	public void setPlayerLive(boolean tankLive) {
 		this.live = tankLive;
 	}	
 	/**
@@ -345,7 +345,7 @@ public class Player implements InitValue{
 				int tanky = 0;
 				while(live){
 					//如果玩家角色活着再追
-					if( playerClient.myPlayer.isTankLive() ){
+					if( playerClient.myPlayer.isPlayerLive() ){
 						tankx = playerClient.myPlayer.X;
 						tanky = playerClient.myPlayer.Y;	
 						if( Math.sqrt(Math.pow(Math.abs(Player.this.X - tankx), 2) + Math.pow(Math.abs(Player.this.Y - tanky), 2)) < FollowDistance ){
@@ -483,7 +483,7 @@ public class Player implements InitValue{
 	 * @return
 	 */
 	public void fire(){
-		if(playerClient != null && Player.this.isTankLive()){
+		if(playerClient != null && Player.this.isPlayerLive()){
 			int x = this.X + Player.Player1X/2 - Missile.missileXlength/2;	//从对象中心发射子弹
 			int y = this.Y + Player.Player1Y/2 - Missile.missileYlength/2;	//从对象中心发射子弹
 			if(DrawFangXiang == Direction.d5)DrawFangXiang = Direction.d6;				//炮弹不能不动
@@ -498,7 +498,7 @@ public class Player implements InitValue{
 	 * @return
 	 */
 	public void BaFangfire(){
-		if(playerClient != null && Player.this.isTankLive()){
+		if(playerClient != null && Player.this.isPlayerLive()){
 			new Thread(new Runnable() {
 				public void run() {		
 					for(int i = 0; i < 8; i++) {
@@ -522,7 +522,7 @@ public class Player implements InitValue{
 	 * @return
 	 */
 	public void ZhuiZongfire(){
-		if(playerClient != null && Player.this.isTankLive()){
+		if(playerClient != null && Player.this.isPlayerLive()){
 			int x = this.X + Player.Player1X/2 - Missile.missileXlength/2;	//从对象中心发射子弹
 			int y = this.Y + Player.Player1Y/2 - Missile.missileYlength/2;	//从对象中心发射子弹
 			if(DrawFangXiang == Direction.d5)DrawFangXiang = Direction.d6;				//炮弹不能不动

@@ -1,4 +1,4 @@
-package tankwar;
+package playerwar;
 /**
  * 8个方向的移动
  *

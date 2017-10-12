@@ -1,4 +1,4 @@
-package tankwar;
+package playerwar;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -16,41 +16,33 @@ import javax.swing.*;
  *
  */
 public class PlayerClient extends JFrame implements InitValue{	
+	//固定参数
+	public static final int setLift = 3;				//初始玩家生命数量
 	//窗口面板
 	private MainWindows mainWindows;					//主窗口指针
 	private JPanel MainPanel;							//窗口主面板
 	private mainPanel GamePanel;						//游戏面板
 	public boolean StartGame = true;					//开始游戏
-	//化游戏内容
+	//画游戏内容
 	public Background background;						//背景图案
-	public List<Item> Items;							//敌人坦克链表
-	public boolean CreateItemPD = true;					//是否生成敌人坦克
-	public Player myPlayer;									//玩家坦克
-	public static final int setLift = 3;				//游戏面板位置
-	public List<Player> enemyPlayers;						//敌人坦克链表
-	public boolean CreateEnemyTanksPD = true;			//是否生成敌人坦克
+	public List<Item> Items;							//物品链表
+	public boolean CreateItemPD = true;					//是否生成物品
+	public Player myPlayer;								//玩家人物
+	public List<Player> enemyPlayers;					//敌人链表
+	public boolean CreateEnemyPlayersPD = true;			//是否生成敌人
 	public List<Missile> missiles;						//子弹链表
 	public List<Explode> explodes;						//爆炸链表
 	public List<Wall> walls;							//墙链表
-	public int killTankNumber = 0;						//杀死坦克数
-	public int reTankNumber = 0;						//玩家重生次数
-	//随机方法
-	public static Random random = new Random();			//随机方法
+	public int killPlayerNumber = 0;					//杀死敌人数
+	public int rePlayerNumber = 0;						//玩家重生次数
+	//随机器
+	public static Random random = new Random();			//随机方法器
 	//多线程
 	public Thread SXSjThread = null;					//刷新数据线程			
-	
+		
 	/**
-	 * 构造函数1
-	 */
-	public PlayerClient(){
-		launchFrame();											//画主窗口
-		initObject();											//初始化一些参数
-		launchGamePanel();										//游戏面板加载
-		new Thread(new PaintThread()).start();					//启动绘图线程
-		this.setVisible(true);									//显示窗口
-	}	
-	/**
-	 * 构造函数2
+	 * 构造函数
+	 * @param mainWindows //传入窗口指针
 	 */
 	public PlayerClient(MainWindows mainWindows){
 		this.mainWindows = mainWindows;							//主窗口指针赋值
@@ -74,7 +66,7 @@ public class PlayerClient extends JFrame implements InitValue{
 			public void windowClosing(WindowEvent e) {
 				super.windowClosing(e);
 				dispose();
-				mainWindows.frame.setVisible(true);
+				mainWindows.mFrame.setVisible(true);
 			}
 		});	
 		//键盘监听
@@ -99,11 +91,11 @@ public class PlayerClient extends JFrame implements InitValue{
 	 */
 	public void initObject(){
 		//生命数
-		reTankNumber = setLift;
+		rePlayerNumber = setLift;
 		//加载背景 障碍
 		background = new Background(0, 0, this);
 		walls = new ArrayList<Wall>();
-		walls.add(new Wall(500, 400, 400, 50, PlayerClient.this));
+		walls.add(new Wall(200, 400, 400, 50, PlayerClient.this));
 		walls.add(new Wall(1200, 200, 50, 500, PlayerClient.this));
 		//加载物品
 		Items = new ArrayList<Item>();
@@ -111,12 +103,12 @@ public class PlayerClient extends JFrame implements InitValue{
 		//加载玩家坦克
 		myPlayer = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, this);
 		while(myPlayer.ZhuangWalls(walls)) {
-			myPlayer.setTankLive(false);
+			myPlayer.setPlayerLive(false);
 			myPlayer = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, this);
 		}
 		//加载敌人坦克
 		enemyPlayers = new ArrayList<Player>();
-		new Thread(new CreatEnemyTank()).start();
+		new Thread(new CreatEnemyPlayer()).start();
 		//加载子弹
 		missiles = new ArrayList<Missile>();
 		//加载爆炸
@@ -131,18 +123,18 @@ public class PlayerClient extends JFrame implements InitValue{
 	 * @author Administrator
 	 *
 	 */
-	private class CreatEnemyTank implements Runnable{
+	private class CreatEnemyPlayer implements Runnable{
 		@Override
 		public void run() {
 			// TODO 自动生成的方法存根
-			while(CreateEnemyTanksPD){
-				if(enemyPlayers.size() < 5){
-					Player enemyTank = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_enemy, 1, 1, PlayerClient.this);
-					while(enemyTank.ZhuangWalls(walls) || enemyTank.ZhuangTanks(enemyPlayers) || enemyTank.ZhuangTank(myPlayer)) {
-						enemyTank.setTankLive(false);
-						enemyTank = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_enemy, 1, 1, PlayerClient.this);
+			while(CreateEnemyPlayersPD){
+				if(CreateEnemyPlayersPD && enemyPlayers.size() < 5){
+					Player enemyPlayer = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_enemy, 1, 1, PlayerClient.this);
+					while(enemyPlayer.ZhuangWalls(walls) || enemyPlayer.ZhuangTanks(enemyPlayers) || enemyPlayer.ZhuangTank(myPlayer)) {
+						enemyPlayer.setPlayerLive(false);
+						enemyPlayer = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_enemy, 1, 1, PlayerClient.this);
 					}
-					enemyPlayers.add(enemyTank);
+					enemyPlayers.add(enemyPlayer);
 				}
 				try {Thread.sleep(2000);} catch (Exception e) {}	//刷新间隔
 			}
@@ -290,7 +282,7 @@ public class PlayerClient extends JFrame implements InitValue{
 				tank.draw(ImageG);	
 			}
 			
-			if( myPlayer.isTankLive() )myPlayer.draw(ImageG);				//画自己的 tank	
+			if( myPlayer.isPlayerLive() )myPlayer.draw(ImageG);				//画自己的 tank	
 			
 			for(int i = 0; i < missiles.size(); i++){						//画炮弹
 				Missile missile = missiles.get(i);		
@@ -306,19 +298,19 @@ public class PlayerClient extends JFrame implements InitValue{
 			}
 			//*************数据信息
 			//击杀坦克数
-			ImageG.drawString("击杀坦克数量:" + killTankNumber, 10, 20);
+			ImageG.drawString("击杀坦克数量:" + killPlayerNumber, 10, 20);
 			//显示生命数
-			if(reTankNumber < 0){
+			if(rePlayerNumber < 0){
 				ImageG.drawString("生命值数量:0", 10, 40);
 			}else{
-				ImageG.drawString("生命值数量:" + reTankNumber, 10, 40);
+				ImageG.drawString("生命值数量:" + rePlayerNumber, 10, 40);
 			}
 			//坦克血量
 			ImageG.drawString("坦克血量:" + myPlayer.getBlood(), 10, 60);
 			//******游戏结束 显示总共击杀数
-			if(reTankNumber < 0){
+			if(rePlayerNumber < 0){
 				background.draw(ImageG);	
-				ImageG.drawString("游戏结束，击杀坦克总数:" + killTankNumber, 10, 120);		
+				ImageG.drawString("游戏结束，击杀坦克总数:" + killPlayerNumber, 10, 120);		
 			}
 			return image;
 		}
@@ -336,23 +328,23 @@ public class PlayerClient extends JFrame implements InitValue{
 			switch (e.getKeyCode()) {
 			case KeyEvent.VK_R:	
 				//单轮游戏重生坦克
-				if(!myPlayer.isTankLive() && reTankNumber > 0){
-					reTankNumber--;
+				if(!myPlayer.isPlayerLive() && rePlayerNumber > 0){
+					rePlayerNumber--;
 					myPlayer = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, PlayerClient.this);
 					while(myPlayer.ZhuangWalls(walls) || myPlayer.ZhuangTanks(enemyPlayers) ) {
-						myPlayer.setTankLive(false);
+						myPlayer.setPlayerLive(false);
 						myPlayer = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, PlayerClient.this);
 					}
 				}
 				//重新开始新的一局
-				if(reTankNumber < 0){
+				if(rePlayerNumber < 0){
 					myPlayer = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, PlayerClient.this);
 					while(myPlayer.ZhuangWalls(walls) || myPlayer.ZhuangTanks(enemyPlayers) ) {
-						myPlayer.setTankLive(false);
+						myPlayer.setPlayerLive(false);
 						myPlayer = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, PlayerClient.this);
 					}
-					reTankNumber = setLift;
-					killTankNumber = 0;
+					rePlayerNumber = setLift;
+					killPlayerNumber = 0;
 				}
 				break;
 			case KeyEvent.VK_Q:	
