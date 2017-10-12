@@ -199,7 +199,7 @@ public class Player implements InitValue{
 		}).start();
 	}	
 	/**
-	 * 玩家动画 发射招式帧数
+	 * 玩家动画 发射招式帧数 蓄力
 	 */
 	private void PlayerFireDongHua(){
 		new Thread(new Runnable() {
@@ -484,11 +484,26 @@ public class Player implements InitValue{
 	 */
 	public void fire(){
 		if(playerClient != null && Player.this.isPlayerLive()){
-			int x = this.X + Player.Player1X/2 - Missile.missileXlength/2;	//从对象中心发射子弹
-			int y = this.Y + Player.Player1Y/2 - Missile.missileYlength/2;	//从对象中心发射子弹
+			int x = this.X + Player.Player1X/2 - Missile.missileXlength/2;				//从对象中心发射子弹
+			int y = this.Y + Player.Player1Y/2 - Missile.missileYlength/2;				//从对象中心发射子弹
 			if(DrawFangXiang == Direction.d5)DrawFangXiang = Direction.d6;				//炮弹不能不动
 			//new 出一发子弹
 			Missile missile = new Missile(x, y, Misslie_putong, DrawFangXiang, type_player, 5, 5, playerClient);
+			missile.ZhuiZongPD = false;
+			playerClient.missiles.add(missile);	
+		}
+	}	
+	/**
+	 * 玩家开火 生成一个超级普通子弹
+	 * @return
+	 */
+	public void Superfire(){
+		if(playerClient != null && Player.this.isPlayerLive()){
+			int x = this.X + Player.Player1X/2 - Missile.missileXlength/2;				//从对象中心发射子弹
+			int y = this.Y + Player.Player1Y/2 - Missile.missileYlength/2;				//从对象中心发射子弹
+			if(DrawFangXiang == Direction.d5)DrawFangXiang = Direction.d6;				//炮弹不能不动
+			//new 出一发子弹
+			Missile missile = new Missile(x, y, Misslie_bafang, DrawFangXiang, type_player, 5, 5, playerClient);
 			missile.ZhuiZongPD = false;
 			playerClient.missiles.add(missile);	
 		}
@@ -572,7 +587,11 @@ public class Player implements InitValue{
 		int Key = e.getKeyCode();
 		switch (Key) {
 		case KeyEvent.VK_NUMPAD1:	
-			fire();
+			if(XuLi >= XuLiZhi){
+				Superfire();
+			}else{
+				fire();	
+			}
 			XuLi = 0;
 			AtkKey = false;
 			break;
@@ -687,9 +706,13 @@ public class Player implements InitValue{
 	 */
 	public boolean ZhuangWalls(List<Wall> walls) {
 		for(int i = 0; i < walls.size(); i++) {
-			if(ZhuangWall(walls.get(i))){
-				return true;
-			}
+			try {
+				if(ZhuangWall(walls.get(i))){
+					return true;
+				}
+			} catch (IndexOutOfBoundsException e) {
+				e.printStackTrace();
+			}		
 		}
 		return false;
 	}
@@ -709,11 +732,17 @@ public class Player implements InitValue{
 	 * @param t
 	 * @return
 	 */
-	public boolean ZhuangTanks(List<Player> tanks) {
-		for(int i = 0; i < tanks.size(); i++) {
-			if( ZhuangTank(tanks.get(i)) ) {
-				return true;
-			}	
+	public boolean ZhuangTanks(List<Player> Players) {
+		if(Players != null){
+			for(int i = 0; i < Players.size(); i++) {
+				try {
+					if( ZhuangTank(Players.get(i)) ) {
+						return true;
+					}	
+				} catch (IndexOutOfBoundsException e) {
+					e.printStackTrace();
+				}			
+			}
 		}
 		return false;
 	}
@@ -751,12 +780,16 @@ public class Player implements InitValue{
 	 */
 	public ItemsType eats(List<Item> items) {
 		ItemsType itemsType = ItemsType.NoItem;
-		for(int i = 0; i < items.size(); i++) {
-			itemsType = eat(items.get(i));
-			if(itemsType != ItemsType.NoItem) {
-				if(items.get(i) != null)items.remove(items.get(i));
-				return itemsType;
-			}
+		for(int i = 0; i < items.size(); i++) {		
+			try {
+				itemsType = eat(items.get(i));
+				if(itemsType != ItemsType.NoItem) {
+					if(items.get(i) != null)items.remove(items.get(i));
+					return itemsType;
+				}
+			} catch (IndexOutOfBoundsException e) {
+				e.printStackTrace();
+			}		
 		}
 		return ItemsType.NoItem;
 	}

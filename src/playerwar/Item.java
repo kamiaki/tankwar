@@ -153,8 +153,12 @@ public class Item {
 	 */
 	public boolean ZhuangWalls(List<Wall> walls) {
 		for(int i = 0; i < walls.size(); i++) {
-			if(ZhuangWall(walls.get(i))){
-				return true;
+			try {
+				if(ZhuangWall(walls.get(i))){
+					return true;
+				}
+			} catch (IndexOutOfBoundsException e) {
+				e.printStackTrace();
 			}
 		}
 		return false;

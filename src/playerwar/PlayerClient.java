@@ -26,9 +26,13 @@ public class PlayerClient extends JFrame implements InitValue{
 	//画游戏内容
 	public Background background;						//背景图案
 	public List<Item> Items;							//物品链表
+	public int ItemLength = 5;							//总物品数量
+	public int ItemTime = 3000;							//物品刷新时间
 	public boolean CreateItemPD = true;					//是否生成物品
 	public Player myPlayer;								//玩家人物
 	public List<Player> enemyPlayers;					//敌人链表
+	public int EnemyLength = 5;							//总物品数量
+	public int EnemyTime = 2000;						//物品刷新时间
 	public boolean CreateEnemyPlayersPD = true;			//是否生成敌人
 	public List<Missile> missiles;						//子弹链表
 	public List<Explode> explodes;						//爆炸链表
@@ -99,7 +103,7 @@ public class PlayerClient extends JFrame implements InitValue{
 		walls.add(new Wall(1200, 200, 50, 500, PlayerClient.this));
 		//加载物品
 		Items = new ArrayList<Item>();
-		new Thread(new CreatItem()).start();
+		new Thread(new CreateItem()).start();
 		//加载玩家坦克
 		myPlayer = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, this);
 		while(myPlayer.ZhuangWalls(walls)) {
@@ -108,7 +112,7 @@ public class PlayerClient extends JFrame implements InitValue{
 		}
 		//加载敌人坦克
 		enemyPlayers = new ArrayList<Player>();
-		new Thread(new CreatEnemyPlayer()).start();
+		new Thread(new CreateEnemyPlayer()).start();
 		//加载子弹
 		missiles = new ArrayList<Missile>();
 		//加载爆炸
@@ -123,12 +127,12 @@ public class PlayerClient extends JFrame implements InitValue{
 	 * @author Administrator
 	 *
 	 */
-	private class CreatEnemyPlayer implements Runnable{
+	private class CreateEnemyPlayer implements Runnable{
 		@Override
 		public void run() {
 			// TODO 自动生成的方法存根
 			while(CreateEnemyPlayersPD){
-				if(CreateEnemyPlayersPD && enemyPlayers.size() < 5){
+				if(CreateEnemyPlayersPD && enemyPlayers.size() < EnemyLength){
 					Player enemyPlayer = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_enemy, 1, 1, PlayerClient.this);
 					while(enemyPlayer.ZhuangWalls(walls) || enemyPlayer.ZhuangTanks(enemyPlayers) || enemyPlayer.ZhuangTank(myPlayer)) {
 						enemyPlayer.setPlayerLive(false);
@@ -136,7 +140,7 @@ public class PlayerClient extends JFrame implements InitValue{
 					}
 					enemyPlayers.add(enemyPlayer);
 				}
-				try {Thread.sleep(2000);} catch (Exception e) {}	//刷新间隔
+				try {Thread.sleep(EnemyTime);} catch (Exception e) {}	//刷新间隔
 			}
 		}
 	}	
@@ -145,19 +149,24 @@ public class PlayerClient extends JFrame implements InitValue{
 	 * @author Administrator
 	 *
 	 */
-	private class CreatItem implements Runnable{
+	private class CreateItem implements Runnable{
 		@Override
 		public void run() {	
 			Item item = null;
 			ItemsType[] itemsTypes = ItemsType.values();
 			while(CreateItemPD){
 				ItemsType itemsType = itemsTypes[random(0, itemsTypes.length)];
-				if(Items.size() >= 3) {
-					if(Items.get(0) != null) {
-						Items.remove(Items.get(0));
-					}				
+				if(Items.size() >= ItemLength) {
+					//抓越界异常
+					try{
+						if(Items.get(0) != null) {
+							Items.remove(Items.get(0));
+						}
+					} catch (IndexOutOfBoundsException e) {
+						e.printStackTrace();
+					}		
 				}
-				if(Items.size() < 5){
+				if(Items.size() < ItemLength){
 					switch (itemsType) {
 					case Blood:
 						//添加血
@@ -190,7 +199,7 @@ public class PlayerClient extends JFrame implements InitValue{
 						break;
 					}
 				}
-				try {Thread.sleep(3000);} catch (Exception e) {}	//刷新间隔
+				try {Thread.sleep(ItemTime);} catch (Exception e) {}	//刷新间隔
 			}
 		}
 	}
@@ -218,11 +227,16 @@ public class PlayerClient extends JFrame implements InitValue{
 				//刷新子弹击中坦克事件		
 				Missile missile = null;
 				for(int i = 0; i < missiles.size(); i++){						//炮弹 触碰检测	
-					missile = missiles.get(i);	
-					if(missile != null) {
-						if(enemyPlayers != null)missile.hitTanks(enemyPlayers);
-						if(myPlayer != null)missile.hitTank(myPlayer);
-					}
+					//抓越界异常
+					try {
+						missile = missiles.get(i);	
+						if(missile != null) {
+							if(enemyPlayers != null)missile.hitTanks(enemyPlayers);
+							if(myPlayer != null)missile.hitTank(myPlayer);
+						}
+					} catch (IndexOutOfBoundsException e) {
+						e.printStackTrace();
+					}			
 				}
 				//刷新玩家吃到物品事件
 				itemsType = myPlayer.eats(Items);
@@ -268,34 +282,46 @@ public class PlayerClient extends JFrame implements InitValue{
 		 * @return
 		 */
 		private Image Doublebuffer(){
+
 			Image image = mainPanel.this.createImage(WindowsXlength + PanelX * (-2),  WindowsYlength + PanelY * (-2));
-			Graphics ImageG = image.getGraphics();		
+			Graphics ImageG = image.getGraphics();
+			//抓越界异常
+			try {
 			//背景图案 和 墙
-			background.draw(ImageG);	
-			for(int i = 0; i < walls.size(); i++) {
-				Wall wall = walls.get(i);
-				wall.draw(ImageG);
-			}
+				background.draw(ImageG);	
+				for(int i = 0; i < walls.size(); i++) {
+					Wall wall = walls.get(i);
+					wall.draw(ImageG);
+				}
 			//对象信息
-			for(int i = 0; i < enemyPlayers.size(); i++){					//画敌人的坦克
-				Player tank = enemyPlayers.get(i);
-				tank.draw(ImageG);	
-			}
-			
-			if( myPlayer.isPlayerLive() )myPlayer.draw(ImageG);				//画自己的 tank	
-			
-			for(int i = 0; i < missiles.size(); i++){						//画炮弹
-				Missile missile = missiles.get(i);		
-				if(missile != null)missile.draw(ImageG);
-			}
-			for(int i = 0; i < explodes.size(); i++){						//画爆炸
-				Explode e = explodes.get(i);
-				e.draw(ImageG);
-			}			
-			for(int i = 0; i < Items.size(); i++){							//画爆炸
-				Item item = Items.get(i);
-				item.draw(ImageG);
-			}
+				if(enemyPlayers != null){
+					for(int i = 0; i < enemyPlayers.size(); i++){					//画敌人的坦克
+						Player tank = enemyPlayers.get(i);
+						tank.draw(ImageG);	
+					}
+				}		
+				if( myPlayer.isPlayerLive() )myPlayer.draw(ImageG);				//画自己的 tank		
+				for(int i = 0; i < missiles.size(); i++){						//画炮弹
+					Missile missile = missiles.get(i);		
+					if(missile != null)missile.draw(ImageG);
+				}
+				for(int i = 0; i < explodes.size(); i++){						//画爆炸
+					Explode e = explodes.get(i);
+					try {
+						if(e != null){
+							e.draw(ImageG);
+						}
+					} catch (NullPointerException e2) {
+						e2.printStackTrace();
+					}
+				}			
+				for(int i = 0; i < Items.size(); i++){							//画爆炸
+					Item item = Items.get(i);
+					item.draw(ImageG);
+				}
+			} catch (IndexOutOfBoundsException e) {
+				e.printStackTrace();
+			}		
 			//*************数据信息
 			//击杀坦克数
 			ImageG.drawString("击杀坦克数量:" + killPlayerNumber, 10, 20);
@@ -348,10 +374,23 @@ public class PlayerClient extends JFrame implements InitValue{
 				}
 				break;
 			case KeyEvent.VK_Q:	
-			
+				if(enemyPlayers != null){
+					CreateEnemyPlayersPD = false;
+					for(int i = 0; i < enemyPlayers.size(); i++){
+						enemyPlayers.get(i).setPlayerLive(false);
+						enemyPlayers.remove(i);
+						i--;
+					}
+					enemyPlayers.clear();
+					enemyPlayers = null;
+				}
 				break;
 			case KeyEvent.VK_E:	
-
+				if(enemyPlayers == null){
+					CreateEnemyPlayersPD = true;
+					enemyPlayers = new ArrayList<Player>();
+					new Thread(new CreateEnemyPlayer()).start();
+				}
 				break;
 			default:
 				break;

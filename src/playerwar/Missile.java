@@ -299,13 +299,22 @@ public class Missile implements InitValue{
 				int tanky = 0;
 				double Distance = 0;
 				List<Player> enemytanks = tankClient.enemyPlayers;
+				Player enemytank = null;
 				//如果玩家坦克活着再追
 				while(live){
 					//吃到追踪弹再追踪
 					while(ZhuiZongPD) {
 						for(int i = 0; i < enemytanks.size(); i++) {
-							Player enemytank = enemytanks.get(i);
-							Distance = Math.sqrt(Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2) + Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2));
+							try {
+								enemytank = enemytanks.get(i);
+							} catch (IndexOutOfBoundsException e) {
+								e.printStackTrace();
+							}
+							try {
+								Distance = Math.sqrt(Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2) + Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2));
+							} catch (NullPointerException e) {
+								e.printStackTrace();
+							}
 							if(Distance < ZhuiJiDistance) {
 								tankx = enemytank.getX();
 								tanky = enemytank.getY();	
@@ -466,12 +475,16 @@ public class Missile implements InitValue{
 	 */
 	public boolean hitTanks(List<Player> enemyTanks) {
 		for(int i = 0; i < enemyTanks.size(); i++){
-			if(hitTank(enemyTanks.get(i))){
-				if(enemyTanks.get(i) != null) {
-					enemyTanks.remove(enemyTanks.get(i));
+			try {
+				if(hitTank(enemyTanks.get(i))){
+					if(enemyTanks.get(i) != null) {
+						enemyTanks.remove(enemyTanks.get(i));
+					}
+					return true;			
 				}
-				return true;
-			}			
+			} catch (IndexOutOfBoundsException e) {
+				e.printStackTrace();
+			}
 		}
 		return false;
 	}
@@ -495,8 +508,12 @@ public class Missile implements InitValue{
 	 */
 	public boolean hitWalls(List<Wall> walls) {
 		for(int i = 0; i < walls.size(); i++) {
-			if(hitWall(walls.get(i))) {
-				return true;
+			try {
+				if(hitWall(walls.get(i))) {
+					return true;
+				}
+			} catch (IndexOutOfBoundsException e) {
+				e.printStackTrace();
 			}
 		}
 		return false;
