@@ -4,8 +4,8 @@ package playerwar;
  *
  */
 public interface InitValue {
-	public static final int WindowsXlength = 800;		//窗口长
-	public static final int WindowsYlength = 800;		//窗口宽
+	public static final int WindowsXlength = 1600;		//窗口长
+	public static final int WindowsYlength = 900;		//窗口宽
 	public static final int WindowsSide = 200;			//边距
 	public static final int PanelX = -5,PanelY = -5;	//游戏面板位置
 	
@@ -20,4 +20,7 @@ public interface InitValue {
 	public static final int Misslie_putongX = 20;			//普通炮
 	public static final int Misslie_bafangX = 30;			//八方炮
 	public static final int Misslie_zhuizongX = 100;		//追踪炮
+	
+	public static final int Door_city = 0;				//城市
+	public static final int Door_woods = 1;				//森林
 }

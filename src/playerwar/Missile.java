@@ -509,13 +509,15 @@ public class Missile implements InitValue{
 	 * @return
 	 */
 	public boolean hitWalls(List<Wall> walls) {
-		for(int i = 0; i < walls.size(); i++) {
-			try {
-				if(hitWall(walls.get(i))) {
-					return true;
+		if(walls != null){
+			for(int i = 0; i < walls.size(); i++) {
+				try {
+					if(hitWall(walls.get(i))) {
+						return true;
+					}
+				} catch (IndexOutOfBoundsException e) {
+					e.printStackTrace();
 				}
-			} catch (IndexOutOfBoundsException e) {
-				e.printStackTrace();
 			}
 		}
 		return false;

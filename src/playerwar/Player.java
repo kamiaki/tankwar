@@ -24,7 +24,7 @@ public class Player implements InitValue{
 	private int bloodZong = 100;											//生命值总数
 	private int Mana = 100;													//生命值
 	private int ManaZong = 100;												//生命值总数
-	private Bar bar = new Bar();								//血条类
+	private Bar bar = new Bar();											//血条类
 	private int X, Y, oldX, oldY, xspeed, yspeed;							//角色位置 速度
 	private boolean Up = false, Down = false,Left = false, Right = false;	//玩家角色 按键方向
 	private Direction MoveFangXiang = Direction.d5;							//角色 移动方向
@@ -32,6 +32,7 @@ public class Player implements InitValue{
 	private int FollowDistance = 1000;										//角色追击距离
 	private int XuLi = 0;													//角色蓄力
 	private int XuLiZhi = 30;												//角色蓄力值
+	private int XuLiZhiSS = 0;												//蓄力值闪烁
 	//随机器
 	public static Random random = new Random();								//随机器
 	//贴图
@@ -179,6 +180,22 @@ public class Player implements InitValue{
 	public int getX() {
 		return X;
 	}
+	/**
+	 * 设置角色X
+	 * @param x
+	 */
+	public void setX(int x) {
+		this.X = x;
+		this.oldX = X;
+	}
+	/**
+	 * 设置角色Y
+	 * @param x
+	 */
+	public void setY(int y) {
+		Y = y;
+		this.oldY = Y;
+	}
 	//******************************************************************画出人物
 	/**
 	 * 玩家动画 运动帧数
@@ -206,17 +223,17 @@ public class Player implements InitValue{
 			public void run() {
 				while(live){
 					if(AtkKey){
-						if(XuLi < XuLiZhi)XuLi++;
-						if(stepfireY > 3) stepfireY = 0;
-						if(stepfireX > 4) stepfireX = 0;
+						if(XuLi < XuLiZhi)XuLi++;			//蓄力值
+						if(stepfireY > 3) stepfireY = 0;	//出招图 
+						if(stepfireX > 4) stepfireX = 0;	//出招图X
 					}else{
-						stepfireX = 0;
-						stepfireY = 0;
+						stepfireY = 0;						//出招图Y
+						stepfireX = 0;						//出招图X					
 					};
 					try {Thread.sleep(20);} catch (Exception e) {}
-					stepfireX += 1;
-					if(stepfireX > 4){
-						stepfireY += 1;
+					stepfireX += 1;							//出招图X
+					if(stepfireX > 4){						//出招图X
+						stepfireY += 1;						//出招图Y
 					}
 				}			
 			}
@@ -442,6 +459,8 @@ public class Player implements InitValue{
 			}	
 			//子弹初始方向 炮筒初始方向  //如果没有动就不改变方向了
 			if( MoveFangXiang != Direction.d5 ) this.DrawFangXiang = this.MoveFangXiang; 
+			//玩家踩门
+			ZhuangDoors(playerClient.doors);
 			//角色不能出界
 			if(X < 0 || Y < 0 || X + Player.Player1X > WindowsXlength || Y + Player.Player1Y + 30 > WindowsYlength) {
 				this.stay();
@@ -679,8 +698,21 @@ public class Player implements InitValue{
 				else{g.setColor(Color.RED);}
 				g.fillRect(X + 1, Y-(offset + BarHeight * 1) + 1, BarLength - 1, BarHeight - 1);
 				//蓄力条
-				BarLength = Player1X * XuLi / XuLiZhi;
-				g.setColor(Color.YELLOW);
+				BarLength = Player1X * XuLi / XuLiZhi;		
+				if(XuLi >= XuLiZhi){
+					if(XuLiZhiSS == 0){
+						XuLiZhiSS = 1;
+						g.setColor(Color.MAGENTA);
+					}else if(XuLiZhiSS == 1){
+						XuLiZhiSS = 2;
+						g.setColor(Color.WHITE);
+					}else{
+						XuLiZhiSS = 0;
+						g.setColor(Color.PINK);
+					}			
+				}else{
+					g.setColor(Color.YELLOW);
+				}
 				g.fillRect(X + 1, Y-(offsetXuLi + BarHeight * 0) + 1, BarLength - 1, BarHeight - 1);
 			}
 			//还原画笔颜色
@@ -705,14 +737,16 @@ public class Player implements InitValue{
 	 * @return
 	 */
 	public boolean ZhuangWalls(List<Wall> walls) {
-		for(int i = 0; i < walls.size(); i++) {
-			try {
-				if(ZhuangWall(walls.get(i))){
-					return true;
-				}
-			} catch (IndexOutOfBoundsException e) {
-				e.printStackTrace();
-			}		
+		if(walls != null){
+			for(int i = 0; i < walls.size(); i++) {
+				try {
+					if(ZhuangWall(walls.get(i))){
+						return true;
+					}
+				} catch (IndexOutOfBoundsException e) {
+					e.printStackTrace();
+				}		
+			}
 		}
 		return false;
 	}
@@ -779,19 +813,51 @@ public class Player implements InitValue{
 	 * @return
 	 */
 	public ItemsType eats(List<Item> items) {
-		ItemsType itemsType = ItemsType.NoItem;
-		for(int i = 0; i < items.size(); i++) {		
-			try {
-				itemsType = eat(items.get(i));
-				if(itemsType != ItemsType.NoItem) {
-					if(items.get(i) != null)items.remove(items.get(i));
-					return itemsType;
-				}
-			} catch (IndexOutOfBoundsException e) {
-				e.printStackTrace();
-			}		
+		if(items != null){
+			ItemsType itemsType = ItemsType.NoItem;
+			for(int i = 0; i < items.size(); i++) {		
+				try {
+					itemsType = eat(items.get(i));
+					if(itemsType != ItemsType.NoItem) {
+						if(items.get(i) != null)items.remove(items.get(i));
+						return itemsType;
+					}
+				} catch (IndexOutOfBoundsException e) {
+					e.printStackTrace();
+				}		
+			}
 		}
 		return ItemsType.NoItem;
 	}
-	
+	/**
+	 * 角色撞门
+	 * @param w
+	 * @return
+	 */
+	public boolean ZhuangDoor(Door door) {
+		if(this.live && Player.this.getRect().intersects(door.getRect())) {
+			door.ChuanSong();
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * 角色撞链表门
+	 * @param w
+	 * @return
+	 */
+	public boolean ZhuangDoors(List<Door> doors) {
+		if(doors != null){
+			for(int i = 0; i < doors.size(); i++) {
+				try {
+					if(ZhuangDoor(doors.get(i))){
+						return true;
+					}
+				} catch (IndexOutOfBoundsException e) {
+					e.printStackTrace();
+				}		
+			}
+		}
+		return false;
+	}
 }

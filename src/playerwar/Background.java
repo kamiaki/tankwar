@@ -10,15 +10,19 @@ import java.awt.Toolkit;
 public class Background implements InitValue{
 	private PlayerClient tankClient;										//´ó¹Ü¼ÒÖ¸Õë
 	private int X,Y;													//±³¾°µÄÎ»ÖÃºÍ³¤¿í
+	private int BeiJingID;												//±³¾°ID
 	//ÌùÍ¼
 	private static Toolkit toolkit = Toolkit.getDefaultToolkit();		//¹¤¾ß°ü
-	private static Image BackGround;									//±³¾°Í¼Æ¬
+	private static Image BackGround1;									//±³¾°Í¼Æ¬
+	private static Image BackGround2;									//±³¾°Í¼Æ¬
 	static{
 		/**
 		 * »­±³¾°
 		 */	
-		BackGround = toolkit.getImage(Background.class.getClassLoader().getResource("images/±³¾°2.png"));		//±³¾°Í¼Æ¬
-		BackGround = BackGround.getScaledInstance(WindowsXlength + PanelX * (-2), WindowsYlength + PanelY * (-2), Image.SCALE_DEFAULT);
+		BackGround1 = toolkit.getImage(Background.class.getClassLoader().getResource("images/±³¾°2.png"));		//±³¾°Í¼Æ¬
+		BackGround1 = BackGround1.getScaledInstance(WindowsXlength + PanelX * (-2), WindowsYlength + PanelY * (-2), Image.SCALE_DEFAULT);
+		BackGround2 = toolkit.getImage(Background.class.getClassLoader().getResource("images/±³¾°1.jpg"));		//±³¾°Í¼Æ¬
+		BackGround2 = BackGround2.getScaledInstance(WindowsXlength + PanelX * (-2), WindowsYlength + PanelY * (-2), Image.SCALE_DEFAULT);
 	}
 
 	/**
@@ -29,9 +33,10 @@ public class Background implements InitValue{
 	 * @param height
 	 * @param tc
 	 */
-	public Background(int x, int y, PlayerClient tc) {
+	public Background(int x, int y,int beijingid, PlayerClient tc) {
 		this.X = x;
 		this.Y = y;
+		this.BeiJingID = beijingid;
 		tankClient = tc;
 	}
 	/**
@@ -46,6 +51,17 @@ public class Background implements InitValue{
 	 * @param g
 	 */
 	private void BackgroundPicture(Graphics g){
-		g.drawImage(BackGround, X, Y, null);
+		switch (BeiJingID) {
+		case 1:
+			g.drawImage(BackGround1, X, Y, null);
+			break;
+		case 2:
+			g.drawImage(BackGround2, X, Y, null);
+			break;
+		default:
+			g.drawImage(BackGround1, X, Y, null);
+			break;
+		}
+		
 	}
 }

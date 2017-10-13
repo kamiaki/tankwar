@@ -61,7 +61,7 @@ public class Wall {
 	/**
 	 * »­Ç½±Ú
 	 */
-	public void HuaWall(){			
+	private void HuaWall(){			
 		wallPicture = wallImageIcon.getImage();
 		wallPicture = wallPicture.getScaledInstance(w, h, Image.SCALE_DEFAULT);
 	}
