@@ -4,8 +4,8 @@ package playerwar;
  *
  */
 public interface InitValue {
-	public static final int WindowsXlength = 1600;		//窗口长
-	public static final int WindowsYlength = 900;		//窗口宽
+	public static final int WindowsXlength = 800;		//窗口长
+	public static final int WindowsYlength = 800;		//窗口宽
 	public static final int WindowsSide = 200;			//边距
 	public static final int PanelX = -5,PanelY = -5;	//游戏面板位置
 	

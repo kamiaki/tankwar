@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class Missile implements InitValue{
 	//大管家指针
-	private PlayerClient tankClient = null;								//大管家指针
+	private PlayerClient PlayerClient = null;								//大管家指针
 	//子弹参数
 	private boolean live = true;										//子弹是否活着
 	private int X, Y, xspeed, yspeed, oldX, oldY;						//子弹位置 和 速度
@@ -96,7 +96,7 @@ public class Missile implements InitValue{
 		this.yspeed = yspeed;
 		this.oldX = x;
 		this.oldY = y;
-		this.tankClient = tc;
+		this.PlayerClient = tc;
 		this.live = true;
 		MissileDongHua();
 		MissileQD();
@@ -268,7 +268,7 @@ public class Missile implements InitValue{
 		case type_player:
 			Follow();  				//启动追踪弹线程
 			MissileMove();			//子弹移动线程
-			TimeMissileDead();		//子弹消亡线程
+			TimeMissileDead();		//子弹消亡线程	
 			break;
 		default:
 			MissileMove();			//子弹移动线程
@@ -293,62 +293,64 @@ public class Missile implements InitValue{
 	 * 追踪弹线程
 	 */
 	private void Follow(){
-		new Thread(new Runnable() {
-			public void run() {
-				int tankx = 0;
-				int tanky = 0;
-				double Distance = 0;
-				List<Player> enemytanks = tankClient.enemyPlayers;
-				Player enemytank = null;
-				//如果玩家坦克活着再追
-				while(live){
-					//吃到追踪弹再追踪
-					while(ZhuiZongPD) {
-						for(int i = 0; i < enemytanks.size(); i++) {
-							try {
-								enemytank = enemytanks.get(i);
-							} catch (IndexOutOfBoundsException e) {
-								e.printStackTrace();
+		if(PlayerClient.enemyPlayers != null){
+			new Thread(new Runnable() {
+				public void run() {
+					int tankx = 0;
+					int tanky = 0;
+					double Distance = 0;
+					List<Player> enemyPlayers = PlayerClient.enemyPlayers;
+					Player enemytank = null;
+					//如果玩家坦克活着再追
+					while(live){
+						//吃到追踪弹再追踪
+						while(ZhuiZongPD) {
+							for(int i = 0; i < enemyPlayers.size(); i++) {
+								try {
+									enemytank = enemyPlayers.get(i);
+								} catch (IndexOutOfBoundsException e) {
+									e.printStackTrace();
+								}
+								try {
+									Distance = Math.sqrt(Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2) + Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2));
+								} catch (NullPointerException e) {
+									e.printStackTrace();
+								}
+								if(Distance < ZhuiJiDistance) {
+									tankx = enemytank.getX();
+									tanky = enemytank.getY();	
+									if(Missile.this.X < tankx && Missile.this.Y == tanky){
+										MissileFangXiang = Direction.d6;
+									}else if(Missile.this.X < tankx && Missile.this.Y < tanky){
+										MissileFangXiang = Direction.d3;
+									}else if(Missile.this.X == tankx && Missile.this.Y < tanky){
+										MissileFangXiang = Direction.d2;
+									}else if(Missile.this.X > tankx && Missile.this.Y < tanky){
+										MissileFangXiang = Direction.d1;
+									}else if(Missile.this.X > tankx && Missile.this.Y == tanky){
+										MissileFangXiang = Direction.d4;
+									}else if(Missile.this.X > tankx && Missile.this.Y > tanky){
+										MissileFangXiang = Direction.d7;
+									}else if(Missile.this.X == tankx && Missile.this.Y > tanky){
+										MissileFangXiang = Direction.d8;
+									}else if(Missile.this.X < tankx && Missile.this.Y > tanky){
+										MissileFangXiang = Direction.d9;
+									}							
+								}					
 							}
-							try {
-								Distance = Math.sqrt(Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2) + Math.pow(Math.abs(Missile.this.X - enemytank.getX()), 2));
-							} catch (NullPointerException e) {
-								e.printStackTrace();
-							}
-							if(Distance < ZhuiJiDistance) {
-								tankx = enemytank.getX();
-								tanky = enemytank.getY();	
-								if(Missile.this.X < tankx && Missile.this.Y == tanky){
-									MissileFangXiang = Direction.d6;
-								}else if(Missile.this.X < tankx && Missile.this.Y < tanky){
-									MissileFangXiang = Direction.d3;
-								}else if(Missile.this.X == tankx && Missile.this.Y < tanky){
-									MissileFangXiang = Direction.d2;
-								}else if(Missile.this.X > tankx && Missile.this.Y < tanky){
-									MissileFangXiang = Direction.d1;
-								}else if(Missile.this.X > tankx && Missile.this.Y == tanky){
-									MissileFangXiang = Direction.d4;
-								}else if(Missile.this.X > tankx && Missile.this.Y > tanky){
-									MissileFangXiang = Direction.d7;
-								}else if(Missile.this.X == tankx && Missile.this.Y > tanky){
-									MissileFangXiang = Direction.d8;
-								}else if(Missile.this.X < tankx && Missile.this.Y > tanky){
-									MissileFangXiang = Direction.d9;
-								}							
-							}					
+							try {Thread.sleep(10);} catch (Exception e) {}	
 						}
 						try {Thread.sleep(10);} catch (Exception e) {}	
 					}
-					try {Thread.sleep(10);} catch (Exception e) {}	
 				}
-			}
-		}).start();
+			}).start();
+		}
 	}
 	/**
 	 * 移动子弹
 	 */
 	private void move() {	
-		if( Missile.this.hitWalls(tankClient.walls) ) {
+		if( Missile.this.hitWalls(PlayerClient.walls) ) {
 			this.missileDead();
 		}else {
 			//上一次移动的坐标
@@ -389,7 +391,7 @@ public class Missile implements InitValue{
 			default:
 				break;
 			}		
-			if(tankClient != null){
+			if(PlayerClient != null){
 				if(X < 0 || Y < 0 || X > WindowsXlength || Y > WindowsYlength){
 					this.missileDead();	
 				}
@@ -402,7 +404,7 @@ public class Missile implements InitValue{
 	private void missileDead() {
 		this.live = false;
 		if(this != null) {
-			tankClient.missiles.remove(this);	
+			PlayerClient.missiles.remove(this);	
 		}
 	}
 	/**
@@ -415,7 +417,7 @@ public class Missile implements InitValue{
 				if(Missile.this.live){
 					Missile.this.live = false;											//子弹生命判断为死
 					if(Missile.this != null) {
-						tankClient.missiles.remove(Missile.this);						//在队列中移除子弹
+						PlayerClient.missiles.remove(Missile.this);						//在队列中移除子弹
 					}
 				}	
 			}
@@ -429,22 +431,22 @@ public class Missile implements InitValue{
 	 */
 	public boolean hitTank(Player t){
 		if(this.getRect().intersects( t.getRect()) && t.isPlayerLive() && Missile.this.getMissileType() != t.getPlayerType() ){			
-			Explode e = new Explode(this.X, this.Y, this.tankClient);	//添加一个爆炸
-			tankClient.explodes.add(e);
+			Explode e = new Explode(this.X, this.Y, this.PlayerClient);	//添加一个爆炸
+			PlayerClient.explodes.add(e);
 			
-			tankClient.ZhenDong();										//大管家 震动方法			
+			PlayerClient.ZhenDong();										//大管家 震动方法			
 			
 			this.live = false;											//子弹生命判断为死
 			if(this != null) {
-				tankClient.missiles.remove(this);						//在队列中移除子弹
+				PlayerClient.missiles.remove(this);						//在队列中移除子弹
 			}
 				
 			if(t.getPlayerType() == type_player) {
 				t.setBlood(t.getBlood() - 20);
 				if(t.getBlood() <= 0) {
 					t.setPlayerLive(false);								//玩家坦克生命判断为死	
-					if(tankClient.rePlayerNumber == 0){
-						tankClient.rePlayerNumber -= 1;
+					if(PlayerClient.rePlayerNumber == 0){
+						PlayerClient.rePlayerNumber -= 1;
 					}
 				}
 			}else if(t.getPlayerType() == type_enemy){	
@@ -459,7 +461,7 @@ public class Missile implements InitValue{
 				//杀死敌人后 数量 + 1
 				if(t.getBlood() <= 0) {
 					t.setPlayerLive(false);								//敌人坦克生命判断为死
-					tankClient.killPlayerNumber += 1;
+					PlayerClient.killPlayerNumber += 1;
 					return true;
 				}else {
 					return false;
@@ -495,8 +497,8 @@ public class Missile implements InitValue{
 	 */
 	public boolean hitWall(Wall w) {
 		if(this.live && this.getRect().intersects(w.getRect())) {
-			Explode e = new Explode(this.X, this.Y, this.tankClient);	//添加一个爆炸
-			tankClient.explodes.add(e);
+			Explode e = new Explode(this.X, this.Y, this.PlayerClient);	//添加一个爆炸
+			PlayerClient.explodes.add(e);
 			return true;
 		}
 		return false;

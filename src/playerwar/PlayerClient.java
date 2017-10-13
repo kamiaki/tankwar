@@ -99,8 +99,8 @@ public class PlayerClient extends JFrame implements InitValue{
 		//加载背景 障碍
 		background = new Background(0, 0, this);
 		walls = new ArrayList<Wall>();
-		walls.add(new Wall(200, 400, 400, 50, PlayerClient.this));
-		walls.add(new Wall(1200, 200, 50, 500, PlayerClient.this));
+		walls.add(new Wall(100, 100, 100, 50, PlayerClient.this));
+		walls.add(new Wall(300, 300, 50, 100, PlayerClient.this));
 		//加载物品
 		Items = new ArrayList<Item>();
 		new Thread(new CreateItem()).start();
@@ -226,17 +226,19 @@ public class PlayerClient extends JFrame implements InitValue{
 			while(StartGame){
 				//刷新子弹击中坦克事件		
 				Missile missile = null;
-				for(int i = 0; i < missiles.size(); i++){						//炮弹 触碰检测	
-					//抓越界异常
-					try {
-						missile = missiles.get(i);	
-						if(missile != null) {
-							if(enemyPlayers != null)missile.hitTanks(enemyPlayers);
-							if(myPlayer != null)missile.hitTank(myPlayer);
-						}
-					} catch (IndexOutOfBoundsException e) {
-						e.printStackTrace();
-					}			
+				if(missiles != null){
+					for(int i = 0; i < missiles.size(); i++){					//炮弹 触碰检测	
+						//抓越界异常
+						try {
+							missile = missiles.get(i);	
+							if(missile != null) {
+								if(enemyPlayers != null)missile.hitTanks(enemyPlayers);
+								if(myPlayer != null)missile.hitTank(myPlayer);
+							}
+						} catch (IndexOutOfBoundsException e) {
+							e.printStackTrace();
+						}			
+					}	
 				}
 				//刷新玩家吃到物品事件
 				itemsType = myPlayer.eats(Items);
@@ -301,9 +303,11 @@ public class PlayerClient extends JFrame implements InitValue{
 					}
 				}		
 				if( myPlayer.isPlayerLive() )myPlayer.draw(ImageG);				//画自己的 tank		
-				for(int i = 0; i < missiles.size(); i++){						//画炮弹
-					Missile missile = missiles.get(i);		
-					if(missile != null)missile.draw(ImageG);
+				if(missiles != null){
+					for(int i = 0; i < missiles.size(); i++){					//画炮弹
+						Missile missile = missiles.get(i);		
+						if(missile != null)missile.draw(ImageG);
+					}
 				}
 				for(int i = 0; i < explodes.size(); i++){						//画爆炸
 					Explode e = explodes.get(i);
@@ -384,13 +388,25 @@ public class PlayerClient extends JFrame implements InitValue{
 					enemyPlayers.clear();
 					enemyPlayers = null;
 				}
+				if(missiles != null){
+					for(int i = 0; i < missiles.size(); i++){
+						missiles.get(i).setLive(false);
+						missiles.remove(i);
+						i--;
+					}
+					missiles.clear();
+					missiles = null;
+					if(missiles == null){
+						missiles = new ArrayList<Missile>();
+					}
+				}
 				break;
 			case KeyEvent.VK_E:	
 				if(enemyPlayers == null){
 					CreateEnemyPlayersPD = true;
 					enemyPlayers = new ArrayList<Player>();
 					new Thread(new CreateEnemyPlayer()).start();
-				}
+				}				
 				break;
 			default:
 				break;
