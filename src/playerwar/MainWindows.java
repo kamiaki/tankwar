@@ -1,23 +1,28 @@
 package playerwar;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import HTTPclient.LoginDlg;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 
 public class MainWindows {
-	//大管家指针
-	private PlayerClient PlayerClient;	
+	//其他窗口引用
+	LoginDlg loginDlg;
+	PlayerClient playerClient;
 	//主窗口
 	public JFrame mFrame;					
-	private JPanel MPanel;		
+	private JPanel MPanel;	
+	private JLabel label_main;
+	//其他参数
 	private buttonlistener btr;
-	//控件
-	private JButton button_StartGame;	
-	private JButton button_CZ;			
+		
 	/**
 	 * 主函数
 	 * @param args
@@ -31,6 +36,7 @@ public class MainWindows {
 	 */
 	public MainWindows() {
 		initialize();
+		LOGIN();
 	}
 	/**
 	 * 初始化主窗体
@@ -48,26 +54,35 @@ public class MainWindows {
 		MPanel.setLayout(null);
 		mFrame.setContentPane(MPanel);
 		//控件		
-		button_StartGame = new JButton("开始游戏");
-		button_StartGame.setBounds(30, 22, 128, 31);
-		button_StartGame.setActionCommand("开始游戏");
-		button_StartGame.addActionListener(btr);
-
-		button_CZ = new JButton("操作说明");
-		button_CZ.setBounds(30, 63, 128, 31);
-		button_CZ.setActionCommand("操作说明");
-		button_CZ.addActionListener(btr);	
+		label_main = new JLabel("加载中..");
+		label_main.setBounds(38, 45, 112, 34);
 		//控件插入容器
-		MPanel.add(button_StartGame);
-		MPanel.add(button_CZ);
+		MPanel.add(label_main);;
 	}
+	
+	private void LOGIN(){
+		new Thread(new Runnable() {
+			public void run() {
+				for(int i = 2; i >= 0; i--){
+					label_main.setText("加载中.." + i);
+					try { Thread.sleep(1000); } catch (InterruptedException e) {}
+				}	
+				playerClient = new PlayerClient(MainWindows.this);
+				loginDlg = new LoginDlg(playerClient);	
+				loginDlg.setVisible(true);
+			}
+		}).start();
+		
+	}
+	
+	
 	
 	//按钮响应类
 	private class buttonlistener implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			switch (e.getActionCommand()) {
 			case "开始游戏":
-				PlayerClient = new PlayerClient(MainWindows.this);
+				PlayerClient PlayerClient = new PlayerClient(MainWindows.this);
 				mFrame.dispose();
 				break;
 			case "操作说明":

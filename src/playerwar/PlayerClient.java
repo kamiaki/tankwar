@@ -51,12 +51,16 @@ public class PlayerClient extends JFrame implements InitValue{
 	 */
 	public PlayerClient(MainWindows mainWindows){
 		this.mainWindows = mainWindows;							//主窗口指针赋值
+	}	
+	/**
+	 * 游戏启动
+	 */
+	public void gamestart(){
 		launchFrame();											//画主窗口
 		initObject();											//初始化一些参数
 		launchGamePanel();										//游戏面板加载
 		new Thread(new PaintThread()).start();					//启动绘图线程
-		this.setVisible(true);									//显示窗口
-	}	
+	}
 	//**********************************************************构造窗口 初始化
 	/**
 	 * 初始化窗口
