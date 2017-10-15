@@ -163,7 +163,7 @@ public class MySQLRelevant {
 	//连接用户ID
 	public void connectionPlayerGameID(){
 		String url = null;
-		url = String.format("jdbc:mysql://rm-2ze354j79ce6ky541o.mysql.rds.aliyuncs.com:3306/playerwarid");
+		url = String.format("jdbc:mysql://rm-2ze354j79ce6ky541o.mysql.rds.aliyuncs.com:3306/aki");
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			con = DriverManager.getConnection(url,"beijingjiuwei","jiuwei123-"); 		 
@@ -174,25 +174,16 @@ public class MySQLRelevant {
 	//写入新用户信息
 	public boolean writePlayerGameID(Map<String, String> map){
 		String insert = null;
-		String userName = null,name = null,password = null,joinDate = null,IPLocation = null;
+		String userName = null,password = null;
 		try {
 			if(con != null){											
 				userName = map.get("用户名");
-				name = map.get("姓名");
 				password = map.get("密码");
-				joinDate = map.get("注册日期");
-				IPLocation = map.get("IP地址");
-				insert = String.format("insert into userid (用户名,密码,姓名,注册日期,IP地址)"
-									+ " values(?,?,?,?,?)");
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");   
+				insert = String.format("insert into playerwarid (用户名,密码)"
+									+ " values(?,?)");
 				pst = con.prepareStatement(insert);	 
 				pst.setString(1, userName); 
-				pst.setString(2, password);
-				pst.setString(3, name);
-				Date dateXD = new Date();  
-				dateXD = sdf.parse(joinDate); 
-				pst.setDate(4,new java.sql.Date(dateXD.getTime())); 				
-				pst.setString(5, IPLocation);			
+				pst.setString(2, password);		
 				pst.executeUpdate(); //执行更新	
 				return true;
 			}else{
@@ -235,7 +226,7 @@ public class MySQLRelevant {
 		try {
 			if(con != null){
 				select = String.format("select * from %s where 用户名 = '%s'", 
-						"userid", userName);
+						"playerwarid", userName);
 				//单个查询
 				pst = con.prepareStatement(select);
 				rs = pst.executeQuery(select);  
@@ -268,7 +259,7 @@ public class MySQLRelevant {
 		try {
 			if(con != null){
 				select = String.format("select * from %s where 用户名 = '%s'", 
-						"userid", userName);
+						"playerwarid", userName);
 				//单个查询
 				pst = con.prepareStatement(select);
 				rs = pst.executeQuery(select);  

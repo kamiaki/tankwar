@@ -227,6 +227,7 @@ public class FileRelevant {
 	       }    
 	}
 	//文件移动
+	//1 原始文件位置 2 移动到的文件位置
 	public static void filemove(String oldPath, String newPath){
 		filecopy(oldPath, newPath);    
 		filedelete(oldPath);    

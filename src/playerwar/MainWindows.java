@@ -54,7 +54,7 @@ public class MainWindows {
 		MPanel.setLayout(null);
 		mFrame.setContentPane(MPanel);
 		//控件		
-		label_main = new JLabel("加载中..");
+		label_main = new JLabel("加载中...");
 		label_main.setBounds(38, 45, 112, 34);
 		//控件插入容器
 		MPanel.add(label_main);;
@@ -63,16 +63,15 @@ public class MainWindows {
 	private void LOGIN(){
 		new Thread(new Runnable() {
 			public void run() {
-				for(int i = 2; i >= 0; i--){
-					label_main.setText("加载中.." + i);
-					try { Thread.sleep(1000); } catch (InterruptedException e) {}
-				}	
-				playerClient = new PlayerClient(MainWindows.this);
-				loginDlg = new LoginDlg(playerClient);	
-				loginDlg.setVisible(true);
+				playerClient = new PlayerClient();						//加载游戏面板
+				
+				loginDlg = new LoginDlg(playerClient);					//加载登录界面
+				playerClient.GetloginDlg(loginDlg);						//获取登录指针
+				loginDlg.setVisible(true);                              //显示登录界面
+				
+				mFrame.dispose();										//关闭这个窗口
 			}
-		}).start();
-		
+		}).start();		
 	}
 	
 	
@@ -82,8 +81,6 @@ public class MainWindows {
 		public void actionPerformed(ActionEvent e) {
 			switch (e.getActionCommand()) {
 			case "开始游戏":
-				PlayerClient PlayerClient = new PlayerClient(MainWindows.this);
-				mFrame.dispose();
 				break;
 			case "操作说明":
 				String xx = "↑-w\r\n↓-S\r\n←-A\r\n→-D\r\n普通炮-Num1\r\nAOE炮-Num2\r\n追踪炮-Num3";

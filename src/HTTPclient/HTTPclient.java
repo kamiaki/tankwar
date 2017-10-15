@@ -78,13 +78,12 @@ public class HTTPclient {
 	public String HTTPclientSendLogin(String userName,String password){
 		try {
 			URL url = new URL("http://" + Addr + ":" + PORT + "/login");		//URL地址
-		    HttpURLConnection conn = (HttpURLConnection)url.openConnection();	//HTTP打开URL连接             
-//			conn.setConnectTimeout(30000);										//设置连接主机超时（单位：毫秒） 
-//			conn.setReadTimeout(30000); 										//设置从主机读取数据超时（单位：毫秒）       
+		    HttpURLConnection conn = (HttpURLConnection)url.openConnection();	//HTTP打开URL连接              
 		    conn.setRequestMethod("POST");										//设置URL请求的方法       
 		    conn.setDoInput(true);												//输入 发送POST请求必须设置
 		    conn.setDoOutput(true);												//输出  发送POST请求必须设置      
 		    conn.setUseCaches(true);											//客户可以使用缓存
+		    conn.connect();
 		    
 			String SENDstr = "";												//文字发送
 			SENDstr = writeLogin(userName,password);
@@ -94,7 +93,7 @@ public class HTTPclient {
 			out.flush();
 			out.close();
 		          
-			byte[] buffer = new byte[1024];									//文字接收
+			byte[] buffer = new byte[1024];										//文字接收
 			int length = 0;
 			String resultSTR = null;        
 			InputStream in = conn.getInputStream();  
@@ -102,11 +101,10 @@ public class HTTPclient {
 				resultSTR = new String(buffer,0,length);
 			}
 			in.close();     
-			conn.disconnect();												//连接断开
+			conn.disconnect();													//连接断开
 			
 			return resultSTR;
 		} catch (Exception e) {
-			// TODO: handle exception
 			return "服务端异常";
 		}		
 	}

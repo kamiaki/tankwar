@@ -2,15 +2,15 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="F:/workspace/tankwar/JSON/commons-beanutils-1.7.0.jar"/>
-	<classpathentry kind="lib" path="F:/workspace/tankwar/JSON/commons-collections.jar"/>
-	<classpathentry kind="lib" path="F:/workspace/tankwar/JSON/commons-collections-3.2.jar"/>
-	<classpathentry kind="lib" path="F:/workspace/tankwar/JSON/commons-httpclient-3.0.1.jar"/>
-	<classpathentry kind="lib" path="F:/workspace/tankwar/JSON/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="F:/workspace/tankwar/JSON/commons-logging-1.0.4.jar"/>
-	<classpathentry kind="lib" path="F:/workspace/tankwar/JSON/ezmorph-1.0.3.jar"/>
-	<classpathentry kind="lib" path="F:/workspace/tankwar/JSON/json-lib-2.2.3-jdk15.jar"/>
-	<classpathentry kind="lib" path="F:/workspace/tankwar/JSON/json-lib-2.3-jdk13.jar"/>
-	<classpathentry kind="lib" path="F:/workspace/tankwar/MySQL/mysql-connector-java-5.1.26-bin.jar"/>
+	<classpathentry kind="lib" path="D:/JavaWork/tankwar/JSON/commons-beanutils-1.7.0.jar"/>
+	<classpathentry kind="lib" path="D:/JavaWork/tankwar/JSON/commons-collections.jar"/>
+	<classpathentry kind="lib" path="D:/JavaWork/tankwar/JSON/commons-collections-3.2.jar"/>
+	<classpathentry kind="lib" path="D:/JavaWork/tankwar/JSON/commons-httpclient-3.0.1.jar"/>
+	<classpathentry kind="lib" path="D:/JavaWork/tankwar/JSON/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="D:/JavaWork/tankwar/JSON/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="D:/JavaWork/tankwar/JSON/ezmorph-1.0.3.jar"/>
+	<classpathentry kind="lib" path="D:/JavaWork/tankwar/JSON/json-lib-2.2.3-jdk15.jar"/>
+	<classpathentry kind="lib" path="D:/JavaWork/tankwar/JSON/json-lib-2.3-jdk13.jar"/>
+	<classpathentry kind="lib" path="D:/JavaWork/tankwar/MySQL/mysql-connector-java-5.1.26-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

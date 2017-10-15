@@ -2,6 +2,7 @@ package playerwar;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.Random;
 
 import javax.swing.*;
+
+import HTTPclient.LoginDlg;
 /**
  * 大管家类
  *
@@ -19,9 +22,9 @@ public class PlayerClient extends JFrame implements InitValue{
 	//固定参数
 	public static final int setLift = 3;				//初始玩家生命数量
 	//窗口面板
-	public MainWindows mainWindows;					//主窗口指针
+	public LoginDlg loginDlg;							//主窗口指针
 	public JPanel MainPanel;							//窗口主面板
-	public mainPanel GamePanel;						//游戏面板
+	public mainPanel GamePanel;							//游戏面板
 	public boolean StartGame = true;					//开始游戏
 	//画游戏内容
 	public Background background;						//背景图案
@@ -44,13 +47,27 @@ public class PlayerClient extends JFrame implements InitValue{
 	public static Random random = new Random();			//随机方法器
 	//多线程
 	public Thread SXSjThread = null;					//刷新数据线程			
+	//图片
+	private static Toolkit tk = Toolkit.getDefaultToolkit();
+	private static Image imageExit = tk.getImage(LoginDlg.class.getClassLoader().getResource("images/询问退出.gif"));
+	static{
+		imageExit = imageExit.getScaledInstance(50, 50, Image.SCALE_DEFAULT);		
+	}
+	private static Icon iconExit = new ImageIcon(imageExit);
+
 	
 	/**
 	 * 构造函数
 	 * @param mainWindows //传入窗口指针
 	 */
-	public PlayerClient(MainWindows mainWindows){
-		this.mainWindows = mainWindows;							//主窗口指针赋值
+	public PlayerClient(){
+	}	
+	/**
+	 * 获取登录指针
+	 * @param loginDlg
+	 */
+	public void GetloginDlg(LoginDlg loginDlg){
+		this.loginDlg = loginDlg;									//获取登录指针
 	}	
 	/**
 	 * 游戏启动
@@ -60,6 +77,7 @@ public class PlayerClient extends JFrame implements InitValue{
 		initObject();											//初始化一些参数
 		launchGamePanel();										//游戏面板加载
 		new Thread(new PaintThread()).start();					//启动绘图线程
+		PlayerClient.this.setVisible(true);						//显示窗口
 	}
 	//**********************************************************构造窗口 初始化
 	/**
@@ -70,30 +88,25 @@ public class PlayerClient extends JFrame implements InitValue{
 		this.setTitle("KamiAki's First JavaGame");
 		this.setSize(WindowsXlength, WindowsYlength);
 		this.setResizable(false);
-		this.setLocationRelativeTo(null);
+		this.setLocationRelativeTo(null);	
 		this.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
+			public void windowClosing(WindowEvent e) {	
 				super.windowClosing(e);
-				dispose();
-				mainWindows.mFrame.setVisible(true);
+				int i = JOptionPane.showConfirmDialog(null, "是否要退出？","退出",JOptionPane.OK_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,iconExit);
+				if(i == JOptionPane.OK_OPTION){
+					dispose();
+					loginDlg.setVisible(true);
+				}
 			}
-		});	
+		});		
+		
+		
 		//键盘监听
 		this.addKeyListener(new Keylistener());	
 		//窗口面板（游戏面板 在其中）
 		MainPanel = new JPanel();
 		MainPanel.setLayout(null);
 		this.setContentPane(MainPanel);		
-	}
-	/**
-	 * 游戏面板加载
-	 */
-	public void launchGamePanel() {
-		GamePanel = new mainPanel(); 
-		GamePanel.setLayout(null);
-		GamePanel.setLocation(PanelX, PanelY);
-		GamePanel.setSize(WindowsXlength + PanelX * (-2), WindowsYlength + PanelY * (-2));			
-		MainPanel.add(GamePanel);	
 	}
 	/**
 	 * 初始化坦克子弹等参数
@@ -103,7 +116,7 @@ public class PlayerClient extends JFrame implements InitValue{
 		//加载背景
 		if(background == null)background = new Background(0, 0, 2,PlayerClient.this);
 		//加载玩家坦克
-		myPlayer = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, this);
+		if(myPlayer == null)myPlayer = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, this);
 		//加载子弹
 		if(missiles == null)missiles = new ArrayList<Missile>();
 		//加载爆炸
@@ -114,6 +127,15 @@ public class PlayerClient extends JFrame implements InitValue{
 		//************************************启动数据刷新 线程
 		SXSjThread = new Thread(new ShuJuShuaXin());
 		SXSjThread.start();
+	}
+	/**
+	 * 游戏面板加载
+	 */
+	public void launchGamePanel() {
+		GamePanel = new mainPanel(); 
+		GamePanel.setLayout(null);
+		GamePanel.setBounds( PanelX, PanelY, WindowsXlength + PanelX * (-2), WindowsYlength + PanelY * (-2) );		
+		MainPanel.add(GamePanel);	
 	}
 	//**********************************************************各种线程
 	/**
@@ -235,29 +257,31 @@ public class PlayerClient extends JFrame implements InitValue{
 					}	
 				}
 				//刷新玩家吃到物品事件
-				itemsType = myPlayer.eats(Items);
-				switch (itemsType) {
-				case Blood:
-					myPlayer.setBlood(myPlayer.getBlood() + 40);
-					if(myPlayer.getBlood() >200){
-						myPlayer.setBlood(200);
+				if(myPlayer != null && Items != null){
+					itemsType = myPlayer.eats(Items);
+					switch (itemsType) {
+					case Blood:
+						myPlayer.setBlood(myPlayer.getBlood() + 40);
+						if(myPlayer.getBlood() >200){
+							myPlayer.setBlood(200);
+						}
+						break;
+					case WeaponBaFang:
+						myPlayer.setMana(myPlayer.getMana() + 20);
+						if(myPlayer.getMana() >200){
+							myPlayer.setMana(200);
+						}
+						break;	
+					case WeaponZhuiZong:
+						myPlayer.setMana(myPlayer.getMana() + 40);
+						if(myPlayer.getMana() >200){
+							myPlayer.setMana(200);
+						}
+						break;
+					default:
+						break;
 					}
-					break;
-				case WeaponBaFang:
-					myPlayer.setMana(myPlayer.getMana() + 20);
-					if(myPlayer.getMana() >200){
-						myPlayer.setMana(200);
-					}
-					break;	
-				case WeaponZhuiZong:
-					myPlayer.setMana(myPlayer.getMana() + 40);
-					if(myPlayer.getMana() >200){
-						myPlayer.setMana(200);
-					}
-					break;
-				default:
-					break;
-				}
+				}	
 				//循环刷新间隔
 				try {Thread.sleep(10);} catch (Exception e) {}	
 			}
@@ -279,7 +303,6 @@ public class PlayerClient extends JFrame implements InitValue{
 		 * @return
 		 */
 		private Image Doublebuffer(){
-
 			Image image = mainPanel.this.createImage(WindowsXlength + PanelX * (-2),  WindowsYlength + PanelY * (-2));
 			Graphics ImageG = image.getGraphics();
 			//抓越界异常
