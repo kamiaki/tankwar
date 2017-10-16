@@ -227,11 +227,11 @@ public class JoinDlg extends JFrame {
 		
 		textField_YaoQing = new JTextField();
 		textField_YaoQing.setForeground(Color.GRAY);
-		textField_YaoQing.setText("公司座机号");
+		textField_YaoQing.setText("三天不打");
 		textField_YaoQing.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				if(textField_YaoQing.getText().equals("公司座机号")){
+				if(textField_YaoQing.getText().equals("三天不打")){
 				textField_YaoQing.setForeground(Color.BLACK);
 				textField_YaoQing.setText("");
 				}
@@ -240,7 +240,7 @@ public class JoinDlg extends JFrame {
 			public void focusLost(FocusEvent e) {
 				if(textField_YaoQing.getText().equals("")){
 				textField_YaoQing.setForeground(Color.GRAY);
-				textField_YaoQing.setText("公司座机号");
+				textField_YaoQing.setText("三天不打");
 				}
 			}
 		});
@@ -296,10 +296,10 @@ public class JoinDlg extends JFrame {
 						if(!password.equals("")){
 							if(!password2.equals("")){
 								if(password2.equals(password)){
-									if(textField_YaoQing.getText().equals("123")){
+									if(textField_YaoQing.getText().equals("上房吃瓦")){
 										
 										//*************************************************************开始注册
-										HTTPclient httPclient = new HTTPclient("123.123.123.123","1234");
+										HTTPclient httPclient = new HTTPclient("192.168.199.148","1234");
 										String returnSTR = httPclient.HTTPclientSendJoin(userName, name, password);	
 										if(returnSTR.equals("注册成功")){
 											JOptionPane.showMessageDialog(null, "注册成功！","提示",JOptionPane.INFORMATION_MESSAGE);					

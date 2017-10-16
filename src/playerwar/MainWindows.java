@@ -21,7 +21,6 @@ public class MainWindows {
 	private JPanel MPanel;	
 	private JLabel label_main;
 	//其他参数
-	private buttonlistener btr;
 		
 	/**
 	 * 主函数
@@ -42,7 +41,6 @@ public class MainWindows {
 	 * 初始化主窗体
 	 */
 	private void initialize() {
-		btr = new buttonlistener();
 		//主窗体
 		mFrame = new JFrame();
 		mFrame.setSize(194, 153);
@@ -63,6 +61,9 @@ public class MainWindows {
 	private void LOGIN(){
 		new Thread(new Runnable() {
 			public void run() {
+				String xx = "↑-w\r\n↓-S\r\n←-A\r\n→-D\r\n普通炮-Num1\r\nAOE炮-Num2\r\n追踪炮-Num3";
+				JOptionPane.showMessageDialog(null, xx);
+				
 				playerClient = new PlayerClient();						//加载游戏面板
 				
 				loginDlg = new LoginDlg(playerClient);					//加载登录界面
@@ -72,24 +73,5 @@ public class MainWindows {
 				mFrame.dispose();										//关闭这个窗口
 			}
 		}).start();		
-	}
-	
-	
-	
-	//按钮响应类
-	private class buttonlistener implements ActionListener{
-		public void actionPerformed(ActionEvent e) {
-			switch (e.getActionCommand()) {
-			case "开始游戏":
-				break;
-			case "操作说明":
-				String xx = "↑-w\r\n↓-S\r\n←-A\r\n→-D\r\n普通炮-Num1\r\nAOE炮-Num2\r\n追踪炮-Num3";
-				JOptionPane.showMessageDialog(null, xx);
-				break;
-			default:
-				break;
-			}
-			
-		}
 	}
 }
