@@ -1,7 +1,5 @@
 package HTTPclient;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -10,7 +8,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.border.EmptyBorder;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,7 +18,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.SwingConstants;
 
-public class UpDataDlg extends JFrame {
+public class UpDataDlg extends JFrame implements ClientInit{
 
 	private JPanel contentPane;
 	
@@ -50,7 +47,7 @@ public class UpDataDlg extends JFrame {
 		});
 		btl = new buttonlistener();
 		//**************************************************主窗口
-		setTitle("生产单上传：修改密码");
+		setTitle("修改密码");
 		setSize(360, 202);
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -192,7 +189,7 @@ public class UpDataDlg extends JFrame {
 								if(password2.equals(password)){
 									
 									//**********************************************开始修改密码
-									HTTPclient httPclient = new HTTPclient("123","123");
+									HTTPclient httPclient = new HTTPclient(InitIP,InitPort);
 									String returnSTR = httPclient.HTTPclientSendUpdata(userName,oldpassword,password);
 									if(returnSTR.equals("修改成功")){
 										JOptionPane.showMessageDialog(null, "修改成功！","提示",JOptionPane.INFORMATION_MESSAGE);					

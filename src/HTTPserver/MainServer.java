@@ -65,10 +65,10 @@ public class MainServer {
 		btl = new ButtonListener();
 		//**************************************************************主窗口
 		frame = new JFrame();
-		frame.setTitle("接收文件服务端");
+		frame.setTitle("HttpServer");
 		frame.setSize(419, 262);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLocationRelativeTo(null);									//居中
+		frame.setLocationRelativeTo(null);							//居中
 		frame.setResizable(false);
 		frame.getContentPane().setLayout(null);
 		//**************************************************************控件

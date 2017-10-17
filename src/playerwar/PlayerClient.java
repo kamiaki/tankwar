@@ -360,7 +360,7 @@ public class PlayerClient extends JFrame implements InitValue{
 			}		
 			//*************数据信息
 			//击杀坦克数
-			ImageG.drawString("击杀坦克数量:" + killPlayerNumber, 10, 20);
+			ImageG.drawString("击杀敌人数量:" + killPlayerNumber, 10, 20);
 			//显示生命数
 			if(rePlayerNumber < 0){
 				ImageG.drawString("生命值数量:0", 10, 40);
@@ -368,11 +368,11 @@ public class PlayerClient extends JFrame implements InitValue{
 				ImageG.drawString("生命值数量:" + rePlayerNumber, 10, 40);
 			}
 			//坦克血量
-			ImageG.drawString("坦克血量:" + myPlayer.getBlood(), 10, 60);
+			ImageG.drawString("人物血量:" + myPlayer.getBlood(), 10, 60);
 			//******游戏结束 显示总共击杀数
 			if(rePlayerNumber < 0){
 				background.draw(ImageG);	
-				ImageG.drawString("游戏结束，击杀坦克总数:" + killPlayerNumber, 10, 120);		
+				ImageG.drawString("游戏结束，击杀敌人总数:" + killPlayerNumber, 10, 120);		
 			}
 			return image;
 		}

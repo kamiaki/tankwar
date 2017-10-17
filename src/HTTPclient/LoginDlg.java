@@ -60,7 +60,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 
-public class LoginDlg extends JFrame {
+public class LoginDlg extends JFrame implements ClientInit{
 	//***************************************主窗口
 	private static int WindowsWidth = 800, WindowsHeigth = 450, side = 50;
 	
@@ -140,7 +140,7 @@ public class LoginDlg extends JFrame {
 					if(!userName.equals("")){
 						if(!password.equals("")){				
 							//**************************************************************开始登录验证
-							HTTPclient httPclient = new HTTPclient("192.168.199.148","1234");
+							HTTPclient httPclient = new HTTPclient(InitIP,InitPort);
 							String returnSTR = httPclient.HTTPclientSendLogin(userName, password);	
 							if(returnSTR.equals("登录成功")){
 								JOptionPane.showMessageDialog(null, "登录成功！","提示",JOptionPane.INFORMATION_MESSAGE);					

@@ -44,8 +44,6 @@ public class HTTPserver {
 	        server.createContext("/join", new joinHttpHandler());   									//注册信息
 	        server.createContext("/login",new loginHttpHandler());										//登录信息
 	        server.createContext("/updata",new updataHttpHandler());									//修改信息
-	        server.createContext("/userMessage",new userMessageHttpHandler());							//信息记录
-	        server.createContext("/userHistory",new userhistoryHttpHandler());							//历史记录反馈
 	        
 			ExecutorService pool = Executors.newCachedThreadPool();										//线程池		
 	        server.setExecutor(pool);																	//null为单线程
@@ -227,101 +225,5 @@ public class HTTPserver {
 	        HttpConn.close();         
 	    } //handle函数    	
 	}//DyanHttpHandler类
-		
-	/**
-	 * 用户操作信息
-	 * @author Administrator
-	 *
-	 */
-	class userMessageHttpHandler implements	HttpHandler{
-		@Override
-		public void handle(HttpExchange HttpConn) throws IOException {
-			// TODO 自动生成的方法存根
-			boolean PD = false;
-			//*****************************************************读取内容
-			String readSTR = "";
-			int length = 0;
-			byte[] buffer = new byte[1024];
-			InputStream ins = HttpConn.getRequestBody();
-			while ( (length = ins.read(buffer)) != -1 ) {
-				readSTR = new String(buffer, 0, length);			
-			}
-			
-			//*****************************************************json2map
-			JSONObject object = JSONObject.fromObject(readSTR);
-			Map<String, String> map = new HashMap<String,String>();
-			map.putAll(object);
-			MySQLRelevant mysqlID = new MySQLRelevant();		
-			mysqlID.connectionPlayerGameID();
-			if(mysqlID.PlayerGameuserRecord(map)){
-				PD = true;
-			}else{
-				PD = false;
-			}
-			mysqlID.deconnectionSQL();
-			
-			//*********************************************************发送数据到客户端  	       
-	        byte[] writeBuffer = null;
-	        if(PD == true){
-	        writeBuffer = ( "用户操作信息为：" + map.toString() ).getBytes();   
-	        }else{
-	        	writeBuffer = "用户操作信息采集失败！".getBytes();
-	        }
-	        HttpConn.sendResponseHeaders(HttpURLConnection.HTTP_OK, writeBuffer.length); 
-	        OutputStream out = HttpConn.getResponseBody();
-	        out.write(writeBuffer);
-	        out.flush(); 
-	        out.close();
-	        
-	        //*********************************************************关闭http
-			HttpConn.close();    		
-		}
-	}
 
-	/**
-	 * 用户历史记录
-	 * @author Administrator
-	 *
-	 */
-	class userhistoryHttpHandler implements	HttpHandler{
-		@Override
-		public void handle(HttpExchange HttpConn) throws IOException {
-			// TODO 自动生成的方法存根
-			boolean PD = false;
-			//*****************************************************读取内容
-			String readSTR = "";
-			int length = 0;
-			byte[] buffer = new byte[1024];
-			InputStream ins = HttpConn.getRequestBody();
-			while ( (length = ins.read(buffer)) != -1 ) {
-				readSTR = new String(buffer, 0, length);			
-			}
-			
-			//*****************************************************json2map
-			JSONObject objectUser = JSONObject.fromObject(readSTR);
-			Map<String, String> map = new HashMap<String,String>();
-			map.putAll(objectUser);
-			JSONObject objectHistory = new JSONObject();
-			
-			MySQLRelevant mysqlHistory = new MySQLRelevant();		
-			mysqlHistory.connectionPlayerGameID();		
-			mysqlHistory.PlayerGameuserHistory(map,objectHistory);			
-			mysqlHistory.deconnectionSQL();
-			
-			//*********************************************************发送数据到客户端  	       
-	        String sendStr = "";
-	        if(objectHistory != null){
-	        	sendStr = objectHistory.toString();
-	        }
-	        byte[] writeBuffer = sendStr.getBytes();
-	        HttpConn.sendResponseHeaders(HttpURLConnection.HTTP_OK, writeBuffer.length); 
-	        OutputStream out = HttpConn.getResponseBody();
-	        out.write(writeBuffer);
-	        out.flush(); 
-	        out.close();
-	        
-	        //*********************************************************关闭http
-			HttpConn.close();    		
-		}
-	}
 }
