@@ -1,8 +1,10 @@
-package playerwar;
+package player;
 
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
+
+import playerClient.PlayerClient;
 /**
  * ±¨’®¿‡
  *

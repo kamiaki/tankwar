@@ -1,10 +1,12 @@
-package playerwar;
+package map;
 
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 
 import javax.swing.ImageIcon;
+
+import playerClient.PlayerClient;
 /**
  * Ç½Àà
  *
@@ -13,14 +15,9 @@ public class Wall {
 	PlayerClient tankClient;
 	private int x,y,w,h;
 	private Image wallPicture;
+	// »­Ç½±Ú	
+	private static ImageIcon wallImageIcon = new ImageIcon(Wall.class.getClassLoader().getResource("images/Ç½.png"));
 	
-	private static ImageIcon wallImageIcon; 
-	static{
-		/**
-		 * »­Ç½±Ú
-		 */
-		wallImageIcon = new ImageIcon(Wall.class.getClassLoader().getResource("images/Ç½.png"));
-	}
 	/**
 	 * ¹¹Ôì·½·¨
 	 * @param x

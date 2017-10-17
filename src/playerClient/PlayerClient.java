@@ -1,4 +1,4 @@
-package playerwar;
+package playerClient;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -14,6 +14,16 @@ import java.util.Random;
 import javax.swing.*;
 
 import HTTPclient.LoginDlg;
+import map.Background;
+import map.Door;
+import map.Map;
+import map.Wall;
+import player.Explode;
+import player.Item;
+import player.ItemsType;
+import player.Missile;
+import player.Player;
+
 /**
  * 大管家类
  *
@@ -25,9 +35,11 @@ public class PlayerClient extends JFrame implements InitValue{
 	public LoginDlg loginDlg;							//主窗口指针
 	public JPanel MainPanel;							//窗口主面板
 	public mainPanel GamePanel;							//游戏面板
-	public boolean StartGame = true;					//开始游戏
+	public boolean StartGame = false;					//开始游戏
 	//画游戏内容
 	public Background background;						//背景图案
+	public List<Wall> walls;							//墙链表
+	public List<Door> doors;							//门链表
 	public List<Item> Items;							//物品链表
 	public int ItemLength = 5;							//总物品数量
 	public int ItemTime = 3000;							//物品刷新时间
@@ -39,14 +51,10 @@ public class PlayerClient extends JFrame implements InitValue{
 	public boolean CreateEnemyPlayersPD = true;			//是否生成敌人
 	public List<Missile> missiles;						//子弹链表
 	public List<Explode> explodes;						//爆炸链表
-	public List<Wall> walls;							//墙链表
-	public List<Door> doors;							//门链表
 	public int killPlayerNumber = 0;					//杀死敌人数
 	public int rePlayerNumber = 0;						//玩家重生次数
 	//随机器
-	public static Random random = new Random();			//随机方法器
-	//多线程
-	public Thread SXSjThread = null;					//刷新数据线程			
+	public static Random random = new Random();			//随机方法器		
 	//图片
 	private static Toolkit tk = Toolkit.getDefaultToolkit();
 	private static Image imageExit = tk.getImage(LoginDlg.class.getClassLoader().getResource("images/询问退出.gif"));
@@ -54,25 +62,22 @@ public class PlayerClient extends JFrame implements InitValue{
 		imageExit = imageExit.getScaledInstance(50, 50, Image.SCALE_DEFAULT);		
 	}
 	private static Icon iconExit = new ImageIcon(imageExit);
-
+	//地图加载
+	private Map map;
 	
 	/**
 	 * 构造函数
-	 * @param mainWindows //传入窗口指针
+	 * @param loginDlg //传入登录窗口指针
 	 */
-	public PlayerClient(){
-	}	
-	/**
-	 * 获取登录指针
-	 * @param loginDlg
-	 */
-	public void GetloginDlg(LoginDlg loginDlg){
-		this.loginDlg = loginDlg;									//获取登录指针
+	public PlayerClient(LoginDlg loginDlg){
+		this.loginDlg = loginDlg;	
+		map = new Map(PlayerClient.this);
 	}	
 	/**
 	 * 游戏启动
 	 */
 	public void gamestart(){
+		StartGame = true;
 		launchFrame();											//画主窗口
 		initObject();											//初始化一些参数
 		launchGamePanel();										//游戏面板加载
@@ -89,6 +94,7 @@ public class PlayerClient extends JFrame implements InitValue{
 		this.setSize(WindowsXlength, WindowsYlength);
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);	
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {	
 				super.windowClosing(e);
@@ -99,8 +105,7 @@ public class PlayerClient extends JFrame implements InitValue{
 				}
 			}
 		});		
-		
-		
+				
 		//键盘监听
 		this.addKeyListener(new Keylistener());	
 		//窗口面板（游戏面板 在其中）
@@ -113,20 +118,12 @@ public class PlayerClient extends JFrame implements InitValue{
 	 */
 	public void initObject(){
 		rePlayerNumber = setLift;			//生命数
-		//加载背景
-		if(background == null)background = new Background(0, 0, 2,PlayerClient.this);
-		//加载玩家坦克
 		if(myPlayer == null)myPlayer = new Player(random(WindowsSide, WindowsXlength - WindowsSide), random(WindowsSide, WindowsYlength - WindowsSide), type_player, 3, 3, this);
-		//加载子弹
-		if(missiles == null)missiles = new ArrayList<Missile>();
-		//加载爆炸
-		if(explodes == null)explodes = new ArrayList<Explode>();
-		//加门
-		if(doors == null)doors = new ArrayList<Door>();
-		doors.add(new Door(0, 450, Door_woods, PlayerClient.this));
+		map.MapOff();
+		map.CreateCity();
+		//加载玩家坦克
 		//************************************启动数据刷新 线程
-		SXSjThread = new Thread(new ShuJuShuaXin());
-		SXSjThread.start();
+		new Thread(new ShuJuShuaXin()).start();
 	}
 	/**
 	 * 游戏面板加载

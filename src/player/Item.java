@@ -1,10 +1,13 @@
-package playerwar;
+package player;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.Random;
+
+import map.Wall;
+import playerClient.PlayerClient;
 
 /**
  * ŒÔ∆∑¿‡

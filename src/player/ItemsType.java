@@ -1,4 +1,4 @@
-package playerwar;
+package player;
 /**
  * ÎïÆ· Ã¶¾Ù
  *

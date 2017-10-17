@@ -1,4 +1,4 @@
-package playerwar;
+package player;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -8,6 +8,10 @@ import java.awt.Toolkit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import map.Wall;
+import playerClient.InitValue;
+import playerClient.PlayerClient;
 /**
  * ×Óµ¯Àà
  *

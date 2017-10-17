@@ -1,4 +1,5 @@
-package playerwar;
+package playerClient;
+
 /**
  * ³£Á¿Àà
  *
@@ -17,9 +18,9 @@ public interface InitValue {
 	public static final int Misslie_bafang = 1;			//°Ë·½ÅÚ
 	public static final int Misslie_zhuizong = 2;		//×·×ÙÅÚ
 	
-	public static final int Misslie_putongX = 20;			//ÆÕÍ¨ÅÚ
-	public static final int Misslie_bafangX = 30;			//°Ë·½ÅÚ
-	public static final int Misslie_zhuizongX = 100;		//×·×ÙÅÚ
+	public static final int Misslie_putongX = 20;		//ÆÕÍ¨ÅÚ
+	public static final int Misslie_bafangX = 30;		//°Ë·½ÅÚ
+	public static final int Misslie_zhuizongX = 100;	//×·×ÙÅÚ
 	
 	public static final int Door_city = 0;				//³ÇÊĞ
 	public static final int Door_woods = 1;				//É­ÁÖ

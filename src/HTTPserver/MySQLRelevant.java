@@ -86,7 +86,7 @@ public class MySQLRelevant {
 		try {
 			if(con != null){		
 				update = String.format("update %s set ÃÜÂë = '%s' where ÓÃ»§Ãû  = '%s'", 
-						"userid", newPassWord, userName);
+						"playerwarid", newPassWord, userName);
 				pst = con.prepareStatement(update);		
 				pst.executeUpdate();
 				return true;

@@ -1,4 +1,4 @@
-package playerwar;
+package player;
 /**
  * 8个方向的移动
  *

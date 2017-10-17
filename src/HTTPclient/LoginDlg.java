@@ -42,13 +42,14 @@ import javax.swing.border.SoftBevelBorder;
 
 import org.apache.commons.httpclient.HttpClient;
 
-import playerwar.Door;
-import playerwar.Explode;
-import playerwar.Item;
-import playerwar.Missile;
-import playerwar.Player;
-import playerwar.Wall;
-import playerwar.PlayerClient.mainPanel;
+import map.Door;
+import map.Wall;
+import player.Explode;
+import player.Item;
+import player.Missile;
+import player.Player;
+import playerClient.PlayerClient;
+import playerClient.PlayerClient.mainPanel;
 
 import javax.swing.JCheckBox;
 import java.awt.event.MouseAdapter;
@@ -70,7 +71,6 @@ public class LoginDlg extends JFrame implements ClientInit{
 	private JLabel jLabel_beijing;			//登录背景
 	//***************************************其他参数
 	private buttonlistener btl;				//按钮响应事件
-	private playerwar.PlayerClient CD;		//大管家指针
 	private String initname = "";			//初始化用户名
 	private String initpassword = "";		//初始化密码
 	private String initloginPD = "";		//初始化判断是否自动登录
@@ -90,9 +90,8 @@ public class LoginDlg extends JFrame implements ClientInit{
 	/**
 	 * 创建登录主窗口
 	 */
-	public LoginDlg(playerwar.PlayerClient cd) {
+	public LoginDlg() {
 		btl = new buttonlistener();
-		this.CD = cd;
 		//********************************************主窗口
 		setTitle("欢迎来到东高地！");
 		setSize(WindowsWidth, WindowsHeigth);
@@ -357,10 +356,11 @@ public class LoginDlg extends JFrame implements ClientInit{
 			//什么都没选
 			SAVEneirong = jPanelLogin.textField_useName.getText() + "\r\n" + "" + "\r\n不登录";
 		}	
-		FileRelevant.filepathsave("logindata.jw", SAVEneirong); //输出文本
-		initname = FileRelevant.filepathread("logindata.jw",1);	//读取用户名
+		FileRelevant.filepathsave("logindata.jw", SAVEneirong); 		//输出文本
+		initname = FileRelevant.filepathread("logindata.jw",1);			//读取用户名
 		
-		CD.gamestart();											//游戏启动
-		LoginDlg.this.dispose();								//关闭登录窗口
+		PlayerClient playerClient = new PlayerClient(LoginDlg.this);	
+		playerClient.gamestart();
+		LoginDlg.this.dispose();										//关闭登录窗口
 	}
 }

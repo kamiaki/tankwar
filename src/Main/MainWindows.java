@@ -6,17 +6,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import HTTPclient.LoginDlg;
-import playerwar.PlayerClient;
-
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
+import playerClient.PlayerClient;
 
 public class MainWindows {
 	//其他窗口引用
 	LoginDlg loginDlg;
-	PlayerClient playerClient;
 	//主窗口
 	public JFrame mFrame;					
 	private JPanel MPanel;	
@@ -44,7 +38,7 @@ public class MainWindows {
 	private void initialize() {
 		//主窗体
 		mFrame = new JFrame();
-		mFrame.setSize(194, 153);
+		mFrame.setSize(200, 100);
 		mFrame.setLocationRelativeTo(null);
 		mFrame.setResizable(false);
 		mFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -54,7 +48,7 @@ public class MainWindows {
 		mFrame.setContentPane(MPanel);
 		//控件		
 		label_main = new JLabel("加载中...");
-		label_main.setBounds(38, 45, 112, 34);
+		label_main.setBounds(70, 28, 54, 15);
 		//控件插入容器
 		MPanel.add(label_main);;
 	}
@@ -65,10 +59,7 @@ public class MainWindows {
 				String xx = "↑-w\r\n↓-S\r\n←-A\r\n→-D\r\n普通炮-Num1\r\nAOE炮-Num2\r\n追踪炮-Num3\r\n重生-R";
 				JOptionPane.showMessageDialog(null, xx);
 				
-				playerClient = new PlayerClient();						//加载游戏面板
-				
-				loginDlg = new LoginDlg(playerClient);					//加载登录界面
-				playerClient.GetloginDlg(loginDlg);						//获取登录指针
+				loginDlg = new LoginDlg();								//加载登录界面
 				loginDlg.setVisible(true);                              //显示登录界面
 				
 				mFrame.dispose();										//关闭这个窗口
