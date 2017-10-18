@@ -121,7 +121,7 @@ public class Map implements playerClient.InitValue{
 	 */
 	public void CreateCity(){
 		//设置玩家位置
-		playerClient.myPlayer.setX(1400);
+		playerClient.myPlayer.setX(200);
 		playerClient.myPlayer.setY(400);
 		//加载背景
 		if(playerClient.background == null)playerClient.background = new Background(0, 0, 2,playerClient);

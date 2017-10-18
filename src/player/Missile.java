@@ -5,9 +5,19 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import map.Wall;
 import playerClient.InitValue;
@@ -28,19 +38,54 @@ public class Missile implements InitValue{
 	private int MissileZhongLei = Misslie_putong;						//炮弹种类
 	public boolean ZhuiZongPD = false;									//追踪弹是否启动
 	private static int ZhuiJiDistance = 100;								//追击距离
+	//************************************************************************************************声音
+	//音频类
+	public class SoundPlayer {
+		File file;
+		AudioInputStream stream;
+		AudioFormat format ;
+		DataLine.Info info;
+		Clip clip;
+		/**
+		 * 读取音频
+		 * @param fileName
+		 */
+		public void loadSound(String fileName){
+			file = new File(fileName);
+			try {
+				stream = AudioSystem.getAudioInputStream(file);
+			} catch (Exception e) {}
+			format = stream.getFormat();
+		}
+		/**
+		 * 播放音频
+		 */
+		public void playSound(){			
+			info = new DataLine.Info(Clip.class, format);
+			try {
+				clip = (Clip)AudioSystem.getLine(info);
+			} catch (Exception e) {}			
+			try{
+				clip.open(stream);
+			}catch (Exception e) {}
+			clip.start();
+		}
+	}
+	
+	private SoundPlayer soundPlayer = new SoundPlayer();
 	//************************************************************************************************贴图
 	private int stepBF;																//八方子弹步数
 	private int stepPTX;															//普通子弹步数
 	private int stepPTY;															//普通子弹步数
 	private int stepZZX;															//zz子弹步数
 	private int stepZZY;															//zz子弹步数
-	private static Toolkit tk = Toolkit.getDefaultToolkit();
 	public static final int missileXlength = 80;									//子弹的大小
 	public static final int missileYlength = 80;									//子弹的大小
 	//敌人子弹
 	private int step;																//步数
 	private static Image[] MissileImages = new Image[10];							//八个图片
 	private static Map<String, Image> MapImage = new HashMap<String, Image>();		//哈希表
+	private static Toolkit tk = Toolkit.getDefaultToolkit();
 	static{																			// 画子弹
 		MissileImages[4] = tk.getImage(Player.class.getClassLoader().getResource("images/D4.png"));	
 		MissileImages[4] = MissileImages[4].getScaledInstance(missileXlength * 3, missileXlength, Image.SCALE_DEFAULT);
@@ -104,6 +149,8 @@ public class Missile implements InitValue{
 		this.live = true;
 		MissileDongHua();
 		MissileQD();
+		soundPlayer.loadSound("ak47声.wav");
+		soundPlayer.playSound();
 	}
 	//*****************************************************************************子弹参数设置
 	/**
